@@ -17,8 +17,7 @@ pub enum Instruction {
         amounts: Vec<u64>,
         mints: Vec<Pubkey>,
     },
-    AddAsset,
-    RemoveAsset,
     Mint,
     Redeem,
+    //..
 }
