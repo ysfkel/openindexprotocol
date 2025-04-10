@@ -148,7 +148,6 @@ pub fn create_index(
         let (component_pda, component_bump) = Pubkey::find_program_address(
             &[
                 COMPONENT_SEED,
-                controller_account.key.as_ref(),
                 index_account.key.as_ref(),
                 mint_account.key.as_ref(),
             ],
@@ -158,8 +157,6 @@ pub fn create_index(
         if *component_account.key != component_pda {
             return Err(ProtocolError::IncorrectComponentAccount.into());
         }
-
-
 
         invoke_signed(
             &system_instruction::create_account(
@@ -176,7 +173,6 @@ pub fn create_index(
             ],
             &[&[
                 COMPONENT_SEED,
-                controller_account.key.as_ref(),
                 index_account.key.as_ref(),
                 mint_account.key.as_ref(),
                 &[component_bump],
