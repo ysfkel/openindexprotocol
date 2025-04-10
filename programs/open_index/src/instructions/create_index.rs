@@ -104,8 +104,6 @@ pub fn create_index(
     let rent = Rent::get()?;
     let lamports = rent.minimum_balance(space);
 
-    // create index
-    // seed index + controller_key + index_id
     invoke_signed(
         &system_instruction::create_account(
             &owner.key,

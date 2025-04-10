@@ -9,8 +9,7 @@ pub struct Index {
     pub initialized: bool,
     pub bump: u8,
     pub mints: Vec<Pubkey>,
-}
-// PDA(["index", index_id.to_le_bytes()]) // ✅ globally unique
+} 
 
 impl Index {
     pub fn new( 

@@ -6,9 +6,6 @@ use solana_program::{
     pubkey::Pubkey,
 };
 
-// token vaults
-// vault_pda("vault", index_pubkey, mint_pubkey)
-
 use crate::processor;
 
 entrypoint!(process_instruction);
