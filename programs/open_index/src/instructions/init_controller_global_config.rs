@@ -25,6 +25,10 @@ pub fn init_controller_global_config(
 ) -> ProgramResult {
     msg!("initializing controlelr global config");
 
+    if max_index_components == 0 {
+        return Err(ProtocolError::InvalidMaxIndexComponents.into());
+    }
+
     let accounts_iter = &mut accounts.iter();
     let owner = next_account_info(accounts_iter)?;
     let protocol_account = next_account_info(accounts_iter)?;

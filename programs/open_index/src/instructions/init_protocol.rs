@@ -13,15 +13,9 @@ use solana_program::{
     sysvar::Sysvar,
 };
 
-#[derive(BorshDeserialize, BorshSerialize)]
-pub struct InitProtocol {
-    pub max_components_per_index: u32,
-}
-
 pub fn init_protocol(
     program_id: Pubkey,
-    accounts: &[AccountInfo],
-    max_index_components: u32,
+    accounts: &[AccountInfo], 
 ) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
     let owner = next_account_info(accounts_iter)?;
@@ -46,15 +40,10 @@ pub fn init_protocol(
         return Err(ProtocolError::IncorrectProtocolAccount.into());
     }
 
-    if max_index_components == 0 {
-        return Err(ProtocolError::InvalidMaxIndexComponents.into());
-    }
-
     let rent = Rent::get()?;
     let lamports = rent.minimum_balance(Protocol::LEN);
 
     msg!("Creating protocol account with bump {}", protocol_bump);
-    msg!("Max index components: {}", max_index_components);
 
     invoke_signed(
         &system_instruction::create_account(

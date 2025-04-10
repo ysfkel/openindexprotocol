@@ -4,15 +4,15 @@ use solana_program::msg;
 use solana_program::program_error::ProgramError;
 use solana_program::pubkey::Pubkey;
 
-use crate::instructions::CreateIndex;
-use crate::instructions::InitProtocol;
+use crate::instructions::CreateIndex; 
 
 #[derive(BorshDeserialize, BorshSerialize, Debug, PartialEq)]
 pub enum Instruction {
-    InitProtocol {
-        max_components_per_index: u32,
-    },
+    InitProtocol,
     InitController,
+    InitControllerGlobalConfig {
+        max_index_components: u32,
+    },
     CreateIndex {
         amounts: Vec<u64>,
         mints: Vec<Pubkey>,
