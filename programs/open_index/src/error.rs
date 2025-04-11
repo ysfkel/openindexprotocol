@@ -3,18 +3,12 @@ use thiserror::Error;
 
 #[derive(Clone, Debug, PartialEq, Eq, Error)]
 pub enum ProtocolError {
-    #[error("Error:Provided system program account is incorrect")]
-    InvalidSystemProgramAccount,
     #[error("Error:Invalid token mint")]
     InvalidTokenMint,
     #[error("Error:Invalid mint account")]
     InvalidMintAccount,
     #[error("Error:Invalid max index components")]
     InvalidMaxIndexComponents,
-    #[error("Error:Invalid associated token program account")]
-    InvalidAssociatedTokenProgramAccount,
-    #[error("Error:Invalid token program account")]
-    InvalidTokenProgramAccount,
     #[error("Error:incorrect protocol account")]
     IncorrectProtocolAccount,
     #[error("Error:incorrect controller account")]

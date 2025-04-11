@@ -43,10 +43,6 @@ pub fn create_index(
 
     let mut controller = Controller::try_from_slice(&controller_account.data.borrow())?;
     require!(controller.owner == *owner.key, ProtocolError::OnlyControllerOwnerCanExecuteThisInstruction.into());
-
-    require!(*system_program_account.key == system_program::ID, ProtocolError::InvalidSystemProgramAccount.into());
-    require!(*associated_token_program_account.key == spl_associated_token_account::ID, ProtocolError::InvalidAssociatedTokenProgramAccount.into());
-    require!(*token_program_account.key == spl_token::ID,ProtocolError::InvalidTokenProgramAccount.into());
     
     let controller_global_config =ControllerGlobalConfig::try_from_slice(&controller_global_config_account.data.borrow())?;
     require!(controller_global_config.is_initialized(),ProtocolError::ControllerGlobalConfigNotInitialized.into());

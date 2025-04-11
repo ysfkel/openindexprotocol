@@ -27,10 +27,6 @@ pub fn init_protocol(program_id: Pubkey, accounts: &[AccountInfo]) -> ProgramRes
         return Err(ProgramError::AccountAlreadyInitialized);
     }
 
-    if *system_program_account.key != system_program::id() {
-        return Err(ProtocolError::InvalidSystemProgramAccount.into());
-    }
-
     let (protocol_pda, protocol_bump) = Pubkey::find_program_address(&[PROTOCOL_SEED], &program_id);
 
     if *protocol_account.key != protocol_pda {

@@ -73,10 +73,6 @@ pub fn init_controller_global_config(
     );
     msg!("max index components: {}", max_index_components);
 
-    if *system_program_account.key != system_program::id() {
-        return Err(ProtocolError::InvalidSystemProgramAccount.into());
-    }
-
     let rent = Rent::get()?;
     let lamports = rent.minimum_balance(ControllerGlobalConfig::LEN);
 
