@@ -1,7 +1,7 @@
 use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{program_pack::IsInitialized, pubkey::Pubkey};
 
-#[derive(BorshDeserialize, BorshSerialize)]
+#[derive(BorshDeserialize, BorshSerialize, Debug)]
 pub struct Protocol {
     pub owner: Pubkey,
     pub next_controller_id: u64,

@@ -16,14 +16,18 @@ pub fn process_instruction(
     let instruction = Instruction::try_from_slice(instruction_data)?;
 
     match instruction {
-        Instruction::InitProtocol=> init_protocol(program_id.clone(), accounts)?,
-        
+        Instruction::InitProtocol => init_protocol(program_id.clone(), accounts)?,
+
         Instruction::InitController => init_controller(program_id, accounts)?,
 
-        Instruction::InitControllerGlobalConfig { max_index_components } => init_controller_global_config(program_id, accounts, max_index_components)?,
+        Instruction::InitControllerGlobalConfig {
+            max_index_components,
+        } => init_controller_global_config(program_id, accounts, max_index_components)?,
 
-        Instruction::CreateIndex { amounts, mints } =>  create_index(program_id, accounts, mints, amounts)?,
-        
+        Instruction::CreateIndex { amounts, mints } => {
+            create_index(program_id, accounts, mints, amounts)?
+        }
+
         Instruction::InitController => init_controller(program_id, accounts)?,
         _ => Err(ProgramError::InvalidInstructionData)?,
     }

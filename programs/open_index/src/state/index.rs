@@ -1,7 +1,7 @@
 use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{program_pack::IsInitialized, pubkey::Pubkey};
 
-#[derive(BorshDeserialize, BorshSerialize)]
+#[derive(BorshDeserialize, BorshSerialize, Debug)]
 pub struct Index {
     pub id: u64,
     pub owner: Pubkey,
@@ -9,16 +9,10 @@ pub struct Index {
     pub initialized: bool,
     pub bump: u8,
     pub mints: Vec<Pubkey>,
-} 
+}
 
 impl Index {
-    pub fn new( 
-        id: u64,
-        owner: Pubkey,
-        manager: Pubkey,
-        mints: Vec<Pubkey>,
-        bump: u8,
-    ) -> Self {
+    pub fn new(id: u64, owner: Pubkey, manager: Pubkey, mints: Vec<Pubkey>, bump: u8) -> Self {
         Self {
             id,
             owner,

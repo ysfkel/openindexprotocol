@@ -26,14 +26,10 @@ use {
 
 #[tokio::test]
 async fn test_controller() {
-    let program_id = Pubkey::new_unique(); 
+    let program_id = Pubkey::new_unique();
     let (protocol_account, _) = Pubkey::find_program_address(&[PROTOCOL_SEED], &program_id);
 
-    let program_test = ProgramTest::new(
-        "open_index",
-        program_id,
-        processor!(process_instruction),
-    );
+    let program_test = ProgramTest::new("open_index", program_id, processor!(process_instruction));
 
     let (mut banks_client, payer, recent_blockhashes) = program_test.start().await;
 
@@ -45,22 +41,19 @@ async fn test_controller() {
 
     //     // use this for calling my program
     let transaction = Transaction::new_signed_with_payer(
-        &[ 
-            Instruction::new_with_borsh(
-                program_id,
-                &initialize_ix, 
-                vec![
-                    solana_sdk::instruction::AccountMeta::new(payer.pubkey(), true),
-                    solana_sdk::instruction::AccountMeta::new(protocol_account, false),
-                    solana_sdk::instruction::AccountMeta::new_readonly(system_program::ID, false),
-                ],
-            ),
-        ],
+        &[Instruction::new_with_borsh(
+            program_id,
+            &initialize_ix,
+            vec![
+                solana_sdk::instruction::AccountMeta::new(payer.pubkey(), true),
+                solana_sdk::instruction::AccountMeta::new(protocol_account, false),
+                solana_sdk::instruction::AccountMeta::new_readonly(system_program::ID, false),
+            ],
+        )],
         Some(&payer.pubkey()),
         &[&payer],
         recent_blockhashes,
     );
     let result = banks_client.process_transaction(transaction).await;
     assert_eq!(result.is_err(), false);
-    
 }
