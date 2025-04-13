@@ -84,6 +84,12 @@ pub fn mint_index(
         program_id,
     );
 
+    require!(
+        mint_account.owner == token_program_account.key,
+        ProgramError::IncorrectProgramId,
+        "mint account not owned by token program"
+    );
+
     let token_account_data = spl_token::state::Account::unpack(&token_account.try_borrow_data()?)?;
     require!(
         token_account_data.mint == *mint_account.key,
@@ -95,12 +101,6 @@ pub fn mint_index(
         *mint_account.key == mint_pda,
         ProtocolError::IncorrectMintAccount.into(),
         "incorrect mint account"
-    );
-
-    require!(
-        mint_account.owner == token_program_account.key,
-        ProgramError::IncorrectProgramId,
-        "mint account not owned by token program"
     );
 
     require!(

@@ -165,12 +165,8 @@ pub fn add_index_components(
         let vault_pda = next_account_info(accounts_iter)?;
         let vault_ata = next_account_info(accounts_iter)?;
 
-        require!(
-            *mint_account.owner == spl_token::ID,
-            ProtocolError::InvalidTokenMint.into(),
-            "invalid token mint"
-        );
-
+        require!(mint_account.key == token_program_account.key, ProgramError::IncorrectProgramId, "token program does not own mint account");
+        
         require!(
             mint_account.key == mint,
             ProtocolError::InvalidMintAccount.into(),
