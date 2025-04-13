@@ -97,6 +97,18 @@ pub fn mint_index(
         "incorrect mint account"
     );
 
+    require!(
+        mint_account.owner == token_program_account.key,
+        ProgramError::IncorrectProgramId,
+        "mint account not owned by token program"
+    );
+
+    require!(
+        token_account.owner == token_program_account.key,
+        ProgramError::IncorrectProgramId,
+        "token account not owned by token program"
+    );
+
     let (mint_authority_pda, mint_authority_bump) = Pubkey::find_program_address(
         &[
             INDEX_MINT_AUTHORITY_SEED,

@@ -171,6 +171,12 @@ pub fn create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramRes
         program_id,
     );
 
+    require!(
+        mint_account.owner == token_program_account.key,
+        ProgramError::IncorrectProgramId,
+        "mint account not owned by token program"
+    );
+    
     invoke_signed(
         &initialize_mint2(
             &token_program_account.key,

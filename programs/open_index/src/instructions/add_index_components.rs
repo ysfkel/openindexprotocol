@@ -218,7 +218,7 @@ pub fn add_index_components(
             ProtocolError::IncorrectVaultATA.into(),
             "incorrect vault ata"
         );
-
+        
         /// create component account
         invoke_signed(
             &system_instruction::create_account(
