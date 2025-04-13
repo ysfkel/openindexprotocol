@@ -1,8 +1,9 @@
 [workspace]
 members = [ 
-    
-    "programs/open_index"
-, "tests"]
+    "client",
+    "programs/open_index",
+    "programs/module_a", 
+ "tests"]
 resolver = "2"
 
 [profile.release]

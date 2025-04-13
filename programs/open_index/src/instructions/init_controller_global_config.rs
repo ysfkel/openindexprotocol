@@ -14,6 +14,7 @@ use solana_program::{
 
 use crate::{
     error::ProtocolError,
+    require,
     seeds::{CONTROLLER_GLOBAL_CONFIG_SEED, PROTOCOL_SEED},
     state::{ControllerGlobalConfig, Protocol},
 };
@@ -56,9 +57,11 @@ pub fn init_controller_global_config(
         return Err(ProtocolError::IncorrectProtocolAccount.into());
     }
 
-    if *owner.key != protocol.owner {
-        return Err(ProtocolError::OnlyProtocolOwnerCanExecuteThisInstruction.into());
-    }
+    require!(
+        *owner.key == protocol.owner,
+        ProtocolError::OnlyProtocolOwner.into(),
+        "only protocol owner can execute this instruction"
+    );
 
     let (controller_global_config_pda, controller_global_conifg_bump) =
         Pubkey::find_program_address(&[CONTROLLER_GLOBAL_CONFIG_SEED], &program_id);

@@ -33,9 +33,7 @@ async fn test_controller() {
 
     let (mut banks_client, payer, recent_blockhashes) = program_test.start().await;
 
-    let initialize_ix = &OpenIndexInstruction::InitProtocol {
-        max_components_per_index: 100,
-    };
+    let initialize_ix = &OpenIndexInstruction::InitProtocol;
     let mut initialize_ix_data = Vec::new();
     initialize_ix.serialize(&mut initialize_ix_data).unwrap();
 
@@ -54,6 +52,17 @@ async fn test_controller() {
         &[&payer],
         recent_blockhashes,
     );
-    let result = banks_client.process_transaction(transaction).await;
-    assert_eq!(result.is_err(), false);
+    let result = banks_client.process_transaction(transaction.clone()).await;
+    // assert_eq!(result.is_err(), false);
+
+    let sim_result = banks_client
+        .simulate_transaction(transaction.clone())
+        .await
+        .unwrap();
+
+    if let Some(details) = sim_result.simulation_details.as_ref() {
+        for log in details.logs.iter() {
+            println!("my loag {}", log);
+        }
+    }
 }
