@@ -38,12 +38,12 @@ impl IsInitialized for Module {
 
 #[cfg(test)]
 mod test {
-    use super::*; 
+    use super::*;
 
     #[test]
     fn test_new() {
-        let key = Pubkey::new_unique(); 
-        let c = Module::new(key, true,253);
+        let key = Pubkey::new_unique();
+        let c = Module::new(key, true, 253);
         assert_eq!(c.key, key);
         assert_eq!(c.active, true);
         assert_eq!(c.is_initialized(), true);
@@ -52,28 +52,27 @@ mod test {
 
     #[test]
     fn test_len() {
-        let c = Module::new(Pubkey::new_unique(), true,253);
+        let c = Module::new(Pubkey::new_unique(), true, 253);
         assert_eq!(borsh::to_vec(&c).unwrap().len(), Module::LEN);
     }
 
     #[test]
     fn test_initialized() {
-        let c = Module::new(Pubkey::new_unique(), true,253);
+        let c = Module::new(Pubkey::new_unique(), true, 253);
         assert_eq!(c.is_initialized(), true);
     }
 
     #[test]
     fn test_deactive() {
-        let mut c = Module::new(Pubkey::new_unique(), true,253);
+        let mut c = Module::new(Pubkey::new_unique(), true, 253);
         c.deactivate();
         assert_eq!(c.active, false);
     }
 
     #[test]
     fn test_active() {
-        let mut c = Module::new(Pubkey::new_unique(), false,253);
+        let mut c = Module::new(Pubkey::new_unique(), false, 253);
         c.activate();
         assert_eq!(c.active, true);
     }
-
 }

@@ -37,7 +37,7 @@ mod test {
     fn test_new() {
         let owner = Pubkey::new_unique();
         let manager = Pubkey::new_unique();
-        let c = Index::new(1, owner, manager,253);
+        let c = Index::new(1, owner, manager, 253);
         assert_eq!(c.id, 1);
         assert_eq!(c.owner, owner);
         assert_eq!(c.manager, manager);
@@ -47,7 +47,7 @@ mod test {
 
     #[test]
     fn test_len() {
-        let c = Index::new(1, Pubkey::new_unique(), Pubkey::new_unique(),253);
+        let c = Index::new(1, Pubkey::new_unique(), Pubkey::new_unique(), 253);
         assert_eq!(borsh::to_vec(&c).unwrap().len(), Index::LEN);
     }
 }

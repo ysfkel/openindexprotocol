@@ -37,12 +37,12 @@ impl IsInitialized for Protocol {
 
 #[cfg(test)]
 mod test {
-    use solana_program::{program_pack::IsInitialized, pubkey::Pubkey};
     use super::Protocol;
+    use solana_program::{program_pack::IsInitialized, pubkey::Pubkey};
 
     #[test]
     fn test_new() {
-        let owner = Pubkey::new_unique(); 
+        let owner = Pubkey::new_unique();
         let c = Protocol::new(owner, 253);
         assert_eq!(c.owner, owner);
         assert_eq!(c.is_initialized(), true);

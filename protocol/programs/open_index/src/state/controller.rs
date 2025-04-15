@@ -39,7 +39,7 @@ impl IsInitialized for Controller {
 }
 
 #[cfg(test)]
-mod test { 
+mod test {
     use super::*;
 
     #[test]

@@ -204,7 +204,7 @@ pub fn create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramRes
     controller.generate_next_index_id();
     controller.serialize(&mut &mut controller_account.data.borrow_mut()[..])?;
 
-    msg!("index created  {:?}",index_account.key);
+    msg!("index created  {:?}", index_account.key);
 
     Ok(())
 }

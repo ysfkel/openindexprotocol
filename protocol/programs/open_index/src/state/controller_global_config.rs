@@ -41,6 +41,9 @@ mod test {
     #[test]
     fn test_len() {
         let c = ControllerGlobalConfig::new(50, 254);
-        assert_eq!(borsh::to_vec(&c).unwrap().len(), ControllerGlobalConfig::LEN);
+        assert_eq!(
+            borsh::to_vec(&c).unwrap().len(),
+            ControllerGlobalConfig::LEN
+        );
     }
 }

@@ -23,8 +23,6 @@ impl IndexMints {
     pub fn len(&self) -> usize {
         4 + (self.mints.len() * 32) + 1 + 1
     }
-
-    
 }
 
 impl IsInitialized for IndexMints {
@@ -40,7 +38,7 @@ mod test {
     #[test]
     fn test_new() {
         let owner = Pubkey::new_unique();
-        let c = IndexMints::new(vec![Pubkey::new_unique(),Pubkey::new_unique()],254);
+        let c = IndexMints::new(vec![Pubkey::new_unique(), Pubkey::new_unique()], 254);
         assert_eq!(c.mints.len(), 2);
         assert_eq!(c.is_initialized(), true);
         assert_eq!(c.bump, 254);
@@ -48,7 +46,7 @@ mod test {
 
     #[test]
     fn test_len() {
-        let c = IndexMints::new(vec![Pubkey::new_unique(),Pubkey::new_unique()],254);
+        let c = IndexMints::new(vec![Pubkey::new_unique(), Pubkey::new_unique()], 254);
         assert_eq!(borsh::to_vec(&c).unwrap().len(), IndexMints::calc_len(2));
         assert_eq!(borsh::to_vec(&c).unwrap().len(), c.len());
     }

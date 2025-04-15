@@ -98,8 +98,8 @@ pub fn init_controller(program_id: &Pubkey, accounts: &[AccountInfo]) -> Program
     let mut controller = Controller::new(controller_id, owner.key.clone(), controller_bump);
     controller.serialize(&mut &mut controller_account.data.borrow_mut()[..])?;
 
-  //update next controller_id
-   protocol.generate_next_controller_id();
+    //update next controller_id
+    protocol.generate_next_controller_id();
     protocol.serialize(&mut &mut protocol_account.data.borrow_mut()[..])?;
 
     msg!("controller initialized {:?}", controller_account.key);
