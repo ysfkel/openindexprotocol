@@ -1,3 +1,6 @@
+//! Program entrypoint definitions
+#![cfg(not(feature = "no-entrypoint"))]
+
 use solana_program::{
     account_info::AccountInfo,
     address_lookup_table::{instruction, program},

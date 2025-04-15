@@ -5,7 +5,7 @@ use solana_program::{
     msg,
     pubkey::Pubkey,
 };
-
+use open_index::instructions;
 use crate::processor;
 
 entrypoint!(process_instruction);
