@@ -73,15 +73,6 @@ impl From<ProtocolError> for ProgramError {
     }
 }
 
-// #[macro_export]
-// macro_rules! require {
-//     ($cond:expr, $err:expr) => {
-//         if !$cond {
-//             return Err($err);
-//         }
-//     };
-// }
-
 #[macro_export]
 macro_rules! require {
     ($cond:expr, $err:expr, $msg:expr) => {

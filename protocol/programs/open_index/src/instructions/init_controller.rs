@@ -14,10 +14,9 @@ use solana_program::{
 
 use crate::{
     error::ProtocolError,
-    seeds::{CONTROLLER_SEED, PROTOCOL_SEED},
     state::{Controller, Protocol},
 };
-
+use open_index_lib::seeds::{CONTROLLER_SEED, PROTOCOL_SEED};
 pub fn init_controller(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
     let owner = next_account_info(accounts_iter)?;

@@ -1,5 +1,6 @@
-use crate::{error::ProtocolError, seeds::PROTOCOL_SEED, state::Protocol};
+use crate::{error::ProtocolError, state::Protocol};
 use borsh::{BorshDeserialize, BorshSerialize};
+use open_index_lib::seeds::PROTOCOL_SEED;
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint::ProgramResult,
@@ -12,7 +13,6 @@ use solana_program::{
     system_instruction, system_program,
     sysvar::Sysvar,
 };
-
 pub fn init_protocol(program_id: Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
     let owner = next_account_info(accounts_iter)?;

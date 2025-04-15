@@ -1,10 +1,10 @@
 use crate::{
     error::ProtocolError,
     require,
-    seeds::{COMPONENT_SEED, INDEX_MINTS_SEED, INDEX_SEED, VAULT_SEED},
     state::{Component, Controller, ControllerGlobalConfig, Index, IndexMints, Protocol},
 };
 use borsh::{BorshDeserialize, BorshSerialize};
+use open_index_lib::seeds::{COMPONENT_SEED, INDEX_MINTS_SEED, INDEX_SEED, VAULT_SEED};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint::ProgramResult,
@@ -165,8 +165,12 @@ pub fn add_index_components(
         let vault_pda = next_account_info(accounts_iter)?;
         let vault_ata = next_account_info(accounts_iter)?;
 
-        require!(mint_account.key == token_program_account.key, ProgramError::IncorrectProgramId, "token program does not own mint account");
-        
+        require!(
+            mint_account.key == token_program_account.key,
+            ProgramError::IncorrectProgramId,
+            "token program does not own mint account"
+        );
+
         require!(
             mint_account.key == mint,
             ProtocolError::InvalidMintAccount.into(),
@@ -214,7 +218,7 @@ pub fn add_index_components(
             ProtocolError::IncorrectVaultATA.into(),
             "incorrect vault ata"
         );
-        
+
         /// create component account
         invoke_signed(
             &system_instruction::create_account(

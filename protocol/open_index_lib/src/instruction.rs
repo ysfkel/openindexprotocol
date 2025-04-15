@@ -17,10 +17,9 @@ pub enum Instruction {
         amounts: Vec<u64>,
         mints: Vec<Pubkey>,
     },
-    MintIndex {
+    Mint {
         index_id: u64,
         amount: u64,
-        to: Pubkey,
     },
     Redeem,
     //..

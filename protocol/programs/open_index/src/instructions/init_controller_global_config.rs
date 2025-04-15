@@ -15,10 +15,9 @@ use solana_program::{
 use crate::{
     error::ProtocolError,
     require,
-    seeds::{CONTROLLER_GLOBAL_CONFIG_SEED, PROTOCOL_SEED},
     state::{ControllerGlobalConfig, Protocol},
 };
-
+use open_index_lib::seeds::{CONTROLLER_GLOBAL_CONFIG_SEED, PROTOCOL_SEED};
 pub fn init_controller_global_config(
     program_id: &Pubkey,
     accounts: &[AccountInfo],

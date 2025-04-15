@@ -14,10 +14,9 @@ use solana_program::{
 
 use crate::{
     error::ProtocolError,
-    seeds::{MODULE_SEED, PROTOCOL_SEED},
     state::{Module, Protocol},
 };
-
+use open_index_lib::seeds::{MODULE_SEED, PROTOCOL_SEED};
 pub fn init_module(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
 

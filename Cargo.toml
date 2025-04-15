@@ -1,8 +1,9 @@
 [workspace]
 members = [ 
     "client",
-    "programs/open_index",
-    "programs/module_a", 
+    "protocol/open_index_lib",
+    "protocol/programs/open_index",
+    "protocol/programs/modules/issuance", 
  "tests"]
 resolver = "2"
 

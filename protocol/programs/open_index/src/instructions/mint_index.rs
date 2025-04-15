@@ -1,21 +1,16 @@
-use crate::{
-    error::ProtocolError,
-    require,
-    seeds::{INDEX_MINT_AUTHORITY_SEED, INDEX_MINT_SEED, MODULE_SEED},
-    state::Module,
-};
+use crate::{error::ProtocolError, require, state::Module};
 use borsh::{BorshDeserialize, BorshSerialize};
+use open_index_lib::seeds::{INDEX_MINT_AUTHORITY_SEED, INDEX_MINT_SEED, MODULE_SEED};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
+    entrypoint::ProgramResult,
     msg,
     program::invoke_signed,
     program_error::ProgramError,
     program_pack::Pack,
     pubkey::Pubkey,
-    entrypoint::ProgramResult,
 };
 use spl_token::instruction::mint_to;
-
 pub fn mint_index(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
@@ -69,7 +64,7 @@ pub fn mint_index(
     );
 
     require!(
-        *token_program_account.key == token_program_account.key,
+        *token_program_account.key == *token_program_account.key,
         ProgramError::IncorrectProgramId,
         "invalid token program"
     );

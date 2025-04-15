@@ -2073,6 +2073,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "469fb0b9cefa57e3ef31275ee7cacb78f2fdca44e4765491884a2b119d4eb130"
 
 [[package]]
+name = "issuance"
+version = "0.1.0"
+dependencies = [
+ "borsh 1.5.7",
+ "borsh-derive 1.5.7",
+ "open_index_lib",
+ "solana-program",
+ "spl-associated-token-account",
+ "spl-token 8.0.0",
+ "thiserror 2.0.12",
+]
+
+[[package]]
 name = "itertools"
 version = "0.10.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2419,16 +2432,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "module_a"
-version = "0.1.0"
-dependencies = [
- "borsh 1.5.7",
- "borsh-derive 1.5.7",
- "solana-program",
- "thiserror 2.0.12",
-]
-
-[[package]]
 name = "nix"
 version = "0.29.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2641,6 +2644,19 @@ checksum = "c08d65885ee38876c4f86fa503fb49d7b507c2b62552df7c70b2fce627e06381"
 
 [[package]]
 name = "open_index"
+version = "0.1.0"
+dependencies = [
+ "borsh 1.5.7",
+ "borsh-derive 1.5.7",
+ "open_index_lib",
+ "solana-program",
+ "spl-associated-token-account",
+ "spl-token 8.0.0",
+ "thiserror 2.0.12",
+]
+
+[[package]]
+name = "open_index_lib"
 version = "0.1.0"
 dependencies = [
  "borsh 1.5.7",
@@ -7233,7 +7249,10 @@ version = "0.1.0"
 dependencies = [
  "borsh 1.5.7",
  "borsh-derive 1.5.7",
+ "num-derive",
+ "num-traits",
  "open_index",
+ "open_index_lib",
  "solana-program",
  "solana-program-test",
  "solana-sdk",

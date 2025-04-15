@@ -24,7 +24,7 @@ impl Protocol {
         self.next_controller_id += 1;
     }
 
-    pub fn get_next_controller_id(&mut self) -> u64 {
+    pub fn get_next_controller_id(&self) -> u64 {
         self.next_controller_id
     }
 }

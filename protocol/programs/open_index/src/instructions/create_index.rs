@@ -2,10 +2,12 @@ use crate::{
     error::ProtocolError,
     instructions::mint_index,
     require,
-    seeds::{COMPONENT_SEED, INDEX_MINT_AUTHORITY_SEED, INDEX_MINT_SEED, INDEX_SEED, VAULT_SEED},
     state::{Component, Controller, ControllerGlobalConfig, Index, Protocol},
 };
 use borsh::{BorshDeserialize, BorshSerialize};
+use open_index_lib::seeds::{
+    COMPONENT_SEED, INDEX_MINT_AUTHORITY_SEED, INDEX_MINT_SEED, INDEX_SEED, VAULT_SEED,
+};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint::ProgramResult,
@@ -57,7 +59,7 @@ pub fn create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramRes
         ProtocolError::UnknownControllerAccount.into(),
         "program does not own controller account"
     );
-    
+
     let mut controller = Controller::try_from_slice(&controller_account.data.borrow())?;
     require!(
         controller.owner == *owner.key,
@@ -176,7 +178,7 @@ pub fn create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramRes
         ProgramError::IncorrectProgramId,
         "mint account not owned by token program"
     );
-    
+
     invoke_signed(
         &initialize_mint2(
             &token_program_account.key,
