@@ -20,7 +20,7 @@ impl Protocol {
         }
     }
 
-    pub fn increment_next_controller_id(&mut self) {
+    pub fn generate_next_controller_id(&mut self) {
         self.next_controller_id += 1;
     }
 

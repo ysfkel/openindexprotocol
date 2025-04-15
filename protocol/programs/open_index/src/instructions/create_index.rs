@@ -200,17 +200,11 @@ pub fn create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramRes
     // Serialize Data
     let index = Index::new(index_id, owner.key.clone(), manager.key.clone(), index_bump);
     index.serialize(&mut &mut index_account.data.borrow_mut()[..])?;
-    msg!("index initialized {:?}", index_account.key);
 
-    controller.increment_next_index_id();
-    let next_id = controller.get_next_index_id();
-
+    controller.generate_next_index_id();
     controller.serialize(&mut &mut controller_account.data.borrow_mut()[..])?;
-    msg!(
-        "controller updated  {:?} next_index_id {:?}",
-        controller_account.key,
-        next_id
-    );
+
+    msg!("index created  {:?}",index_account.key);
 
     Ok(())
 }

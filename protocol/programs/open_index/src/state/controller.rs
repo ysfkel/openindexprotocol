@@ -23,7 +23,7 @@ impl Controller {
         }
     }
 
-    pub fn increment_next_index_id(&mut self) {
+    pub fn generate_next_index_id(&mut self) {
         self.next_index_id += 1;
     }
 

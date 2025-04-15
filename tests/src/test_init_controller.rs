@@ -21,6 +21,7 @@ async fn test_init_controller() {
     let _setup: Setup = setup().await;
     let program_id = _setup.program_id;
     let init_protocol_instruction = init_protocol_instruction(&_setup).await;
+    // Send init_protocol_instruction 
     let result = _setup
         .banks_client
         .process_transaction(init_protocol_instruction.transaction.clone())
@@ -36,6 +37,7 @@ async fn test_init_controller() {
 
     // create controller
     let controller_id = protocol.get_next_controller_id();
+    assert_eq!(protocol.next_controller_id, 1);
     let controller_pda = get_controller_pda(&program_id, controller_id).0;
     let int_controller_tx = init_controller_transaction(controller_id, &_setup).await;
     let result: Option<BanksClientError> = _setup
@@ -43,6 +45,7 @@ async fn test_init_controller() {
         .process_transaction(int_controller_tx.transaction.clone())
         .await
         .err();
+
     let controller_account = _setup
         .banks_client
         .get_account(controller_pda)
