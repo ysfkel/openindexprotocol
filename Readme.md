@@ -1,0 +1,2 @@
+# OPEN INDEX PROTOCOL
+The Open Index Protocol is a decentralized and modular framework built on Solana that enables the creation, management, and interaction with tokenized indices. It allows developers, DAOs, and users to create custom indices composed of multiple tokens, manage their components, and interact with them seamlessly. 
