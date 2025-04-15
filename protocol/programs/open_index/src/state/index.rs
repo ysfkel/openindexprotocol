@@ -31,8 +31,19 @@ impl IsInitialized for Index {
 
 #[cfg(test)]
 mod test {
-    use solana_program::pubkey::Pubkey;
-    use super::Index;
+    use super::*;
+
+    #[test]
+    fn test_new() {
+        let owner = Pubkey::new_unique();
+        let manager = Pubkey::new_unique();
+        let c = Index::new(1, owner, manager,253);
+        assert_eq!(c.id, 1);
+        assert_eq!(c.owner, owner);
+        assert_eq!(c.manager, manager);
+        assert_eq!(c.is_initialized(), true);
+        assert_eq!(c.bump, 253);
+    }
 
     #[test]
     fn test_len() {

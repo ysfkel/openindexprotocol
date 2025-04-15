@@ -39,13 +39,39 @@ impl IsInitialized for Controller {
 }
 
 #[cfg(test)]
-mod test {
-    use solana_program::pubkey::Pubkey;
-    use super::Controller;
+mod test { 
+    use super::*;
 
     #[test]
     fn test_len() {
-        let c = Controller::new(1, Pubkey::new_unique(), 1);
+        let c = Controller::new(1, Pubkey::new_unique(), 254);
         assert_eq!(borsh::to_vec(&c).unwrap().len(), Controller::LEN);
+    }
+
+    #[test]
+    fn test_new() {
+        let owner = Pubkey::new_unique();
+        let c = Controller::new(1, owner, 253);
+        assert_eq!(c.id, 1);
+        assert_eq!(c.owner, owner);
+        assert_eq!(c.is_initialized(), true);
+        assert_eq!(c.next_index_id, 1);
+        assert_eq!(c.bump, 253);
+    }
+
+    #[test]
+    fn test_get_next_controller_id() {
+        let c = Controller::new(1, Pubkey::new_unique(), 1);
+        assert_eq!(c.next_index_id, 1);
+    }
+
+    #[test]
+    fn test_generate_next_controller_id() {
+        let mut c = Controller::new(1, Pubkey::new_unique(), 1);
+        assert_eq!(c.next_index_id, 1);
+        c.generate_next_index_id();
+        assert_eq!(c.next_index_id, 2);
+        c.generate_next_index_id();
+        assert_eq!(c.next_index_id, 3);
     }
 }
