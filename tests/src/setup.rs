@@ -16,7 +16,6 @@ pub async fn setup() -> Setup {
     let program_id = Pubkey::new_unique();
     let program_test = ProgramTest::new("open_index", program_id, processor!(process_instruction));
     let (mut banks_client, payer, recent_blockhashes) = program_test.start().await;
-
     Setup {
         banks_client,
         recent_blockhashes,

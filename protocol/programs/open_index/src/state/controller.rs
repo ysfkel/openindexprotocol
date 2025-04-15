@@ -37,3 +37,15 @@ impl IsInitialized for Controller {
         self.initialized
     }
 }
+
+#[cfg(test)]
+mod test {
+    use solana_program::pubkey::Pubkey;
+    use super::Controller;
+
+    #[test]
+    fn test_len() {
+        let c = Controller::new(1, Pubkey::new_unique(), 1);
+        assert_eq!(borsh::to_vec(&c).unwrap().len(), Controller::LEN);
+    }
+}

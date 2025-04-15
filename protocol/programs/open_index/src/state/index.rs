@@ -28,3 +28,15 @@ impl IsInitialized for Index {
         self.initialized
     }
 }
+
+#[cfg(test)]
+mod test {
+    use solana_program::pubkey::Pubkey;
+    use super::Index;
+
+    #[test]
+    fn test_len() {
+        let c = Index::new(1, Pubkey::new_unique(), Pubkey::new_unique(),253);
+        assert_eq!(borsh::to_vec(&c).unwrap().len(), Index::LEN);
+    }
+}

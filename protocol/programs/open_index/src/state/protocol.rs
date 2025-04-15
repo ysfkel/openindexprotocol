@@ -34,3 +34,15 @@ impl IsInitialized for Protocol {
         self.initialized
     }
 }
+
+#[cfg(test)]
+mod test {
+    use solana_program::pubkey::Pubkey;
+    use super::Protocol;
+
+    #[test]
+    fn test_len() {
+        let c = Protocol::new(Pubkey::new_unique(), 253);
+        assert_eq!(borsh::to_vec(&c).unwrap().len(), Protocol::LEN);
+    }
+}

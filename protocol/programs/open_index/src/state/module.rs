@@ -35,3 +35,15 @@ impl IsInitialized for Module {
         self.initialized
     }
 }
+
+#[cfg(test)]
+mod test {
+    use solana_program::pubkey::Pubkey;
+    use super::Module;
+
+    #[test]
+    fn test_len() {
+        let c = Module::new(Pubkey::new_unique(), true,253);
+        assert_eq!(borsh::to_vec(&c).unwrap().len(), Module::LEN);
+    }
+}

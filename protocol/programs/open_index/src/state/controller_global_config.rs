@@ -25,3 +25,15 @@ impl IsInitialized for ControllerGlobalConfig {
         self.initialized
     }
 }
+
+#[cfg(test)]
+mod test {
+    use solana_program::pubkey::Pubkey;
+    use super::ControllerGlobalConfig;
+
+    #[test]
+    fn test_len() {
+        let c = ControllerGlobalConfig::new(50, 254);
+        assert_eq!(borsh::to_vec(&c).unwrap().len(), ControllerGlobalConfig::LEN);
+    }
+}

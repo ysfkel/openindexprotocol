@@ -132,7 +132,7 @@ pub fn add_index_components(
         "mints and amounts len mismatch"
     );
 
-    let space = IndexMints::len(mints_len);
+    let space = IndexMints::calc_len(mints_len);
     let rent = Rent::get()?;
     let lamports = rent.minimum_balance(space);
 

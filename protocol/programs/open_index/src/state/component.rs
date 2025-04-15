@@ -33,7 +33,6 @@ impl IsInitialized for Component {
 #[cfg(test)]
 mod test {
     use solana_program::pubkey::Pubkey;
-
     use super::Component;
 
     #[test]
