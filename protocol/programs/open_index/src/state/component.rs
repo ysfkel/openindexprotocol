@@ -32,8 +32,18 @@ impl IsInitialized for Component {
 
 #[cfg(test)]
 mod test {
-    use solana_program::pubkey::Pubkey;
-    use super::Component;
+    use super::*;
+
+    #[test]
+    fn test_new() {
+        let mint = Pubkey::new_unique();
+        let c = Component::new(1, mint, 253, 252);
+        assert_eq!(c.uints, 1);
+        assert_eq!(c.mint, mint);
+        assert_eq!(c.bump, 253);
+        assert_eq!(c.vault_bump, 252);
+        assert_eq!(c.initialized, true);
+    }
 
     #[test]
     fn test_len() {

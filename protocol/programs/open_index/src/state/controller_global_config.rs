@@ -28,8 +28,15 @@ impl IsInitialized for ControllerGlobalConfig {
 
 #[cfg(test)]
 mod test {
-    use solana_program::pubkey::Pubkey;
-    use super::ControllerGlobalConfig;
+    use super::*;
+
+    #[test]
+    fn test_new() {
+        let c = ControllerGlobalConfig::new(50, 254);
+        assert_eq!(c.max_index_components, 50);
+        assert_eq!(c.bump, 254);
+        assert_eq!(c.initialized, true);
+    }
 
     #[test]
     fn test_len() {
