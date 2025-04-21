@@ -35,13 +35,16 @@ pub fn init_controller_global_config(
     let controller_global_config_account = next_account_info(accounts_iter)?;
     let system_program_account = next_account_info(accounts_iter)?;
 
+    if !owner.is_signer {
+        return Err(ProgramError::MissingRequiredSignature);
+    }
+
     if controller_global_config_account.lamports() > 0 {
         return Err(ProgramError::AccountAlreadyInitialized);
     }
 
-    if !owner.is_signer {
-        return Err(ProgramError::MissingRequiredSignature);
-    }
+    require!(protocol_account.owner == program_id, ProtocolError::UnknownProtocolAccount.into(),"Unknown protocol account");
+
 
     let mut protocol: Protocol = Protocol::try_from_slice(&protocol_account.data.borrow())
         .map_err(|_| ProgramError::InvalidAccountData)?;

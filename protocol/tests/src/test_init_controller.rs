@@ -1,8 +1,8 @@
 use core::num;
 
 use crate::{
-    get_controller_pda, get_protocol_pda, init_controller_transaction, init_protocol_instruction,
-    setup, Setup,
+    get_controller_pda, get_protocol_pda, init_controller_transaction,
+    init_protocol_transaction::init_protocol_transaction, setup, Setup,
 };
 use borsh::{BorshDeserialize, BorshSerialize};
 use num_derive::FromPrimitive;
@@ -20,7 +20,7 @@ use {solana_program::pubkey::Pubkey, solana_program_test::tokio, solana_sdk::sig
 async fn test_init_controller() {
     let _setup: Setup = setup().await;
     let program_id = _setup.program_id;
-    let init_protocol_instruction = init_protocol_instruction(&_setup).await;
+    let init_protocol_instruction = init_protocol_transaction(&_setup).await;
     // Send init_protocol_instruction
     let result = _setup
         .banks_client
@@ -97,7 +97,6 @@ async fn test_init_controller() {
     let mut protocol = Protocol::try_from_slice(&protocol_account.data).unwrap();
     let controller = Controller::try_from_slice(&controller_account.data).unwrap();
     assert_eq!(protocol.next_controller_id, 3);
-
 
     // unwrap transaction error when ProtocolError is caught IncorrectControllerAccount
     // if let Some(error) = result {

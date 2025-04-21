@@ -16,12 +16,13 @@ pub struct InitProtocolTransaction {
     pub transaction: Transaction,
 }
 
-pub async fn init_protocol_instruction(
+pub async fn init_protocol_transaction(
     Setup {
         banks_client,
         recent_blockhashes,
         payer,
         program_id,
+        rent,
     }: &Setup,
 ) -> InitProtocolTransaction {
     let (protocol_pda, _) = get_protocol_pda(program_id);

@@ -13,7 +13,8 @@ pub enum Instruction {
         max_index_components: u32,
     },
     InitModule,
-    CreateIndex {
+    CreateIndex,
+    AddIndexComponents {
         amounts: Vec<u64>,
         mints: Vec<Pubkey>,
     },

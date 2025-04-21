@@ -1,3 +1,5 @@
+use crate::processor;
+use open_index::instructions;
 use solana_program::{
     account_info::AccountInfo,
     address_lookup_table::{instruction, program},
@@ -5,8 +7,6 @@ use solana_program::{
     msg,
     pubkey::Pubkey,
 };
-use open_index::instructions;
-use crate::processor;
 
 entrypoint!(process_instruction);
 
