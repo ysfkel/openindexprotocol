@@ -17,7 +17,7 @@ use {
 };
 
 pub struct CreateIndexTransaction {
-    index_pda: Pubkey,
+    pub index_pda: Pubkey,
     pub transaction: Transaction,
 }
 
@@ -33,12 +33,12 @@ pub async fn create_index_transaction(
         program_id,
         rent,
     }: &Setup,
-) -> CreateIndexTransaction{
+) -> CreateIndexTransaction {
     let controller_pda = get_controller_pda(program_id, controller_id).0;
-    let (index_pda, _) = get_index_pda(program_id, controller_id, index_id);
+    let (index_pda, _) = get_index_pda(program_id, &controller_pda, index_id);
     let (controller_global, _) = get_controller_global_config_pda(program_id);
 
-    let initialize_ix = &OpenIndexInstruction::CreateIndex ;
+    let initialize_ix = &OpenIndexInstruction::CreateIndex;
     let mut initialize_ix_data = Vec::new();
     initialize_ix.serialize(&mut initialize_ix_data).unwrap();
     // use this for calling my program
@@ -47,14 +47,14 @@ pub async fn create_index_transaction(
             program_id.clone(),
             &initialize_ix,
             vec![
-                solana_sdk::instruction::AccountMeta::new(payer.pubkey().clone(), true),
-                solana_sdk::instruction::AccountMeta::new(manager, false),
-                solana_sdk::instruction::AccountMeta::new(index_pda, false),
-                solana_sdk::instruction::AccountMeta::new(mint, false),
-                solana_sdk::instruction::AccountMeta::new(controller_pda, false),
-                solana_sdk::instruction::AccountMeta::new(controller_global, false),
-                solana_sdk::instruction::AccountMeta::new_readonly(system_program::ID, false),
-                solana_sdk::instruction::AccountMeta::new_readonly(spl_token::ID, false),
+                AccountMeta::new(payer.pubkey(), true),
+                AccountMeta::new(manager, false),
+                AccountMeta::new(index_pda, false),
+                AccountMeta::new(mint, false),
+                AccountMeta::new(controller_pda, false),
+                AccountMeta::new(controller_global, false),
+                AccountMeta::new_readonly(system_program::ID, false),
+                AccountMeta::new_readonly(spl_token::ID, false),
             ],
         )],
         Some(&payer.pubkey()),
@@ -64,6 +64,6 @@ pub async fn create_index_transaction(
 
     CreateIndexTransaction {
         index_pda,
-        transaction
+        transaction,
     }
 }

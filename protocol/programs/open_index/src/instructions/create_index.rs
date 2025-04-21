@@ -45,7 +45,13 @@ pub fn create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramRes
     require!(
         index_account.lamports() == 0,
         ProgramError::AccountAlreadyInitialized,
-        "index initialized"
+        "index already initialized"
+    );
+
+    require!(
+        mint_account.lamports() == 0,
+        ProgramError::AccountAlreadyInitialized,
+        "mint already initialized"
     );
 
     require!(
@@ -92,7 +98,6 @@ pub fn create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramRes
         "incorrect index account"
     );
 
-    //
     let (mint_pda, mint_bump) = Pubkey::find_program_address(
         &[
             INDEX_MINT_SEED,
@@ -101,8 +106,9 @@ pub fn create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramRes
         ],
         program_id,
     );
+
     require!(
-        mint_account.key == &mint_pda,
+        *mint_account.key == mint_pda,
         ProtocolError::IncorrectMintAccount.into(),
         "incorrect mint account"
     );
@@ -148,7 +154,7 @@ pub fn create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramRes
             mint_account.key,
             mint_lamports,
             mint_space as u64,
-            program_id,
+            token_program_account.key,
         ),
         &[
             owner.clone(),
@@ -171,12 +177,6 @@ pub fn create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramRes
             &index_id.to_le_bytes(),
         ],
         program_id,
-    );
-
-    require!(
-        mint_account.owner == token_program_account.key,
-        ProgramError::IncorrectProgramId,
-        "mint account not owned by token program"
     );
 
     invoke_signed(

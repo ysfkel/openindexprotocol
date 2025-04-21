@@ -4,7 +4,7 @@ use crate::{
     state::{Component, Controller, ControllerGlobalConfig, Index, IndexMints, Protocol},
 };
 use borsh::{BorshDeserialize, BorshSerialize};
-use open_index_lib::seeds::{COMPONENT_SEED, INDEX_MINTS_SEED, INDEX_SEED, VAULT_SEED};
+use open_index_lib::seeds::{COMPONENT_SEED, INDEX_MINTS_DATA_SEED, INDEX_SEED, VAULT_SEED};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint::ProgramResult,
@@ -100,7 +100,7 @@ pub fn add_index_components(
 
     let (index_mints_pda, index_mints_bump) = Pubkey::find_program_address(
         &[
-            INDEX_MINTS_SEED,
+            INDEX_MINTS_DATA_SEED,
             controller_account.key.as_ref(),
             &index_id.to_le_bytes(),
         ],
@@ -150,7 +150,7 @@ pub fn add_index_components(
             system_program_account.clone(),
         ],
         &[&[
-            INDEX_MINTS_SEED,
+            INDEX_MINTS_DATA_SEED,
             controller_account.key.as_ref(),
             &index_id.to_le_bytes(),
             &[index_bump],

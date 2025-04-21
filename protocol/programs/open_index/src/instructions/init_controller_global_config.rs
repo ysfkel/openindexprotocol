@@ -43,8 +43,11 @@ pub fn init_controller_global_config(
         return Err(ProgramError::AccountAlreadyInitialized);
     }
 
-    require!(protocol_account.owner == program_id, ProtocolError::UnknownProtocolAccount.into(),"Unknown protocol account");
-
+    require!(
+        protocol_account.owner == program_id,
+        ProtocolError::UnknownProtocolAccount.into(),
+        "Unknown protocol account"
+    );
 
     let mut protocol: Protocol = Protocol::try_from_slice(&protocol_account.data.borrow())
         .map_err(|_| ProgramError::InvalidAccountData)?;

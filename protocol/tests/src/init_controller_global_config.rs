@@ -29,7 +29,9 @@ pub async fn init_controller_global_config(
     let protocol_pda = get_protocol_pda(program_id).0;
     let controller_global_pda = get_controller_global_config_pda(program_id).0;
 
-    let initialize_ix = &OpenIndexInstruction::InitControllerGlobalConfig { max_index_components };
+    let initialize_ix = &OpenIndexInstruction::InitControllerGlobalConfig {
+        max_index_components,
+    };
     let mut initialize_ix_data = Vec::new();
     initialize_ix.serialize(&mut initialize_ix_data).unwrap();
     // use this for calling my program

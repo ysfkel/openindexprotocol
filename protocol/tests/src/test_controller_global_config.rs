@@ -1,4 +1,7 @@
-use crate::{init_controller_global_config, init_protocol_transaction, setup, InitControllerGlobalTransaction, Setup};
+use crate::{
+    init_controller_global_config, init_protocol_transaction, setup,
+    InitControllerGlobalTransaction, Setup,
+};
 use borsh::{BorshDeserialize, BorshSerialize};
 use open_index::state::ControllerGlobalConfig;
 use {solana_program::pubkey::Pubkey, solana_program_test::tokio, solana_sdk::signature::Signer};
@@ -28,9 +31,10 @@ async fn test_controller_global_config() {
         .banks_client
         .get_account(controller_global_pda)
         .await
-        .unwrap().unwrap();
+        .unwrap()
+        .unwrap();
 
     let cg = ControllerGlobalConfig::try_from_slice(&controller_global_account.data).unwrap();
     assert_eq!(cg.initialized, true);
-    assert_eq!(cg.max_index_components, max_index_components); 
+    assert_eq!(cg.max_index_components, max_index_components);
 }

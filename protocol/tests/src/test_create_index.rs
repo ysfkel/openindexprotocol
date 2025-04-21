@@ -2,7 +2,8 @@ use core::num;
 
 use crate::{
     create_index_transaction, create_mint_acccount_transaction, get_controller_pda,
-    get_protocol_pda, init_controller_transaction, init_protocol_transaction, setup, Setup,
+    get_index_mint_pda, get_protocol_pda, init_controller_global_config,
+    init_controller_transaction, init_protocol_transaction, setup, Setup,
 };
 use bincode::{config, decode_from_slice};
 use borsh::{BorshDeserialize, BorshSerialize};
@@ -10,7 +11,7 @@ use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 use open_index::{
     error::ProtocolError,
-    state::{Controller, Protocol},
+    state::{Controller, Index, Protocol},
 };
 use open_index_lib::seeds::PROTOCOL_SEED;
 use solana_program_test::BanksClientError;
@@ -19,7 +20,7 @@ use solana_sdk::{
     clock::sysvar,
     instruction::InstructionError,
     msg,
-    program_pack::Pack,
+    program_pack::{IsInitialized, Pack},
     rent::Rent,
     signature::Keypair,
     syscalls,
@@ -32,52 +33,115 @@ use {solana_program::pubkey::Pubkey, solana_program_test::tokio, solana_sdk::sig
 #[tokio::test]
 async fn test_create_index() {
     let _setup: Setup = setup().await;
-    let mint = Keypair::new();
+    let program_id = _setup.program_id;
     let manager = Keypair::new();
-    let mint_space = Mint::LEN;
+    //Initialize Protocol
+    let init_protocol_instruction = init_protocol_transaction(&_setup).await;
+    let protocol_pda = get_protocol_pda(&program_id).0;
 
-    let lamports = _setup.rent.minimum_balance(mint_space);
+    let result = _setup
+        .banks_client
+        .process_transaction(init_protocol_instruction.transaction.clone())
+        .await;
 
-    let create_account_instruction = create_mint_acccount_transaction(&mint, &_setup).await;
+    let protocol_account = _setup
+        .banks_client
+        .get_account(protocol_pda)
+        .await
+        .unwrap()
+        .unwrap();
 
+    let mut protocol = Protocol::try_from_slice(&protocol_account.data).unwrap();
+    // Initialize Controller
+    let controller_id = protocol.get_next_controller_id();
+    let init_controller_tx = init_controller_transaction(controller_id, &_setup).await;
+    let controller_pda = init_controller_tx.controller_pda;
+    let result: Option<BanksClientError> = _setup
+        .banks_client
+        .process_transaction(init_controller_tx.transaction.clone())
+        .await
+        .err();
+
+    let controller_account = _setup
+        .banks_client
+        .get_account(controller_pda)
+        .await
+        .unwrap()
+        .unwrap();
+    let controller = Controller::try_from_slice(&controller_account.data).unwrap();
+
+    let mint = get_index_mint_pda(&program_id, &controller_pda, controller.get_next_index_id()).0;
     let create_index_tx =
-        create_index_transaction(1, 1, mint.pubkey(), manager.pubkey(), &_setup).await;
+        create_index_transaction(1, controller.id, mint.clone(), manager.pubkey(), &_setup).await;
 
-   let result = _setup.banks_client.process_transaction(create_account_instruction.transaction).await;
+    let controller_global_tx = init_controller_global_config(10, &_setup).await;
 
-//    let result = _setup.banks_client.process_transaction(create_index_tx.transaction).await.err();//.err().unwrap();
+    let result = _setup
+        .banks_client
+        .process_transaction(controller_global_tx.transaction.clone())
+        .await;
+    //
+    let result: Option<BanksClientError> = _setup
+        .banks_client
+        .process_transaction(init_controller_tx.transaction.clone())
+        .await
+        .err();
+    let result = _setup
+        .banks_client
+        .process_transaction(create_index_tx.transaction)
+        .await;
 
-// //    assert!(result);
+    let index_account = _setup
+        .banks_client
+        .get_account(create_index_tx.index_pda)
+        .await
+        .unwrap()
+        .unwrap();
 
-//        if let Some(error) = result {
-//         match error {
-//             BanksClientError::Io(e) => {
-//                 println!("io error");
-//             }
-//             BanksClientError::RpcError(e) => {
-//                 println!(" RpcError {:?}", e);
-//             }
-//             BanksClientError::TransactionError(tx_error) => {
-//                 match tx_error {
-//                     TransactionError::InstructionError(n, ix_error) => {
-//                         match ix_error {
-//                             InstructionError::Custom(code) => {
-//                                 match code {
-//                                     7 => {
-//                                         println!("hello controller roor");
-//                                         //  return Err(ProtocolError::IncorrectControllerAccount.into()); // Return error
-//                                     }
+    let controller_account = _setup
+        .banks_client
+        .get_account(controller_pda)
+        .await
+        .unwrap()
+        .unwrap();
+    let controller = Controller::try_from_slice(&controller_account.data).unwrap();
 
-//                                     _ => {}
-//                                 }
-//                             }
-//                             _ => {}
-//                         }
-//                     }
-//                     _ => {}
-//                 }
-//             }
-//             _ => {}
-//         }
-//     }
+    let index = Index::try_from_slice(&index_account.data).unwrap();
+    assert!(index.is_initialized());
+    assert_eq!(index.manager, manager.pubkey());
+    assert_eq!(index.owner, _setup.payer.pubkey());
+    assert!(!result.is_err());
+    assert_eq!(controller.get_next_index_id(), 2);
+
+    //        if let Some(error) = result {
+    //         match error {
+    //             BanksClientError::Io(e) => {
+    //                 println!("io error");
+    //             }
+    //             BanksClientError::RpcError(e) => {
+    //                 println!(" RpcError {:?}", e);
+    //             }
+    //             BanksClientError::TransactionError(tx_error) => {
+    //                 match tx_error {
+    //                     TransactionError::InstructionError(n, ix_error) => {
+    //                         match ix_error {
+    //                             InstructionError::Custom(code) => {
+    //                                 match code {
+    //                                     7 => {
+    //                                         println!("hello controller roor");
+    //                                         //  return Err(ProtocolError::IncorrectControllerAccount.into()); // Return error
+    //                                     }
+
+    //                                     _ => {}
+    //                                 }
+    //                             }
+    //                             _ => {}
+    //                         }
+    //                     }
+    //                     _ => {}
+    //                 }
+    //             }
+    //             _ => {}
+    //         }
+    //     }
 }
