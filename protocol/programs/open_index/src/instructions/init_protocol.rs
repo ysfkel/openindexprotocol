@@ -36,8 +36,6 @@ pub fn init_protocol(program_id: Pubkey, accounts: &[AccountInfo]) -> ProgramRes
     let rent = Rent::get()?;
     let lamports = rent.minimum_balance(Protocol::LEN);
 
-    msg!("Creating protocol account with bump {}", protocol_bump);
-
     invoke_signed(
         &system_instruction::create_account(
             &owner.key,
@@ -56,7 +54,6 @@ pub fn init_protocol(program_id: Pubkey, accounts: &[AccountInfo]) -> ProgramRes
 
     let protocol = Protocol::new(owner.key.clone(), protocol_bump);
     protocol.serialize(&mut &mut protocol_account.data.borrow_mut()[..])?;
-    msg!("Protocol account initialized {:?}", protocol_account.key);
 
     Ok(())
 }

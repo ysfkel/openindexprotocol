@@ -7271,6 +7271,7 @@ dependencies = [
  "bincode 2.0.1",
  "borsh 1.5.7",
  "borsh-derive 1.5.7",
+ "issuance",
  "num-derive",
  "num-traits",
  "open_index",

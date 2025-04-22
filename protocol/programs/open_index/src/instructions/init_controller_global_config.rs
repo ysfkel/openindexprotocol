@@ -104,7 +104,7 @@ pub fn init_controller_global_config(
         ]],
     )?;
 
-    let mut controller_global_conifg =
+    let controller_global_conifg =
         ControllerGlobalConfig::new(max_index_components, controller_global_conifg_bump);
     controller_global_conifg
         .serialize(&mut &mut controller_global_config_account.data.borrow_mut()[..])?;

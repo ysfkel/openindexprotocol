@@ -95,7 +95,7 @@ pub fn init_controller(program_id: &Pubkey, accounts: &[AccountInfo]) -> Program
     )?;
 
     // initialize controller
-    let mut controller = Controller::new(controller_id, owner.key.clone(), controller_bump);
+    let controller = Controller::new(controller_id, owner.key.clone(), controller_bump);
     controller.serialize(&mut &mut controller_account.data.borrow_mut()[..])?;
 
     //update next controller_id

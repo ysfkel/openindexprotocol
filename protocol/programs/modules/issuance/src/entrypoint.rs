@@ -8,6 +8,7 @@ use solana_program::{
     pubkey::Pubkey,
 };
 
+#[cfg(not(feature = "no-entrypoint"))]
 entrypoint!(process_instruction);
 
 pub fn process_instruction(
