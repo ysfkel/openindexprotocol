@@ -1,7 +1,7 @@
-use crate::{init_protocol_transaction, setup, InitProtocolTransaction, Setup};
-use borsh::{BorshDeserialize, BorshSerialize};
+use crate::{init_protocol_transaction, setup,Setup, InitProtocolTransaction};
+use borsh::BorshDeserialize;
 use open_index::state::Protocol;
-use {solana_program::pubkey::Pubkey, solana_program_test::tokio, solana_sdk::signature::Signer};
+use { solana_program_test::tokio, solana_sdk::signature::Signer};
 
 #[tokio::test]
 async fn test_init_protocol() {
@@ -15,6 +15,7 @@ async fn test_init_protocol() {
         .banks_client
         .process_transaction(transaction.clone())
         .await;
+    assert!(result.is_err() == false);
     let protocol_account = _setup
         .banks_client
         .get_account(protocol_pda)

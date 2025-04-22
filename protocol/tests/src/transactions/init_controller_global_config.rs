@@ -8,7 +8,7 @@ use solana_sdk::{
 };
 use {
     solana_program::pubkey::Pubkey,
-    solana_sdk::signature::{Keypair, Signer},
+    solana_sdk::signature::Signer,
 };
 
 pub struct InitControllerGlobalTransaction {
@@ -18,14 +18,11 @@ pub struct InitControllerGlobalTransaction {
 
 pub async fn init_controller_global_config(
     max_index_components: u32,
-    Setup {
-        banks_client,
-        recent_blockhashes,
-        payer,
-        program_id,
-        rent,
-    }: &Setup,
+    _setup: &Setup,
 ) -> InitControllerGlobalTransaction {
+    let payer = &_setup.payer;
+    let recent_blockhashes = &_setup.recent_blockhashes;
+    let program_id = &_setup.program_id;
     let protocol_pda = get_protocol_pda(program_id).0;
     let controller_global_pda = get_controller_global_config_pda(program_id).0;
 
@@ -40,10 +37,10 @@ pub async fn init_controller_global_config(
             program_id.clone(),
             &initialize_ix,
             vec![
-                solana_sdk::instruction::AccountMeta::new(payer.pubkey().clone(), true),
-                solana_sdk::instruction::AccountMeta::new(protocol_pda, false),
-                solana_sdk::instruction::AccountMeta::new(controller_global_pda, false),
-                solana_sdk::instruction::AccountMeta::new_readonly(system_program::ID, false),
+                 AccountMeta::new(payer.pubkey().clone(), true),
+                 AccountMeta::new(protocol_pda, false),
+                 AccountMeta::new(controller_global_pda, false),
+                 AccountMeta::new_readonly(system_program::ID, false),
             ],
         )],
         Some(&payer.pubkey()),

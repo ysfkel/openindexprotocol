@@ -1,11 +1,8 @@
 use crate::{
-    find_component_address, find_component_vault_address, find_index_mints_data_address, get_controller_global_config_pda, get_controller_pda, get_index_pda, get_protocol_pda, Setup
+    find_component_address, find_component_vault_address, find_index_mints_data_address, get_controller_global_config_pda, get_controller_pda, get_index_pda, Setup
 };
-use borsh::{BorshDeserialize, BorshSerialize};
-use open_index_lib::{
-    instruction::Instruction as OpenIndexInstruction,
-    seeds::{CONTROLLER_SEED, PROTOCOL_SEED},
-};
+use borsh::BorshSerialize;
+use open_index_lib::instruction::Instruction as OpenIndexInstruction;
 use solana_sdk::{
      instruction::{AccountMeta, Instruction}, system_program, transaction::Transaction
 };
@@ -26,19 +23,15 @@ pub async fn add_index_components(
     controller_id: u64,
     mints: Vec<Pubkey>, 
     amounts: Vec<u64>, 
-    Setup {
-        banks_client,
-        recent_blockhashes,
-        payer,
-        program_id,
-        rent,
-    }: &Setup,
+    _setup: &Setup,
 ) -> AddIndexComponentsTransaction {
+    let recent_blockhashes = &_setup.recent_blockhashes;
+    let payer = &_setup.payer;
+    let program_id = &_setup.program_id;
     let controller_pda = get_controller_pda(program_id, controller_id).0;
     let (index_pda, _) = get_index_pda(program_id, &controller_pda, index_id);
     let (controller_global, _) = get_controller_global_config_pda(program_id);
-    let (index_mints_data_pda, _) = find_index_mints_data_address(program_id, &controller_pda, index_id);
-
+    let (index_mints_data_pda, _) = find_index_mints_data_address(program_id, &controller_pda, index_id); 
     let mut accounts = vec![
         AccountMeta::new(payer.pubkey(), true),
         AccountMeta::new(index_pda, false),
@@ -76,7 +69,7 @@ pub async fn add_index_components(
         )],
         Some(&payer.pubkey()),
         &[&payer],
-        *recent_blockhashes,
+        recent_blockhashes.clone(),
     );
 
     AddIndexComponentsTransaction {

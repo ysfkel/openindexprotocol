@@ -2,9 +2,9 @@ use crate::{
     init_controller_global_config, init_protocol_transaction, setup,
     InitControllerGlobalTransaction, Setup,
 };
-use borsh::{BorshDeserialize, BorshSerialize};
+use borsh::BorshDeserialize;
 use open_index::state::ControllerGlobalConfig;
-use {solana_program::pubkey::Pubkey, solana_program_test::tokio, solana_sdk::signature::Signer};
+use {solana_program_test::tokio, solana_sdk::signature::Signer};
 
 #[tokio::test]
 async fn test_controller_global_config() {
@@ -17,7 +17,7 @@ async fn test_controller_global_config() {
 
     let init_protocol_instruction = init_protocol_transaction(&_setup).await;
 
-    let result = _setup
+    let _ =_setup
         .banks_client
         .process_transaction(init_protocol_instruction.transaction.clone())
         .await;
@@ -26,6 +26,7 @@ async fn test_controller_global_config() {
         .banks_client
         .process_transaction(transaction.clone())
         .await;
+    assert!(result.is_err()==false);
 
     let controller_global_account = _setup
         .banks_client

@@ -23,14 +23,11 @@ pub async fn create_index_transaction(
     controller_id: u64,
     mint: Pubkey,
     manager: Pubkey,
-    Setup {
-        banks_client,
-        recent_blockhashes,
-        payer,
-        program_id,
-        rent,
-    }: &Setup,
+    _setup: &Setup,
 ) -> CreateIndexTransaction {
+    let payer =&_setup.payer;
+    let program_id = &_setup.program_id;
+    let recent_blockhashes = &_setup.recent_blockhashes;
     let controller_pda = get_controller_pda(program_id, controller_id).0;
     let (index_pda, _) = get_index_pda(program_id, &controller_pda, index_id);
     let (controller_global, _) = get_controller_global_config_pda(program_id);

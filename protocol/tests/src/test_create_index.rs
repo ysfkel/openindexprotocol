@@ -1,22 +1,13 @@
-use core::num;
-
 use crate::{
-    create_index_transaction, create_mint_acccount_transaction, get_controller_pda,
+    create_index_transaction,
     get_index_mint_pda, get_protocol_pda, init_controller_global_config,
     init_controller_transaction, init_protocol_transaction, setup, Setup,
 };
-use bincode::{config, decode_from_slice};
-use borsh::{BorshDeserialize, BorshSerialize};
-use num_derive::FromPrimitive;
-use num_traits::FromPrimitive;
-use open_index::{
-    error::ProtocolError,
-    state::{Controller, Index, Protocol},
-};
-use open_index_lib::seeds::PROTOCOL_SEED;
+
+use borsh::BorshDeserialize;
+use open_index::state::{Controller, Index, Protocol};
 use solana_program_test::BanksClientError;
 use solana_sdk::{
-    account::Account,
     clock::sysvar,
     instruction::InstructionError,
     msg,
@@ -25,11 +16,11 @@ use solana_sdk::{
     signature::Keypair,
     syscalls,
     system_instruction::create_account,
-    sysvar::{Sysvar, SysvarId},
+    sysvar::Sysvar,
     transaction::TransactionError,
 };
-use spl_token::state::Mint;
-use {solana_program::pubkey::Pubkey, solana_program_test::tokio, solana_sdk::signature::Signer};
+
+use {solana_program_test::tokio, solana_sdk::signature::Signer};
 #[tokio::test]
 async fn test_create_index() {
     let _setup: Setup = setup().await;
@@ -39,7 +30,7 @@ async fn test_create_index() {
     let init_protocol_instruction = init_protocol_transaction(&_setup).await;
     let protocol_pda = get_protocol_pda(&program_id).0;
 
-    let result = _setup
+    let _ =_setup
         .banks_client
         .process_transaction(init_protocol_instruction.transaction.clone())
         .await;
@@ -51,12 +42,12 @@ async fn test_create_index() {
         .unwrap()
         .unwrap();
 
-    let mut protocol = Protocol::try_from_slice(&protocol_account.data).unwrap();
+    let protocol = Protocol::try_from_slice(&protocol_account.data).unwrap();
     // Initialize Controller
     let controller_id = protocol.get_next_controller_id();
     let init_controller_tx = init_controller_transaction(controller_id, &_setup).await;
     let controller_pda = init_controller_tx.controller_pda;
-    let result: Option<BanksClientError> = _setup
+    let _ =_setup
         .banks_client
         .process_transaction(init_controller_tx.transaction.clone())
         .await
@@ -74,12 +65,12 @@ async fn test_create_index() {
         create_index_transaction(1, controller.id, mint.clone(), manager.pubkey(), &_setup).await;
     // Create controller global  config tx
     let controller_global_tx = init_controller_global_config(10, &_setup).await;
-    let result = _setup
+    let _ =_setup
         .banks_client
         .process_transaction(controller_global_tx.transaction.clone())
         .await;
     //
-    let result: Option<BanksClientError> = _setup
+    let _ =_setup
         .banks_client
         .process_transaction(init_controller_tx.transaction.clone())
         .await

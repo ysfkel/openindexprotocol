@@ -13,5 +13,4 @@ pub use pda::*;
 pub use setup::*;
 pub use test_controller_global_config::*;
 pub use test_create_index::*;
-pub use add_index_components::*;
 pub use test_add_index_components::*;

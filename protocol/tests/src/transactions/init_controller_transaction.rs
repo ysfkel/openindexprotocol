@@ -1,9 +1,6 @@
 use crate::{get_controller_pda, get_protocol_pda, Setup};
-use borsh::{BorshDeserialize, BorshSerialize};
-use open_index_lib::{
-    instruction::Instruction as OpenIndexInstruction,
-    seeds::{CONTROLLER_SEED, PROTOCOL_SEED},
-};
+use borsh::BorshSerialize;
+use open_index_lib::instruction::Instruction as OpenIndexInstruction;
 use solana_sdk::{
     instruction::{AccountMeta, Instruction},
     system_program,
@@ -21,14 +18,11 @@ pub struct InitControllerTransaction {
 
 pub async fn init_controller_transaction(
     controller_id: u64,
-    Setup {
-        banks_client,
-        recent_blockhashes,
-        payer,
-        program_id,
-        rent,
-    }: &Setup,
+    _setup: &Setup,
 ) -> InitControllerTransaction {
+    let payer = &_setup.payer;
+    let program_id = &_setup.program_id;
+    let recent_blockhashes = &_setup.recent_blockhashes;
     let protocol_pda = get_protocol_pda(program_id).0;
     let controller_pda = get_controller_pda(program_id, controller_id).0;
 

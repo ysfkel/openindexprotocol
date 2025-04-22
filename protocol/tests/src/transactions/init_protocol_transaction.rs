@@ -17,14 +17,11 @@ pub struct InitProtocolTransaction {
 }
 
 pub async fn init_protocol_transaction(
-    Setup {
-        banks_client,
-        recent_blockhashes,
-        payer,
-        program_id,
-        rent,
-    }: &Setup,
+    _setup: &Setup,
 ) -> InitProtocolTransaction {
+    let payer = &_setup.payer;
+    let program_id = &_setup.program_id;
+    let recent_blockhashes = &_setup.recent_blockhashes;
     let (protocol_pda, _) = get_protocol_pda(program_id);
     let initialize_ix = &OpenIndexInstruction::InitProtocol;
     let mut initialize_ix_data = Vec::new();

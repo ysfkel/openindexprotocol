@@ -1,19 +1,12 @@
 use core::num;
 
 use crate::{
-    add_index_components, create_index_transaction, create_mint_acccount_transaction, get_controller_pda, get_index_mint_pda, get_protocol_pda, init_controller_global_config, init_controller_transaction, init_protocol_transaction, setup, AddIndexComponentsTransaction, Setup
+    add_index_components, create_index_transaction, create_mint_acccount_transaction, get_index_mint_pda, init_controller_global_config, init_controller_transaction, init_protocol_transaction, setup, AddIndexComponentsTransaction
 };
-use bincode::{config, decode_from_slice};
-use borsh::{BorshDeserialize, BorshSerialize};
-use num_derive::FromPrimitive;
-use num_traits::FromPrimitive;
-use open_index::{
-    error::ProtocolError, state::{Controller, Index, IndexMints, Protocol}
-};
-use open_index_lib::seeds::PROTOCOL_SEED;
-use solana_program_test::BanksClientError;
+
+use borsh::BorshDeserialize;
+use open_index::state::{Controller, Index, IndexMints, Protocol};
 use solana_sdk::{
-    account::Account,
     clock::sysvar,
     instruction::InstructionError,
     msg,
@@ -22,12 +15,10 @@ use solana_sdk::{
     signature::Keypair,
     syscalls,
     system_instruction::create_account,
-    sysvar::{Sysvar, SysvarId},
     transaction::TransactionError,
 };
 
-use spl_token::state::Mint;
-use {solana_program::pubkey::Pubkey, solana_program_test::tokio, solana_sdk::signature::Signer};
+use {solana_program_test::tokio, solana_sdk::signature::Signer};
 #[tokio::test]
 async fn test_add_index_components() {
     
@@ -38,8 +29,7 @@ async fn test_add_index_components() {
    let mint_2 = Keypair::new();
    // Initialize protocol
    let init_protocol_instruction = init_protocol_transaction(&_setup).await;
-   let protocol_pda = get_protocol_pda(&program_id).0;
-   let result = _setup
+   let _ =_setup
    .banks_client
    .process_transaction(init_protocol_instruction.transaction.clone())
    .await;
@@ -47,13 +37,13 @@ async fn test_add_index_components() {
    let controller_id = 1;
    let init_controller_tx = init_controller_transaction(controller_id, &_setup).await;
    let controller_pda = init_controller_tx.controller_pda;
-   let result = _setup
+   let _ =_setup
    .banks_client
    .process_transaction(init_controller_tx.transaction.clone())
    .await;
     // Create controller global  config tx
     let controller_global_tx = init_controller_global_config(10, &_setup).await;
-    let result = _setup
+    let _ =_setup
     .banks_client
     .process_transaction(controller_global_tx.transaction.clone())
     .await;
@@ -61,7 +51,7 @@ async fn test_add_index_components() {
     let mint = get_index_mint_pda(&program_id, &controller_pda, controller_id).0;
     let create_index_tx =
     create_index_transaction(1, controller_id, mint.clone(), manager.pubkey(), &_setup).await;
-    let result = _setup
+    let _ =_setup
     .banks_client
     .process_transaction(create_index_tx.transaction)
     .await;
@@ -69,8 +59,8 @@ async fn test_add_index_components() {
     let index_id = 1;
     let create_mint_1_transaction = create_mint_acccount_transaction(&mint_1, &_setup).await;
     let create_mint_2_transaction = create_mint_acccount_transaction(&mint_2, &_setup).await;
-    let result = _setup.banks_client.process_transaction(create_mint_1_transaction.transaction).await;
-    let result = _setup.banks_client.process_transaction(create_mint_2_transaction.transaction).await;
+    let _ =_setup.banks_client.process_transaction(create_mint_1_transaction.transaction).await;
+    let _ =_setup.banks_client.process_transaction(create_mint_2_transaction.transaction).await;
     let AddIndexComponentsTransaction {
          index_mints_data_pda,
          components,

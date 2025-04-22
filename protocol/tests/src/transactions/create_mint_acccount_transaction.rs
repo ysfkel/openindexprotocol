@@ -1,14 +1,4 @@
-use crate::{
-    get_controller_pda, get_protocol_pda, init_controller_transaction, init_protocol_transaction,
-    setup, Setup,
-};
-use borsh::{BorshDeserialize, BorshSerialize};
-use num_derive::FromPrimitive;
-use num_traits::FromPrimitive;
-use open_index::{
-    error::ProtocolError,
-    state::{Controller, Protocol},
-};
+use crate::{setup, Setup};
 use solana_sdk::{
     program_pack::Pack, signature::Keypair, system_instruction::create_account, transaction::Transaction
 };
@@ -20,15 +10,11 @@ pub struct CreateMintAccountTransaction {
 }
 pub async fn create_mint_acccount_transaction(
     mint: &Keypair,
-    Setup {
-        banks_client,
-        recent_blockhashes,
-        payer,
-        program_id,
-        rent,
-    }: &Setup,
+    _setup : &Setup,
 ) -> CreateMintAccountTransaction {
-    let _setup: Setup = setup().await;
+    let payer = &_setup.payer;
+    let recent_blockhashes = &_setup.recent_blockhashes;
+
     let mint_space = Mint::LEN;
     let lamports = _setup.rent.minimum_balance(mint_space);
 
