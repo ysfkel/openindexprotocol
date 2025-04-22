@@ -17,7 +17,7 @@ async fn test_controller_global_config() {
 
     let init_protocol_instruction = init_protocol_transaction(&_setup).await;
 
-    let _ =_setup
+    let _ = _setup
         .banks_client
         .process_transaction(init_protocol_instruction.transaction.clone())
         .await;
@@ -26,7 +26,7 @@ async fn test_controller_global_config() {
         .banks_client
         .process_transaction(transaction.clone())
         .await;
-    assert!(result.is_err()==false);
+    assert!(result.is_err() == false);
 
     let controller_global_account = _setup
         .banks_client

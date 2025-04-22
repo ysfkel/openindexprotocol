@@ -56,7 +56,8 @@ pub fn init_controller_global_config(
         return Err(ProtocolError::ProtocolNotInitialized.into());
     }
 
-    let protocol_pda = Pubkey::create_program_address(&[&PROTOCOL_SEED,&[protocol.bump]], &program_id)?;
+    let protocol_pda =
+        Pubkey::create_program_address(&[&PROTOCOL_SEED, &[protocol.bump]], &program_id)?;
 
     if *protocol_account.key != protocol_pda {
         return Err(ProtocolError::IncorrectProtocolAccount.into());

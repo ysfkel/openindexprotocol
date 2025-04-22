@@ -2,14 +2,14 @@ use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{program_pack::IsInitialized, pubkey::Pubkey};
 
 #[derive(BorshDeserialize, BorshSerialize)]
-pub struct Module { 
+pub struct Module {
     is_active: bool,
     initialized: bool,
     pub bump: u8,
 }
 
 impl Module {
-    pub const LEN: usize =  1 + 1 + 1;
+    pub const LEN: usize = 1 + 1 + 1;
 
     pub fn new(is_active: bool, bump: u8) -> Self {
         Self {
@@ -57,7 +57,7 @@ mod test {
 
     #[test]
     fn test_initialized() {
-        let c = Module::new( true, 253);
+        let c = Module::new(true, 253);
         assert_eq!(c.is_initialized(), true);
     }
 
@@ -70,7 +70,7 @@ mod test {
 
     #[test]
     fn test_active() {
-        let mut c = Module::new( false, 253);
+        let mut c = Module::new(false, 253);
         c.activate();
         assert_eq!(c.is_active, true);
     }

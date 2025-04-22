@@ -13,10 +13,13 @@ use solana_program::{
 
 use crate::{
     error::ProtocolError,
-    require, 
+    require,
     state::{Component, IndexMints},
 };
-use open_index_lib::{instruction::Instruction as OpenIndexInstruction, seeds::{COMPONENT_SEED, COMPONENT_VAULT_SEED, INDEX_MINTS_DATA_SEED, MODULE_SEED}};
+use open_index_lib::{
+    instruction::Instruction as OpenIndexInstruction,
+    seeds::{COMPONENT_SEED, COMPONENT_VAULT_SEED, INDEX_MINTS_DATA_SEED, MODULE_SEED},
+};
 use spl_token::instruction::transfer;
 pub fn mint_index(
     program_id: &Pubkey,

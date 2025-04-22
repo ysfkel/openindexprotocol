@@ -1,6 +1,7 @@
-use crate::{Setup, setup};
+use crate::{setup, Setup};
 use solana_sdk::{
-signature::Keypair, signer::Signer, system_instruction::create_account, transaction::Transaction
+    signature::Keypair, signer::Signer, system_instruction::create_account,
+    transaction::Transaction,
 };
 
 pub struct InitAccountTransaction {

@@ -1,16 +1,17 @@
 use crate::{setup, Setup};
+use solana_sdk::signature::Signer;
 use solana_sdk::{
-    program_pack::Pack, signature::Keypair, system_instruction::create_account, transaction::Transaction
+    program_pack::Pack, signature::Keypair, system_instruction::create_account,
+    transaction::Transaction,
 };
 use spl_token::{instruction::initialize_mint, state::Mint};
-use solana_sdk::signature::Signer;
 
 pub struct CreateMintAccountTransaction {
     pub transaction: Transaction,
 }
 pub async fn create_mint_acccount_transaction(
     mint: &Keypair,
-    _setup : &Setup,
+    _setup: &Setup,
 ) -> CreateMintAccountTransaction {
     let payer = &_setup.payer;
     let recent_blockhashes = &_setup.recent_blockhashes;

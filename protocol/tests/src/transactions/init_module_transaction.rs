@@ -16,16 +16,14 @@ pub struct InitModuleTransaction {
     pub transaction: Transaction,
 }
 
-pub async fn init_module_transaction(
-    _setup: &Setup,
-) -> InitModuleTransaction {
-    let fake_module_program_id  = Keypair::new().pubkey();
+pub async fn init_module_transaction(_setup: &Setup) -> InitModuleTransaction {
+    let fake_module_program_id = Keypair::new().pubkey();
     let payer = &_setup.payer;
     let program_id = &_setup.program_id;
     let recent_blockhashes = &_setup.recent_blockhashes;
     let (protocol_pda, _) = get_protocol_pda(program_id);
 
-    let module_signer_pda =  find_module_signer_address(&fake_module_program_id).0;
+    let module_signer_pda = find_module_signer_address(&fake_module_program_id).0;
     let registered_module_pda = find_registered_module_address(program_id, &module_signer_pda).0;
 
     let initialize_ix = &OpenIndexInstruction::InitModule;
@@ -37,11 +35,11 @@ pub async fn init_module_transaction(
             program_id.clone(),
             &initialize_ix,
             vec![
-                 AccountMeta::new(payer.pubkey().clone(), true),
-                 AccountMeta::new(protocol_pda, false),
-                 AccountMeta::new(module_signer_pda, false),
-                 AccountMeta::new(registered_module_pda, false),
-                 AccountMeta::new_readonly(system_program::ID, false),
+                AccountMeta::new(payer.pubkey().clone(), true),
+                AccountMeta::new(protocol_pda, false),
+                AccountMeta::new(module_signer_pda, false),
+                AccountMeta::new(registered_module_pda, false),
+                AccountMeta::new_readonly(system_program::ID, false),
             ],
         )],
         Some(&payer.pubkey()),

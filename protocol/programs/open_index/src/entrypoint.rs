@@ -1,3 +1,4 @@
+use crate::processor;
 use solana_program::{
     account_info::AccountInfo,
     address_lookup_table::{instruction, program},
@@ -5,7 +6,6 @@ use solana_program::{
     msg,
     pubkey::Pubkey,
 };
-use crate::processor;
 
 #[cfg(not(feature = "no-entrypoint"))]
 entrypoint!(process_instruction);

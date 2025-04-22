@@ -6,10 +6,7 @@ use solana_sdk::{
     system_program,
     transaction::Transaction,
 };
-use {
-    solana_program::pubkey::Pubkey,
-    solana_sdk::signature::Signer,
-};
+use {solana_program::pubkey::Pubkey, solana_sdk::signature::Signer};
 
 pub struct InitControllerGlobalTransaction {
     pub controller_global_pda: Pubkey,
@@ -37,10 +34,10 @@ pub async fn init_controller_global_config(
             program_id.clone(),
             &initialize_ix,
             vec![
-                 AccountMeta::new(payer.pubkey().clone(), true),
-                 AccountMeta::new(protocol_pda, false),
-                 AccountMeta::new(controller_global_pda, false),
-                 AccountMeta::new_readonly(system_program::ID, false),
+                AccountMeta::new(payer.pubkey().clone(), true),
+                AccountMeta::new(protocol_pda, false),
+                AccountMeta::new(controller_global_pda, false),
+                AccountMeta::new_readonly(system_program::ID, false),
             ],
         )],
         Some(&payer.pubkey()),

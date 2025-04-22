@@ -34,7 +34,7 @@ pub fn init_module(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResu
         return Err(ProtocolError::UnknownProtocolAccount.into());
     }
 
-    let mut protocol: Protocol = Protocol::try_from_slice(&protocol_account.data.borrow())
+    let protocol: Protocol = Protocol::try_from_slice(&protocol_account.data.borrow())
         .map_err(|_| ProgramError::InvalidAccountData)?;
 
     if protocol.owner != *owner.key {
@@ -58,8 +58,10 @@ pub fn init_module(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResu
 
     //// REGISTER MODULE
 
-    let (registered_module_pda, registered_module_bump) =
-        Pubkey::find_program_address(&[&MODULE_SEED, &module_signer_account.key.as_ref()], program_id);
+    let (registered_module_pda, registered_module_bump) = Pubkey::find_program_address(
+        &[&MODULE_SEED, &module_signer_account.key.as_ref()],
+        program_id,
+    );
 
     msg!("MODULE:: Module pda {:?}", module_signer_account.key);
 
@@ -101,10 +103,7 @@ pub fn init_module(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResu
     )?;
 
     // initialize module
-    let mut module = Module::new( 
-        true,
-        registered_module_bump,
-    );
+    let mut module = Module::new(true, registered_module_bump);
     module.serialize(&mut &mut registered_module_account.data.borrow_mut()[..])?;
 
     msg!("module initialized {:?}", registered_module_account.key);

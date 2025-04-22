@@ -1,7 +1,7 @@
-use crate::{init_protocol_transaction, setup,Setup, InitProtocolTransaction};
+use crate::{init_protocol_transaction, setup, InitProtocolTransaction, Setup};
 use borsh::BorshDeserialize;
 use open_index::state::Protocol;
-use { solana_program_test::tokio, solana_sdk::signature::Signer};
+use {solana_program_test::tokio, solana_sdk::signature::Signer};
 
 #[tokio::test]
 async fn test_init_protocol() {

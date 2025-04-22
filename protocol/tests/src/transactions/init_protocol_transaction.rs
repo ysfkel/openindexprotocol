@@ -16,9 +16,7 @@ pub struct InitProtocolTransaction {
     pub transaction: Transaction,
 }
 
-pub async fn init_protocol_transaction(
-    _setup: &Setup,
-) -> InitProtocolTransaction {
+pub async fn init_protocol_transaction(_setup: &Setup) -> InitProtocolTransaction {
     let payer = &_setup.payer;
     let program_id = &_setup.program_id;
     let recent_blockhashes = &_setup.recent_blockhashes;
