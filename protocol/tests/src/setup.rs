@@ -3,7 +3,7 @@ use {
     solana_sdk::sysvar::{Sysvar, SysvarId},
     solana_sdk::{hash::Hash, pubkey::Pubkey, rent::Rent, signature::Keypair},
 };
-// #[derive(Clone)]
+
 pub struct Setup {
     pub banks_client: BanksClient,
     pub payer: Keypair,

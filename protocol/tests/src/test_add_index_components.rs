@@ -118,6 +118,8 @@ async fn test_add_index_components() {
 
     assert!(component_1_data.is_initialized());
     assert_eq!(component_1_data.mint, *index_mint_1);
+    assert_eq!(component_1_data.uints, 10);
     assert!(component_2_data.is_initialized());
     assert_eq!(component_2_data.mint, *index_mint_2);
+    assert_eq!(component_2_data.uints, 20);
 }
