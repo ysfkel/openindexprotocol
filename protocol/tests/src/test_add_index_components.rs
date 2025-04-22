@@ -1,7 +1,7 @@
 use core::num;
 
 use crate::{
-    add_index_components, create_index_transaction, create_mint_acccount_transaction, get_index_mint_pda, init_controller_global_config, init_controller_transaction, init_protocol_transaction, setup, AddIndexComponentsTransaction
+    add_index_components_transaction, create_index_transaction, create_mint_acccount_transaction, get_index_mint_pda, init_controller_global_config, init_controller_transaction, init_protocol_transaction, setup, AddIndexComponentsTransaction
 };
 
 use borsh::BorshDeserialize;
@@ -65,7 +65,7 @@ async fn test_add_index_components() {
          index_mints_data_pda,
          components,
          transaction,
-    } = add_index_components(index_id, controller_id, vec![mint_1.pubkey(), mint_2.pubkey()], vec![10,20], &_setup).await;
+    } = add_index_components_transaction(index_id, controller_id, vec![mint_1.pubkey(), mint_2.pubkey()], vec![10,20], &_setup).await;
     let result = _setup.banks_client.process_transaction(transaction).await;
     assert!(result.is_err()==false);
 

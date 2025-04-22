@@ -18,7 +18,7 @@ pub struct AddIndexComponentsTransaction {
     pub transaction: Transaction,
 }
 
-pub async fn add_index_components(
+pub async fn add_index_components_transaction(
     index_id: u64,
     controller_id: u64,
     mints: Vec<Pubkey>, 

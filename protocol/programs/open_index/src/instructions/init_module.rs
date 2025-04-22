@@ -22,7 +22,7 @@ pub fn init_module(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResu
 
     let owner = next_account_info(accounts_iter)?;
     let protocol_account = next_account_info(accounts_iter)?;
-    let module_account = next_account_info(accounts_iter)?;
+    let module_signer_account = next_account_info(accounts_iter)?;
     let registered_module_account = next_account_info(accounts_iter)?;
     let system_program = next_account_info(accounts_iter)?;
 
@@ -41,7 +41,7 @@ pub fn init_module(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResu
         return Err(ProtocolError::OnlyProtocolOwner.into());
     }
 
-    if module_account.lamports() > 0 {
+    if module_signer_account.lamports() > 0 {
         return Err(ProgramError::AccountAlreadyInitialized);
     }
 
@@ -59,9 +59,9 @@ pub fn init_module(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResu
     //// REGISTER MODULE
 
     let (registered_module_pda, registered_module_bump) =
-        Pubkey::find_program_address(&[&MODULE_SEED, &module_account.key.as_ref()], program_id);
+        Pubkey::find_program_address(&[&MODULE_SEED, &module_signer_account.key.as_ref()], program_id);
 
-    msg!("MODULE:: Module pda {:?}", module_account.key);
+    msg!("MODULE:: Module pda {:?}", module_signer_account.key);
 
     msg!(
         "registered_module_bump ID: {}, bump: {}",
@@ -95,14 +95,13 @@ pub fn init_module(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResu
         ],
         &[&[
             MODULE_SEED,
-            &module_account.key.as_ref(),
+            &module_signer_account.key.as_ref(),
             &[registered_module_bump],
         ]],
     )?;
 
     // initialize module
-    let mut module = Module::new(
-        registered_module_account.key.clone(),
+    let mut module = Module::new( 
         true,
         registered_module_bump,
     );

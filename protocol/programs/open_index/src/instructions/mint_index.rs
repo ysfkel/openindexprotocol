@@ -52,7 +52,7 @@ pub fn mint_index(
         })?;
 
     require!(
-        registered_module.active,
+        registered_module.is_active(),
         ProtocolError::OnlyActiveModules.into(),
         "only active modules can mint"
     );

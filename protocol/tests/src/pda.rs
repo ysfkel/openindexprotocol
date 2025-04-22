@@ -1,5 +1,5 @@
 use open_index_lib::seeds::{
-    COMPONENT_SEED, COMPONENT_VAULT_SEED, CONTROLLER_GLOBAL_CONFIG_SEED, CONTROLLER_SEED, INDEX_MINTS_DATA_SEED, INDEX_MINT_SEED, INDEX_SEED, PROTOCOL_SEED
+    COMPONENT_SEED, COMPONENT_VAULT_SEED, CONTROLLER_GLOBAL_CONFIG_SEED, CONTROLLER_SEED, INDEX_MINTS_DATA_SEED, INDEX_MINT_SEED, INDEX_SEED, MODULE_SEED, PROTOCOL_SEED
 };
 use solana_sdk::pubkey::Pubkey;
 
@@ -85,4 +85,14 @@ pub fn find_component_vault_address(program_id: &Pubkey, index_key: &Pubkey, min
         program_id,
     );
     (pda, bump)
+}
+
+pub fn find_module_signer_address(program_id: &Pubkey) -> (Pubkey, u8) {
+    let (pda, bump) = Pubkey::find_program_address(&[program_id.as_ref()], program_id);
+    (pda, bump)
+}
+
+pub fn find_registered_module_address(program_id: &Pubkey, module_signer_account: &Pubkey) -> (Pubkey, u8) {
+   let   (pda, bump) = Pubkey::find_program_address(&[&MODULE_SEED, &module_signer_account.as_ref()], program_id);
+   (pda, bump)
 }
