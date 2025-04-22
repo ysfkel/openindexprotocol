@@ -6,7 +6,7 @@ use crate::{
 };
 use borsh::{BorshDeserialize, BorshSerialize};
 use open_index_lib::seeds::{
-    COMPONENT_SEED, INDEX_MINT_AUTHORITY_SEED, INDEX_MINT_SEED, INDEX_SEED, VAULT_SEED,
+    COMPONENT_SEED, INDEX_MINT_AUTHORITY_SEED, INDEX_MINT_SEED, INDEX_SEED,
 };
 use solana_program::{
     account_info::{next_account_info, AccountInfo},

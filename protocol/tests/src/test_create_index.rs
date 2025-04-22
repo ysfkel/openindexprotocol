@@ -61,7 +61,6 @@ async fn test_create_index() {
         .process_transaction(init_controller_tx.transaction.clone())
         .await
         .err();
-
     let controller_account = _setup
         .banks_client
         .get_account(controller_pda)
@@ -69,13 +68,12 @@ async fn test_create_index() {
         .unwrap()
         .unwrap();
     let controller = Controller::try_from_slice(&controller_account.data).unwrap();
-
+    // Create Index tx
     let mint = get_index_mint_pda(&program_id, &controller_pda, controller.get_next_index_id()).0;
     let create_index_tx =
         create_index_transaction(1, controller.id, mint.clone(), manager.pubkey(), &_setup).await;
-
+    // Create controller global  config tx
     let controller_global_tx = init_controller_global_config(10, &_setup).await;
-
     let result = _setup
         .banks_client
         .process_transaction(controller_global_tx.transaction.clone())

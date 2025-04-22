@@ -4,7 +4,7 @@ use crate::{
     state::{Component, Controller, ControllerGlobalConfig, Index, IndexMints, Protocol},
 };
 use borsh::{BorshDeserialize, BorshSerialize};
-use open_index_lib::seeds::{COMPONENT_SEED, INDEX_MINTS_DATA_SEED, INDEX_SEED, VAULT_SEED};
+use open_index_lib::seeds::{COMPONENT_SEED, INDEX_MINTS_DATA_SEED, INDEX_SEED, COMPONENT_VAULT_SEED};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint::ProgramResult,
@@ -42,10 +42,11 @@ pub fn add_index_components(
     );
 
     require!(
-        index_account.lamports() == 0,
-        ProgramError::AccountAlreadyInitialized,
-        "index account already initialized"
+        index_account.owner == program_id,
+        ProtocolError::UnknownIndexAccount.into(),
+        "inalid index account"
     );
+
     require!(
         controller_global_config_account.owner == program_id,
         ProtocolError::UnknownControllerGlobalConfigAccount.into(),
@@ -74,16 +75,19 @@ pub fn add_index_components(
     );
 
     // TODO! REMOVE
-    let index_id = controller.get_next_index_id();
+    let index_data = Index::try_from_slice(&index_account.data.borrow())?;
+    let index_id = index_data.id;
 
-    let (index_pda, index_bump) = Pubkey::find_program_address(
+    let index_pda = Pubkey::create_program_address(
         &[
             INDEX_SEED,
             controller_account.key.as_ref(),
             &index_id.to_le_bytes(),
+            &[index_data.bump]
         ],
         program_id,
-    );
+    )?;
+
     require!(
         *index_account.key == index_pda,
         ProtocolError::IncorrectIndexAccount.into(),
@@ -153,7 +157,7 @@ pub fn add_index_components(
             INDEX_MINTS_DATA_SEED,
             controller_account.key.as_ref(),
             &index_id.to_le_bytes(),
-            &[index_bump],
+            &[index_mints_bump],
         ]],
     )?;
 
@@ -166,7 +170,7 @@ pub fn add_index_components(
         let vault_ata = next_account_info(accounts_iter)?;
 
         require!(
-            mint_account.key == token_program_account.key,
+            mint_account.owner == token_program_account.key,
             ProgramError::IncorrectProgramId,
             "token program does not own mint account"
         );
@@ -197,7 +201,7 @@ pub fn add_index_components(
         /// Get Vault PDA
         let (expected_vault_pda, vault_bump) = Pubkey::find_program_address(
             &[
-                VAULT_SEED,
+                COMPONENT_VAULT_SEED,
                 index_account.key.as_ref(),
                 mint_account.key.as_ref(),
             ],
@@ -267,7 +271,7 @@ pub fn add_index_components(
                 associated_token_program_account.clone(),
             ],
             &[&[
-                VAULT_SEED,
+                COMPONENT_VAULT_SEED,
                 index_account.key.as_ref(),
                 mint_account.key.as_ref(),
                 &[vault_bump],
@@ -275,7 +279,7 @@ pub fn add_index_components(
         )?;
     }
 
-    let index_mints = IndexMints::new(mints, index_bump);
+    let index_mints = IndexMints::new(mints, index_mints_bump);
 
     index_mints.serialize(&mut &mut index_mints_account.data.borrow_mut()[..])?;
     msg!("index_mints initialized {:?}", index_mints_account.key);

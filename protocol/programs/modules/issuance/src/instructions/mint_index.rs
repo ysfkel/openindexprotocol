@@ -13,11 +13,10 @@ use solana_program::{
 
 use crate::{
     error::ProtocolError,
-    require,
-    seeds::{COMPONENT_SEED, INDEX_MINTS_SEED, MODULE_SEED, VAULT_SEED},
+    require, 
     state::{Component, IndexMints},
 };
-use open_index_lib::instruction::Instruction as OpenIndexInstruction;
+use open_index_lib::{instruction::Instruction as OpenIndexInstruction, seeds::{COMPONENT_SEED, COMPONENT_VAULT_SEED, INDEX_MINTS_DATA_SEED, MODULE_SEED}};
 use spl_token::instruction::transfer;
 pub fn mint_index(
     program_id: &Pubkey,
@@ -79,7 +78,7 @@ pub fn mint_index(
     // Get Index Mints
     let (index_mints_pda, index_mints_bump) = Pubkey::find_program_address(
         &[
-            INDEX_MINTS_SEED,
+            INDEX_MINTS_DATA_SEED,
             controller_account.key.as_ref(),
             &index_id.to_le_bytes(),
         ],
@@ -157,7 +156,7 @@ pub fn mint_index(
 
         let expected_vault_pda = Pubkey::create_program_address(
             &[
-                VAULT_SEED,
+                COMPONENT_VAULT_SEED,
                 index_account.key.as_ref(),
                 component_mint_account.key.as_ref(),
                 &[component.vault_bump],

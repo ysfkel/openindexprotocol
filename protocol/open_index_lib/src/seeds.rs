@@ -6,5 +6,5 @@ pub const INDEX_MINT_SEED: &[u8] = b"open_index_mint";
 pub const INDEX_MINTS_DATA_SEED: &[u8] = b"open_index_mints_data";
 pub const INDEX_MINT_AUTHORITY_SEED: &[u8] = b"open_index_mint_authority";
 pub const COMPONENT_SEED: &[u8] = b"open_index_component";
-pub const VAULT_SEED: &[u8] = b"open_index_component_vault";
+pub const COMPONENT_VAULT_SEED: &[u8] = b"open_index_component_vault";
 pub const MODULE_SEED: &[u8] = b"open_index_module";
