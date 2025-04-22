@@ -2,9 +2,9 @@ use core::num;
 
 use crate::{
     get_controller_pda, get_protocol_pda, init_controller_transaction,
-    init_protocol_transaction::init_protocol_transaction, setup, Setup,
+    init_protocol_transaction, setup, Setup,
 };
-use borsh::{BorshDeserialize, BorshSerialize};
+use borsh::BorshSerialize;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 use open_index::{

@@ -1,5 +1,5 @@
-use crate::{get_controller_global_config_pda, get_controller_pda, get_protocol_pda, Setup};
-use borsh::{BorshDeserialize, BorshSerialize};
+use crate::{get_controller_global_config_pda, get_protocol_pda, Setup};
+use borsh::BorshSerialize;
 use open_index_lib::instruction::Instruction as OpenIndexInstruction;
 use solana_sdk::{
     instruction::{AccountMeta, Instruction},

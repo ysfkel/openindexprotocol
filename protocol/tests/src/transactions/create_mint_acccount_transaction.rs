@@ -1,5 +1,3 @@
-use core::num;
-
 use crate::{
     get_controller_pda, get_protocol_pda, init_controller_transaction, init_protocol_transaction,
     setup, Setup,
@@ -11,31 +9,17 @@ use open_index::{
     error::ProtocolError,
     state::{Controller, Protocol},
 };
-use open_index_lib::seeds::PROTOCOL_SEED;
-use solana_program_test::BanksClientError;
 use solana_sdk::{
-    clock::sysvar,
-    instruction::InstructionError,
-    msg,
-    program_pack::Pack,
-    rent::Rent,
-    signature::Keypair,
-    syscalls,
-    system_instruction::create_account,
-    sysvar::Sysvar,
-    transaction::{Transaction, TransactionError},
+    program_pack::Pack, signature::Keypair, system_instruction::create_account, transaction::Transaction
 };
 use spl_token::{instruction::initialize_mint, state::Mint};
-use {solana_program::pubkey::Pubkey, solana_program_test::tokio, solana_sdk::signature::Signer};
+use solana_sdk::signature::Signer;
 
-pub struct InitAccountTransaction {
+pub struct CreateMintAccountTransaction {
     pub transaction: Transaction,
 }
-
-async fn create_acccount_transaction(
-    account: Keypair,
-    len: usize,
-    lamports: u64,
+pub async fn create_mint_acccount_transaction(
+    mint: &Keypair,
     Setup {
         banks_client,
         recent_blockhashes,
@@ -43,23 +27,33 @@ async fn create_acccount_transaction(
         program_id,
         rent,
     }: &Setup,
-) -> InitAccountTransaction {
+) -> CreateMintAccountTransaction {
     let _setup: Setup = setup().await;
+    let mint_space = Mint::LEN;
+    let lamports = _setup.rent.minimum_balance(mint_space);
 
     let create_account_instruction = create_account(
         &payer.pubkey(),
-        &account.pubkey(),
+        &mint.pubkey(),
         lamports,
-        lamports,
+        mint_space as u64,
         &spl_token::id(),
     );
 
-    let transaction = Transaction::new_signed_with_payer(
-        &[create_account_instruction],
+    let initialize_mint_instruction = initialize_mint(
+        &spl_token::id(),
+        &mint.pubkey(),
+        &payer.pubkey(),
         Some(&payer.pubkey()),
-        &[&payer, &account],
+        9,
+    )
+    .unwrap();
+
+    let transaction = Transaction::new_signed_with_payer(
+        &[create_account_instruction, initialize_mint_instruction],
+        Some(&payer.pubkey()),
+        &[&payer, mint],
         recent_blockhashes.clone(),
     );
-
-    InitAccountTransaction { transaction }
+    CreateMintAccountTransaction { transaction }
 }

@@ -1,11 +1,8 @@
 use crate::{
-    get_controller_global_config_pda, get_controller_pda, get_index_pda, get_protocol_pda, Setup,
+    get_controller_global_config_pda, get_controller_pda, get_index_pda, Setup,
 };
-use borsh::{BorshDeserialize, BorshSerialize};
-use open_index_lib::{
-    instruction::Instruction as OpenIndexInstruction,
-    seeds::{CONTROLLER_SEED, PROTOCOL_SEED},
-};
+use borsh::BorshSerialize;
+use open_index_lib::instruction::Instruction as OpenIndexInstruction;
 use solana_sdk::{
     instruction::{AccountMeta, Instruction},
     system_program,
@@ -13,7 +10,7 @@ use solana_sdk::{
 };
 use {
     solana_program::pubkey::Pubkey,
-    solana_sdk::signature::{Keypair, Signer},
+    solana_sdk::signature::Signer,
 };
 
 pub struct CreateIndexTransaction {
