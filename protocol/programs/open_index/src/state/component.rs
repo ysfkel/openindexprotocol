@@ -1,12 +1,17 @@
 use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{program_pack::IsInitialized, pubkey::Pubkey};
 
+/// A Conponent of Index token
 #[derive(BorshDeserialize, BorshSerialize, Debug)]
 pub struct Component {
     pub uints: u64,
+    /// The token mint of the component
     pub mint: Pubkey,
+    /// Component PDA bump
     pub bump: u8,
+    /// The PDA bump of the vault account of the component
     pub vault_bump: u8,
+    /// Component initialzed state - set true when component is initialized
     initialized: bool,
 }
 
