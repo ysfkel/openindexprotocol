@@ -13,7 +13,7 @@ pub enum ProtocolInstruction {
     /// Accounts expected by this instruction:
     ///
     ///   0. `[writable]` Owner account. Can be governance account
-    ///   1. `[]` Protocol account
+    ///   1. `[writable]` Protocol account
     ///   2. `[]` System Program account
     InitProtocol,
     InitController,
