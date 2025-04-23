@@ -1,7 +1,7 @@
 use borsh::BorshDeserialize;
 use borsh::BorshSerialize;
 use solana_program::system_program;
-use solana_program::{msg,         instruction::{AccountMeta, Instruction},};
+use solana_program::instruction::{AccountMeta, Instruction};
 use solana_program::program_error::ProgramError;
 use solana_program::pubkey::Pubkey;
 
