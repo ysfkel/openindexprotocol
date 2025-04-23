@@ -3,7 +3,7 @@ use crate::instructions::{
     init_module, init_protocol, mint_index,
 };
 use borsh::BorshDeserialize;
-use open_index_lib::instruction::Instruction;
+use open_index_lib::instruction::ProtocolInstruction as Instruction;
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, msg, program_error::ProgramError,
     pubkey::Pubkey,

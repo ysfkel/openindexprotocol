@@ -9,7 +9,7 @@ use spl_token::{instruction::initialize_mint, state::Mint};
 pub struct CreateMintAccountTransaction {
     pub transaction: Transaction,
 }
-pub async fn create_mint_acccount_transaction(
+pub fn create_mint_acccount_transaction(
     mint: &Keypair,
     _setup: &Setup,
 ) -> CreateMintAccountTransaction {

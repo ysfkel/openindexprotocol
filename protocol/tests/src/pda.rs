@@ -1,6 +1,7 @@
 use open_index_lib::seeds::{
     COMPONENT_SEED, COMPONENT_VAULT_SEED, CONTROLLER_GLOBAL_CONFIG_SEED, CONTROLLER_SEED,
-    INDEX_MINTS_DATA_SEED, INDEX_MINT_SEED, INDEX_SEED, MODULE_SEED, PROTOCOL_SEED,
+    INDEX_MINTS_DATA_SEED, INDEX_MINT_AUTHORITY_SEED, INDEX_MINT_SEED, INDEX_SEED, MODULE_SEED,
+    PROTOCOL_SEED,
 };
 use solana_sdk::pubkey::Pubkey;
 
@@ -9,7 +10,7 @@ pub fn get_protocol_pda(program_id: &Pubkey) -> (Pubkey, u8) {
     (pda, bump)
 }
 
-pub fn get_controller_pda(program_id: &Pubkey, controller_id: u64) -> (Pubkey, u8) {
+pub fn find_controller_address(program_id: &Pubkey, controller_id: u64) -> (Pubkey, u8) {
     let (pda, bump) = Pubkey::find_program_address(
         &[CONTROLLER_SEED, &controller_id.to_le_bytes()],
         &program_id,
@@ -17,7 +18,11 @@ pub fn get_controller_pda(program_id: &Pubkey, controller_id: u64) -> (Pubkey, u
     (pda, bump)
 }
 
-pub fn get_index_pda(program_id: &Pubkey, controller_key: &Pubkey, index_id: u64) -> (Pubkey, u8) {
+pub fn find_index_address(
+    program_id: &Pubkey,
+    controller_key: &Pubkey,
+    index_id: u64,
+) -> (Pubkey, u8) {
     let (pda, bump) = Pubkey::find_program_address(
         &[INDEX_SEED, controller_key.as_ref(), &index_id.to_le_bytes()],
         program_id,
@@ -98,4 +103,20 @@ pub fn find_registered_module_address(
     let (pda, bump) =
         Pubkey::find_program_address(&[&MODULE_SEED, &module_signer_account.as_ref()], program_id);
     (pda, bump)
+}
+
+pub fn find_index_mint_authority_address(
+    program_id: &Pubkey,
+    controller_account: &Pubkey,
+    index_id: u64,
+) -> (Pubkey, u8) {
+    let (pda, nump) = Pubkey::find_program_address(
+        &[
+            INDEX_MINT_AUTHORITY_SEED,
+            controller_account.as_ref(),
+            &index_id.to_le_bytes(),
+        ],
+        program_id,
+    );
+    (pda, nump)
 }

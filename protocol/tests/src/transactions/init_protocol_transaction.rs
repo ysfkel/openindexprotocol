@@ -1,6 +1,6 @@
 use crate::{get_protocol_pda, Setup};
 use borsh::{BorshDeserialize, BorshSerialize};
-use open_index_lib::{instruction::Instruction as OpenIndexInstruction, seeds::PROTOCOL_SEED};
+use open_index_lib::{instruction::ProtocolInstruction , seeds::PROTOCOL_SEED};
 use solana_sdk::{
     instruction::{AccountMeta, Instruction},
     system_program,
@@ -16,29 +16,20 @@ pub struct InitProtocolTransaction {
     pub transaction: Transaction,
 }
 
-pub async fn init_protocol_transaction(_setup: &Setup) -> InitProtocolTransaction {
+pub fn init_protocol_transaction(_setup: &Setup) -> InitProtocolTransaction {
     let payer = &_setup.payer;
     let program_id = &_setup.program_id;
     let recent_blockhashes = &_setup.recent_blockhashes;
     let (protocol_pda, _) = get_protocol_pda(program_id);
-    let initialize_ix = &OpenIndexInstruction::InitProtocol;
-    let mut initialize_ix_data = Vec::new();
-    initialize_ix.serialize(&mut initialize_ix_data).unwrap();
-    // use this for calling my program
+
+    let instruction  = ProtocolInstruction::init_protocol(program_id.clone(), payer.pubkey().clone(), protocol_pda.clone());
     let transaction = Transaction::new_signed_with_payer(
-        &[Instruction::new_with_borsh(
-            program_id.clone(),
-            &initialize_ix,
-            vec![
-                solana_sdk::instruction::AccountMeta::new(payer.pubkey().clone(), true),
-                solana_sdk::instruction::AccountMeta::new(protocol_pda, false),
-                solana_sdk::instruction::AccountMeta::new_readonly(system_program::ID, false),
-            ],
-        )],
+        &[instruction],
         Some(&payer.pubkey()),
         &[&payer],
         *recent_blockhashes,
     );
+
     InitProtocolTransaction {
         protocol_pda,
         transaction,

@@ -49,7 +49,7 @@ pub fn init_controller_global_config(
         "Unknown protocol account"
     );
 
-    let mut protocol: Protocol = Protocol::try_from_slice(&protocol_account.data.borrow())
+    let protocol: Protocol = Protocol::try_from_slice(&protocol_account.data.borrow())
         .map_err(|_| ProgramError::InvalidAccountData)?;
 
     if !protocol.is_initialized() {

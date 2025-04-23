@@ -15,8 +15,16 @@ pub struct Setup {
 pub async fn setup() -> Setup {
     let program_id = Pubkey::new_unique();
     let issuance_program_id = Pubkey::new_unique();
-    let mut program_test = ProgramTest::new("open_index", program_id, processor!(open_index::entrypoint::process_instruction));
-    program_test.add_program("issuance", issuance_program_id, processor!(issuance::entrypoint::process_instruction));
+    let mut program_test = ProgramTest::new(
+        "open_index",
+        program_id,
+        processor!(open_index::entrypoint::process_instruction),
+    );
+    program_test.add_program(
+        "issuance",
+        issuance_program_id,
+        processor!(issuance::entrypoint::process_instruction),
+    );
 
     let (mut banks_client, payer, recent_blockhashes) = program_test.start().await;
     // get rent

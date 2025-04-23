@@ -9,7 +9,7 @@ async fn test_init_protocol() {
     let InitProtocolTransaction {
         protocol_pda,
         transaction,
-    } = init_protocol_transaction(&_setup).await;
+    } = init_protocol_transaction(&_setup);
 
     let result = _setup
         .banks_client

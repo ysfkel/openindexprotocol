@@ -1,5 +1,5 @@
 use crate::{
-    init_controller_global_config, init_protocol_transaction, setup,
+    init_controller_global_config_transaction, init_protocol_transaction, setup,
     InitControllerGlobalTransaction, Setup,
 };
 use borsh::BorshDeserialize;
@@ -13,9 +13,9 @@ async fn test_controller_global_config() {
     let InitControllerGlobalTransaction {
         controller_global_pda,
         transaction,
-    } = init_controller_global_config(max_index_components, &_setup).await;
+    } = init_controller_global_config_transaction(max_index_components, &_setup);
 
-    let init_protocol_instruction = init_protocol_transaction(&_setup).await;
+    let init_protocol_instruction = init_protocol_transaction(&_setup);
 
     let _ = _setup
         .banks_client

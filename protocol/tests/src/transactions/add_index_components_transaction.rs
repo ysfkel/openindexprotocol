@@ -1,9 +1,9 @@
 use crate::{
-    find_component_address, find_component_vault_address, find_index_mints_data_address,
-    get_controller_global_config_pda, get_controller_pda, get_index_pda, Setup,
+    find_component_address, find_component_vault_address, find_controller_address,
+    find_index_address, find_index_mints_data_address, get_controller_global_config_pda, Setup,
 };
 use borsh::BorshSerialize;
-use open_index_lib::instruction::Instruction as OpenIndexInstruction;
+use open_index_lib::instruction::ProtocolInstruction as OpenIndexInstruction;
 use solana_sdk::{
     instruction::{AccountMeta, Instruction},
     system_program,
@@ -23,7 +23,7 @@ pub struct AddIndexComponentsTransaction {
     pub transaction: Transaction,
 }
 
-pub async fn add_index_components_transaction(
+pub fn add_index_components_transaction(
     index_id: u64,
     controller_id: u64,
     mints: Vec<Pubkey>,
@@ -33,8 +33,8 @@ pub async fn add_index_components_transaction(
     let recent_blockhashes = &_setup.recent_blockhashes;
     let payer = &_setup.payer;
     let program_id = &_setup.program_id;
-    let controller_pda = get_controller_pda(program_id, controller_id).0;
-    let (index_pda, _) = get_index_pda(program_id, &controller_pda, index_id);
+    let controller_pda = find_controller_address(program_id, controller_id).0;
+    let (index_pda, _) = find_index_address(program_id, &controller_pda, index_id);
     let (controller_global, _) = get_controller_global_config_pda(program_id);
     let (index_mints_data_pda, _) =
         find_index_mints_data_address(program_id, &controller_pda, index_id);

@@ -1,5 +1,5 @@
 use crate::{
-    create_index_transaction, get_index_mint_pda, get_protocol_pda, init_controller_global_config,
+    create_index_transaction, get_index_mint_pda, get_protocol_pda, init_controller_global_config_transaction,
     init_controller_transaction, init_protocol_transaction, setup, Setup,
 };
 
@@ -26,7 +26,7 @@ async fn test_create_index() {
     let program_id = _setup.program_id;
     let manager = Keypair::new();
     //Initialize Protocol
-    let init_protocol_instruction = init_protocol_transaction(&_setup).await;
+    let init_protocol_instruction = init_protocol_transaction(&_setup);
     let protocol_pda = get_protocol_pda(&program_id).0;
 
     let _ = _setup
@@ -44,7 +44,7 @@ async fn test_create_index() {
     let protocol = Protocol::try_from_slice(&protocol_account.data).unwrap();
     // Initialize Controller
     let controller_id = protocol.get_next_controller_id();
-    let init_controller_tx = init_controller_transaction(controller_id, &_setup).await;
+    let init_controller_tx = init_controller_transaction(controller_id, &_setup);
     let controller_pda = init_controller_tx.controller_pda;
     let _ = _setup
         .banks_client
@@ -61,9 +61,9 @@ async fn test_create_index() {
     // Create Index tx
     let mint = get_index_mint_pda(&program_id, &controller_pda, controller.get_next_index_id()).0;
     let create_index_tx =
-        create_index_transaction(1, controller.id, mint.clone(), manager.pubkey(), &_setup).await;
+        create_index_transaction(1, controller.id, mint.clone(), manager.pubkey(), &_setup);
     // Create controller global  config tx
-    let controller_global_tx = init_controller_global_config(10, &_setup).await;
+    let controller_global_tx = init_controller_global_config_transaction(10, &_setup);
     let _ = _setup
         .banks_client
         .process_transaction(controller_global_tx.transaction.clone())

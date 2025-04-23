@@ -11,7 +11,7 @@ async fn test_init_module() {
     let _setup: Setup = setup().await;
     let max_index_components = 10;
 
-    let init_protocol_instruction = init_protocol_transaction(&_setup).await;
+    let init_protocol_instruction = init_protocol_transaction(&_setup);
     let _ = _setup
         .banks_client
         .process_transaction(init_protocol_instruction.transaction.clone())
@@ -20,7 +20,7 @@ async fn test_init_module() {
     let InitModuleTransaction {
         registered_module_pda,
         transaction,
-    } = init_module_transaction(&_setup).await;
+    } = init_module_transaction(&_setup);
 
     let result = _setup
         .banks_client

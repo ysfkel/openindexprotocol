@@ -7,12 +7,11 @@ use solana_sdk::{
 pub struct InitAccountTransaction {
     pub transaction: Transaction,
 }
-pub async fn create_acccount_transaction(
+pub fn create_acccount_transaction(
     account: Keypair,
     lamports: u64,
     _setup: &Setup,
 ) -> InitAccountTransaction {
-    let _setup: Setup = setup().await;
 
     let create_account_instruction = create_account(
         &_setup.payer.pubkey(),

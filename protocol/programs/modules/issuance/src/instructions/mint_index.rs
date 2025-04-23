@@ -17,7 +17,7 @@ use crate::{
     state::{Component, IndexMints},
 };
 use open_index_lib::{
-    instruction::Instruction as OpenIndexInstruction,
+    instruction::ProtocolInstruction,
     seeds::{COMPONENT_SEED, COMPONENT_VAULT_SEED, INDEX_MINTS_DATA_SEED, MODULE_SEED},
 };
 use spl_token::instruction::transfer;
@@ -195,7 +195,7 @@ pub fn mint_index(
     }
 
     // Mint index token
-    let initialize_ix = &OpenIndexInstruction::Mint { amount, index_id };
+    let initialize_ix = & ProtocolInstruction::Mint { amount, index_id };
     let mut initialize_ix_data = Vec::new();
     initialize_ix.serialize(&mut initialize_ix_data).unwrap();
 
