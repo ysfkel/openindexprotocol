@@ -7,6 +7,14 @@ use solana_program::pubkey::Pubkey;
 
 #[derive(BorshDeserialize, BorshSerialize, Debug, PartialEq)]
 pub enum ProtocolInstruction {
+    // 0
+    /// Initializes the Open Index Protocol account
+    ///
+    /// Accounts expected by this instruction:
+    ///
+    ///   0. `[writable]` Owner account. Can be governance account
+    ///   1. `[]` Protocol account
+    ///   2. `[]` System Program account
     InitProtocol,
     InitController,
 
