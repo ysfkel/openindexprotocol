@@ -29,6 +29,12 @@ async fn test_add_index_components() {
     let manager = Keypair::new();
     let mint_1 = Keypair::new();
     let mint_2 = Keypair::new();
+    let mint_3 = Keypair::new();
+    let mint_4 = Keypair::new();
+    let mint_5 = Keypair::new();
+    let mint_6 = Keypair::new();
+    let mint_7 = Keypair::new();
+    let mint_8 = Keypair::new();
     // Initialize protocol
     let init_protocol_instruction = init_protocol_transaction(&_setup);
     let _ = _setup
@@ -61,6 +67,13 @@ async fn test_add_index_components() {
     let index_id = 1;
     let create_mint_1_transaction = create_mint_acccount_transaction(&mint_1, &_setup);
     let create_mint_2_transaction = create_mint_acccount_transaction(&mint_2, &_setup);
+    let create_mint_3_transaction = create_mint_acccount_transaction(&mint_3, &_setup);
+    let create_mint_4_transaction = create_mint_acccount_transaction(&mint_4, &_setup);
+    let create_mint_5_transaction = create_mint_acccount_transaction(&mint_5, &_setup);
+    let create_mint_6_transaction = create_mint_acccount_transaction(&mint_6, &_setup);
+    let create_mint_7_transaction = create_mint_acccount_transaction(&mint_7, &_setup);
+    let create_mint_8_transaction = create_mint_acccount_transaction(&mint_8, &_setup);
+
     let _ = _setup
         .banks_client
         .process_transaction(create_mint_1_transaction.transaction)
@@ -69,6 +82,40 @@ async fn test_add_index_components() {
         .banks_client
         .process_transaction(create_mint_2_transaction.transaction)
         .await;
+    let _ = _setup
+        .banks_client
+        .process_transaction(create_mint_3_transaction.transaction)
+        .await;
+    let _ = _setup
+        .banks_client
+        .process_transaction(create_mint_4_transaction.transaction)
+        .await;
+    let _ = _setup
+        .banks_client
+        .process_transaction(create_mint_5_transaction.transaction)
+        .await;
+    let _ = _setup
+        .banks_client
+        .process_transaction(create_mint_6_transaction.transaction)
+        .await;
+    let _ = _setup
+        .banks_client
+        .process_transaction(create_mint_7_transaction.transaction)
+        .await;
+    let _ = _setup
+        .banks_client
+        .process_transaction(create_mint_8_transaction.transaction)
+        .await;
+    let mints =  vec![
+        mint_1.pubkey(),
+        mint_2.pubkey(),
+        mint_3.pubkey(),
+        mint_4.pubkey(),
+        mint_5.pubkey(),
+        mint_6.pubkey(),
+        mint_7.pubkey(),
+        // mint_8.pubkey(),
+    ];
     let AddIndexComponentsTransaction {
         index_mints_data_pda,
         components,
@@ -76,8 +123,17 @@ async fn test_add_index_components() {
     } = add_index_components_transaction(
         index_id,
         controller_id,
-        vec![mint_1.pubkey(), mint_2.pubkey()],
-        vec![10, 20],
+        vec![
+            mint_1.pubkey(),
+            mint_2.pubkey(),
+            mint_3.pubkey(),
+            mint_4.pubkey(),
+            mint_5.pubkey(),
+            mint_6.pubkey(),
+            mint_7.pubkey(),
+            // mint_8.pubkey(),
+        ],
+        vec![10, 20, 30, 40, 50, 60, 70],
         &_setup,
     );
     let result = _setup.banks_client.process_transaction(transaction).await;
@@ -112,7 +168,7 @@ async fn test_add_index_components() {
     let index_mint_1 = index_mints_data.mints.get(0).unwrap();
     let index_mint_2 = index_mints_data.mints.get(1).unwrap();
     assert!(index_mints_data.is_initialized());
-    assert_eq!(index_mints_data.mints.len(), 2);
+    assert_eq!(index_mints_data.mints.len(),mints.len());
     assert_eq!(index_mint_1.clone(), mint_1.pubkey());
     assert_eq!(index_mint_2.clone(), mint_2.pubkey());
     assert!(component_1_data.is_initialized());
