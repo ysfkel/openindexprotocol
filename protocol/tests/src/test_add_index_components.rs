@@ -2,12 +2,13 @@ use core::num;
 
 use crate::{
     add_index_components_transaction, create_index_transaction, create_mint_acccount_transaction,
-    get_index_mint_pda, init_controller_global_config_transaction, init_controller_transaction,
+    init_controller_global_config_transaction, init_controller_transaction,
     init_protocol_transaction, setup, AddIndexComponentsTransaction,
 };
 
 use borsh::BorshDeserialize;
 use open_index::state::{Component, Controller, Index, IndexMints, Protocol};
+use open_index_lib::pda::find_index_mint_address;
 use solana_sdk::{
     clock::sysvar,
     instruction::InstructionError,
@@ -49,7 +50,7 @@ async fn test_add_index_components() {
         .process_transaction(controller_global_tx.transaction.clone())
         .await;
     // Create Index tx
-    let mint = get_index_mint_pda(&program_id, &controller_pda, controller_id).0;
+    let mint = find_index_mint_address(&program_id, &controller_pda, controller_id).0;
     let create_index_tx =
         create_index_transaction(1, controller_id, mint.clone(), manager.pubkey(), &_setup);
     let _ = _setup

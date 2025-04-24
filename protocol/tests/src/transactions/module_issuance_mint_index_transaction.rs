@@ -1,10 +1,6 @@
 use solana_sdk::pubkey::Pubkey;
 
-use crate::{
-    find_controller_address, find_index_address, find_index_mint_authority_address,
-    find_index_mints_data_address, find_module_signer_address, find_registered_module_address,
-    get_index_mint_pda, Setup,
-};
+use crate::Setup;
 
 pub struct ModuleMintIndexTransaction {}
 pub fn module_issuance_mint_index_transaction(
@@ -21,7 +17,7 @@ pub fn module_issuance_mint_index_transaction(
     //    let module_signer_pda = find_module_signer_address(issuance_program_id).0;
     //    let registered_module_account = find_registered_module_address(issuance_program_id, &module_signer_pda).0;
     //    let controller_pda = find_controller_address(program_id, controller_id).0;
-    //    let mint_pda = get_index_mint_pda(program_id, &controller_pda, index_id).0;
+    //    let mint_pda = find_index_mint_address(program_id, &controller_pda, index_id).0;
     //    let mint_authourity =  find_index_mint_authority_address(program_id,&controller_pda, index_id).0;
     //    let index_pda = find_index_address(program_id, &controller_pda, index_id).0;
     //    let index_mints_data_pda = find_index_mints_data_address(program_id, &controller_pda, index_id).0;

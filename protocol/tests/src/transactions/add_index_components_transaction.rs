@@ -1,9 +1,12 @@
-use crate::{
-    find_component_address, find_component_vault_address, find_controller_address,
-    find_index_address, find_index_mints_data_address, get_controller_global_config_pda, Setup,
-};
+use crate::Setup;
 use borsh::BorshSerialize;
-use open_index_lib::instruction::ProtocolInstruction as OpenIndexInstruction;
+use open_index_lib::{
+    instruction::ProtocolInstruction,
+    pda::{
+        find_component_address, find_component_vault_address, find_controller_address,
+        find_controller_global_config_address, find_index_address, find_index_mints_data_address,
+    },
+};
 use solana_sdk::{
     instruction::{AccountMeta, Instruction},
     system_program,
@@ -35,7 +38,7 @@ pub fn add_index_components_transaction(
     let program_id = &_setup.program_id;
     let controller_pda = find_controller_address(program_id, controller_id).0;
     let (index_pda, _) = find_index_address(program_id, &controller_pda, index_id);
-    let (controller_global, _) = get_controller_global_config_pda(program_id);
+    let (controller_global, _) = find_controller_global_config_address(program_id);
     let (index_mints_data_pda, _) =
         find_index_mints_data_address(program_id, &controller_pda, index_id);
     let mut accounts = vec![
@@ -64,7 +67,7 @@ pub fn add_index_components_transaction(
         components.push(component_pda);
     }
 
-    let initialize_ix = &OpenIndexInstruction::AddIndexComponents { amounts, mints };
+    let initialize_ix = &ProtocolInstruction::AddIndexComponents { amounts, mints };
     let mut initialize_ix_data = Vec::new();
     initialize_ix.serialize(&mut initialize_ix_data).unwrap();
     // use this for calling my program

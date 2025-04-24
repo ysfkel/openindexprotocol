@@ -1,9 +1,6 @@
 use core::num;
 
-use crate::{
-    find_controller_address, get_protocol_pda, init_controller_transaction,
-    init_protocol_transaction, setup, Setup,
-};
+use crate::{init_controller_transaction, init_protocol_transaction, setup, Setup};
 use borsh::BorshDeserialize;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -12,6 +9,7 @@ use open_index::{
     state::{Controller, Protocol},
 };
 
+use open_index_lib::pda::{find_controller_address, find_protocol_address};
 use solana_program_test::BanksClientError;
 use solana_sdk::{
     instruction::InstructionError, msg, program_pack::IsInitialized, transaction::TransactionError,
@@ -28,7 +26,7 @@ async fn test_init_controller() {
         .banks_client
         .process_transaction(init_protocol_instruction.transaction.clone())
         .await;
-    let protocol_pda = get_protocol_pda(&program_id).0;
+    let protocol_pda = find_protocol_address(&program_id).0;
 
     // create controller
     let protocol_account = _setup

@@ -195,7 +195,7 @@ pub fn mint_index(
     }
 
     // Mint index token
-    let initialize_ix = & ProtocolInstruction::Mint { amount, index_id };
+    let initialize_ix = &ProtocolInstruction::Mint { amount, index_id };
     let mut initialize_ix_data = Vec::new();
     initialize_ix.serialize(&mut initialize_ix_data).unwrap();
 

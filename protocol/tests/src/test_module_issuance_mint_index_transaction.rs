@@ -51,7 +51,7 @@ async fn test_module_issuance_mint_index_transaction() {
 
     assert_eq!(token_account.amount, mint_amount);
 
-    //Todo! 
+    //Todo!
     // complete module_issuance_mint_index_transaction
     // create token accounts for each of the component tokens and mint to user so as to deposit
 }

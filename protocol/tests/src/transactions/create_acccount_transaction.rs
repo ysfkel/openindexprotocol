@@ -12,7 +12,6 @@ pub fn create_acccount_transaction(
     lamports: u64,
     _setup: &Setup,
 ) -> InitAccountTransaction {
-
     let create_account_instruction = create_account(
         &_setup.payer.pubkey(),
         &account.pubkey(),
