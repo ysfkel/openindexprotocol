@@ -1,7 +1,6 @@
-use core::num;
 
 use crate::{
-    add_index_components_transaction, create_mint_acccount_transaction,
+   create_mint_acccount_transaction,
     init_controller_global_config_transaction, setup,
 };
 
@@ -12,7 +11,7 @@ use open_index_lib::{
         find_component_address, find_controller_address, find_index_address,
         find_index_mint_address, find_index_mints_data_address,
     },
-    transaction::{create_index_transaction, init_controller_transaction, init_protocol_transaction},
+    transaction::{add_index_components_transaction, create_index_transaction, init_controller_transaction, init_protocol_transaction},
 };
 use solana_sdk::{
     clock::{sysvar, Clock},

@@ -1,4 +1,3 @@
-mod add_index_components_transaction;
 mod create_acccount_transaction;
 mod create_lookup_table_transaction;
 mod create_mint_acccount_transaction;
@@ -8,7 +7,6 @@ mod init_module_transaction;
 mod mint_to_transaction;
 mod module_issuance_mint_index_transaction;
 
-pub use add_index_components_transaction::*;
 pub use create_acccount_transaction::*;
 pub use create_lookup_table_transaction::*;
 pub use create_mint_acccount_transaction::*;

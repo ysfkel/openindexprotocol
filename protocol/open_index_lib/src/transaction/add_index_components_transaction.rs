@@ -1,13 +1,5 @@
-use crate::Setup;
-use borsh::BorshSerialize;
-use open_index_lib::{
-    instruction::{add_index_components_instruction, ProtocolInstruction},
-    pda::{
-        find_controller_address, find_controller_global_config_address, find_index_address,
-        find_index_mints_data_address,
-    },
-};
 use solana_sdk::{hash::Hash, instruction::Instruction, transaction::Transaction};
+use crate::{instruction::add_index_components_instruction, pda::{find_controller_address, find_controller_global_config_address, find_index_address, find_index_mints_data_address}};
 
 use {
     solana_program::pubkey::Pubkey,
@@ -40,12 +32,10 @@ pub fn add_index_components_transaction(
         amounts,
     );
 
-    let transaction = Transaction::new_signed_with_payer(
+    Transaction::new_signed_with_payer(
         &[instruction],
         Some(&payer.pubkey()),
         &[&payer],
         recent_blockhashes,
-    );
-
-    transaction
+    )
 }
