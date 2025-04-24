@@ -1,4 +1,3 @@
-mod pda;
 mod setup;
 mod test_add_index_components;
 mod test_controller_global_config;
@@ -9,6 +8,5 @@ mod test_init_protocol;
 mod test_module_issuance_mint_index_transaction;
 mod transactions;
 //
-pub use pda::*;
 pub use setup::*;
 pub use transactions::*;
