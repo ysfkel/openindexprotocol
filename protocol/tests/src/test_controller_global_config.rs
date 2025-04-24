@@ -1,9 +1,9 @@
 use crate::{
-    init_controller_global_config_transaction, init_protocol_transaction, setup,
-    InitControllerGlobalTransaction, Setup,
+    init_controller_global_config_transaction, setup, InitControllerGlobalTransaction, Setup,
 };
 use borsh::BorshDeserialize;
 use open_index::state::ControllerGlobalConfig;
+use open_index_lib::transaction::init_protocol_transaction;
 use {solana_program_test::tokio, solana_sdk::signature::Signer};
 
 #[tokio::test]
@@ -15,11 +15,12 @@ async fn test_controller_global_config() {
         transaction,
     } = init_controller_global_config_transaction(max_index_components, &_setup);
 
-    let init_protocol_instruction = init_protocol_transaction(&_setup);
+    let init_protocol_instruction =
+        init_protocol_transaction(&_setup.payer, _setup.program_id, _setup.recent_blockhashes);
 
     let _ = _setup
         .banks_client
-        .process_transaction(init_protocol_instruction.transaction.clone())
+        .process_transaction(init_protocol_instruction.clone())
         .await;
 
     let result = _setup

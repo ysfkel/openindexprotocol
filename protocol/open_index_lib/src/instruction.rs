@@ -177,8 +177,6 @@ pub fn add_index_components_instruction(
         AccountMeta::new_readonly(spl_token::ID, false),
     ];
 
-    let mut components = vec![];
-
     for mint in mints.iter() {
         let (component_pda, _) = find_component_address(&program_id, &index_account, mint);
         let (vault_pda, _) = find_component_vault_address(&program_id, &index_account, mint);
@@ -189,7 +187,6 @@ pub fn add_index_components_instruction(
         accounts.push(AccountMeta::new(component_pda, false));
         accounts.push(AccountMeta::new(vault_pda, false));
         accounts.push(AccountMeta::new(vault_ata, false));
-        components.push(component_pda);
     }
 
     let instruction = ProtocolInstruction::AddIndexComponents { amounts, mints };

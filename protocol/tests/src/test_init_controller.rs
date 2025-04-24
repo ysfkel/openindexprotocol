@@ -1,6 +1,6 @@
 use core::num;
 
-use crate::{init_controller_transaction, init_protocol_transaction, setup, Setup};
+use crate::{setup, Setup};
 use borsh::BorshDeserialize;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -9,7 +9,10 @@ use open_index::{
     state::{Controller, Protocol},
 };
 
-use open_index_lib::pda::{find_controller_address, find_protocol_address};
+use open_index_lib::{
+    pda::{find_controller_address, find_protocol_address},
+    transaction::{init_controller_transaction, init_protocol_transaction},
+};
 use solana_program_test::BanksClientError;
 use solana_sdk::{
     instruction::InstructionError, msg, program_pack::IsInitialized, transaction::TransactionError,
@@ -20,11 +23,13 @@ use {solana_program::pubkey::Pubkey, solana_program_test::tokio, solana_sdk::sig
 async fn test_init_controller() {
     let _setup: Setup = setup().await;
     let program_id = _setup.program_id;
-    let init_protocol_instruction = init_protocol_transaction(&_setup);
+    let init_protocol_instruction =
+        init_protocol_transaction(&_setup.payer, _setup.program_id, _setup.recent_blockhashes);
+
     // Send init_protocol_instruction
     let _ = _setup
         .banks_client
-        .process_transaction(init_protocol_instruction.transaction.clone())
+        .process_transaction(init_protocol_instruction.clone())
         .await;
     let protocol_pda = find_protocol_address(&program_id).0;
 
@@ -39,10 +44,15 @@ async fn test_init_controller() {
     let controller_id = protocol.get_next_controller_id();
     assert_eq!(protocol.next_controller_id, 1);
     let controller_pda = find_controller_address(&program_id, controller_id).0;
-    let int_controller_tx = init_controller_transaction(controller_id, &_setup);
+    let int_controller_tx = init_controller_transaction(
+        &_setup.payer,
+        _setup.program_id,
+        controller_id,
+        _setup.recent_blockhashes,
+    );
     let _ = _setup
         .banks_client
-        .process_transaction(int_controller_tx.transaction.clone())
+        .process_transaction(int_controller_tx.clone())
         .await
         .err();
 
@@ -75,10 +85,15 @@ async fn test_init_controller() {
     let controller_id = protocol.get_next_controller_id();
     assert_eq!(protocol.next_controller_id, 2);
     let controller_pda = find_controller_address(&program_id, controller_id).0;
-    let int_controller_tx = init_controller_transaction(controller_id, &_setup);
+    let int_controller_tx = init_controller_transaction(
+        &_setup.payer,
+        _setup.program_id,
+        controller_id,
+        _setup.recent_blockhashes,
+    );
     let _: Option<BanksClientError> = _setup
         .banks_client
-        .process_transaction(int_controller_tx.transaction.clone())
+        .process_transaction(int_controller_tx.clone())
         .await
         .err();
 

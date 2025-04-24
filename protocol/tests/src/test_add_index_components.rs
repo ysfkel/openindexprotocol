@@ -1,23 +1,30 @@
 use core::num;
 
 use crate::{
-    add_index_components_transaction, create_index_transaction, create_mint_acccount_transaction,
-    init_controller_global_config_transaction, init_controller_transaction,
-    init_protocol_transaction, setup, AddIndexComponentsTransaction,
+    add_index_components_transaction, create_mint_acccount_transaction,
+    init_controller_global_config_transaction, setup,
 };
 
 use borsh::BorshDeserialize;
 use open_index::state::{Component, Controller, Index, IndexMints, Protocol};
-use open_index_lib::pda::find_index_mint_address;
+use open_index_lib::{
+    pda::{
+        find_component_address, find_controller_address, find_index_address,
+        find_index_mint_address, find_index_mints_data_address,
+    },
+    transaction::{create_index_transaction, init_controller_transaction, init_protocol_transaction},
+};
 use solana_sdk::{
-    clock::sysvar,
+    clock::{sysvar, Clock},
     instruction::InstructionError,
     msg,
     program_pack::{IsInitialized, Pack},
+    pubkey::Pubkey,
     rent::Rent,
     signature::Keypair,
     syscalls,
     system_instruction::create_account,
+    sysvar::{Sysvar, SysvarId},
     transaction::TransactionError,
 };
 
@@ -36,18 +43,24 @@ async fn test_add_index_components() {
     let mint_7 = Keypair::new();
     let mint_8 = Keypair::new();
     // Initialize protocol
-    let init_protocol_instruction = init_protocol_transaction(&_setup);
+    let init_protocol_instruction =
+        init_protocol_transaction(&_setup.payer, _setup.program_id, _setup.recent_blockhashes);
     let _ = _setup
         .banks_client
-        .process_transaction(init_protocol_instruction.transaction.clone())
+        .process_transaction(init_protocol_instruction.clone())
         .await;
     // Initialize Controller
     let controller_id = 1;
-    let init_controller_tx = init_controller_transaction(controller_id, &_setup);
-    let controller_pda = init_controller_tx.controller_pda;
+    let init_controller_tx = init_controller_transaction(
+        &_setup.payer,
+        _setup.program_id,
+        controller_id,
+        _setup.recent_blockhashes,
+    );
+    let controller_pda = find_controller_address(&program_id, controller_id).0;
     let _ = _setup
         .banks_client
-        .process_transaction(init_controller_tx.transaction.clone())
+        .process_transaction(init_controller_tx.clone())
         .await;
     // Create controller global  config tx
     let controller_global_tx = init_controller_global_config_transaction(10, &_setup);
@@ -57,11 +70,20 @@ async fn test_add_index_components() {
         .await;
     // Create Index tx
     let mint = find_index_mint_address(&program_id, &controller_pda, controller_id).0;
-    let create_index_tx =
-        create_index_transaction(1, controller_id, mint.clone(), manager.pubkey(), &_setup);
+
+    let create_index_tx = create_index_transaction(
+            &_setup.payer,
+            _setup.program_id,
+            1,
+            controller_id,
+            mint,
+            manager.pubkey(),
+            _setup.recent_blockhashes,
+        );
+
     let _ = _setup
         .banks_client
-        .process_transaction(create_index_tx.transaction)
+        .process_transaction(create_index_tx)
         .await;
     // Create mints
     let index_id = 1;
@@ -106,7 +128,7 @@ async fn test_add_index_components() {
         .banks_client
         .process_transaction(create_mint_8_transaction.transaction)
         .await;
-    let mints =  vec![
+    let mints = vec![
         mint_1.pubkey(),
         mint_2.pubkey(),
         mint_3.pubkey(),
@@ -116,13 +138,13 @@ async fn test_add_index_components() {
         mint_7.pubkey(),
         // mint_8.pubkey(),
     ];
-    let AddIndexComponentsTransaction {
-        index_mints_data_pda,
-        components,
-        transaction,
-    } = add_index_components_transaction(
+
+    let transaction = add_index_components_transaction(
+        &_setup.payer,
+        &_setup.program_id,
         index_id,
         controller_id,
+        _setup.recent_blockhashes.clone(),
         vec![
             mint_1.pubkey(),
             mint_2.pubkey(),
@@ -134,10 +156,27 @@ async fn test_add_index_components() {
             // mint_8.pubkey(),
         ],
         vec![10, 20, 30, 40, 50, 60, 70],
-        &_setup,
     );
+
+    // create versioned
+    // get slot
+    let clock_account = _setup.banks_client.get_sysvar::<Clock>().await.unwrap();
+    let slot = clock_account.slot;
+
+    //
     let result = _setup.banks_client.process_transaction(transaction).await;
     assert!(result.is_err() == false);
+
+    // Get component pda
+    let controller_pda = find_controller_address(&program_id, controller_id).0;
+    let index_pda = find_index_address(&program_id, &controller_pda, index_id).0;
+    let mut components: Vec<Pubkey> = vec![];
+    for mint in mints.iter() {
+        let component_pda = find_component_address(&program_id, &index_pda, mint).0;
+        components.push(component_pda);
+    }
+    let index_mints_data_pda =
+        find_index_mints_data_address(&program_id, &controller_pda, index_id).0;
 
     let index_mints_data_account = _setup
         .banks_client
@@ -168,7 +207,7 @@ async fn test_add_index_components() {
     let index_mint_1 = index_mints_data.mints.get(0).unwrap();
     let index_mint_2 = index_mints_data.mints.get(1).unwrap();
     assert!(index_mints_data.is_initialized());
-    assert_eq!(index_mints_data.mints.len(),mints.len());
+    assert_eq!(index_mints_data.mints.len(), mints.len());
     assert_eq!(index_mint_1.clone(), mint_1.pubkey());
     assert_eq!(index_mint_2.clone(), mint_2.pubkey());
     assert!(component_1_data.is_initialized());

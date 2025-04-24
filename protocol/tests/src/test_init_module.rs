@@ -1,8 +1,7 @@
-use crate::{
-    init_module_transaction, init_protocol_transaction, setup, InitModuleTransaction, Setup,
-};
+use crate::{init_module_transaction, setup, InitModuleTransaction, Setup};
 use borsh::BorshDeserialize;
 use open_index::state::Module;
+use open_index_lib::transaction::init_protocol_transaction;
 use solana_sdk::program_pack::IsInitialized;
 use {solana_program_test::tokio, solana_sdk::signature::Signer};
 
@@ -11,10 +10,12 @@ async fn test_init_module() {
     let _setup: Setup = setup().await;
     let max_index_components = 10;
 
-    let init_protocol_instruction = init_protocol_transaction(&_setup);
+    let init_protocol_instruction =
+        init_protocol_transaction(&_setup.payer, _setup.program_id, _setup.recent_blockhashes);
+
     let _ = _setup
         .banks_client
-        .process_transaction(init_protocol_instruction.transaction.clone())
+        .process_transaction(init_protocol_instruction.clone())
         .await;
 
     let InitModuleTransaction {

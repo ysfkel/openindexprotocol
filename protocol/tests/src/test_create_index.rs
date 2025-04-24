@@ -1,11 +1,15 @@
-use crate::{
-    create_index_transaction, init_controller_global_config_transaction,
-    init_controller_transaction, init_protocol_transaction, setup, Setup,
-};
+use crate::{init_controller_global_config_transaction, setup, Setup};
 
 use borsh::BorshDeserialize;
 use open_index::state::{Controller, Index, Protocol};
-use open_index_lib::pda::{find_index_mint_address, find_protocol_address};
+use open_index_lib::{
+    pda::{
+        find_controller_address, find_index_address, find_index_mint_address, find_protocol_address,
+    },
+    transaction::{
+        create_index_transaction, init_controller_transaction, init_protocol_transaction,
+    },
+};
 use solana_program_test::BanksClientError;
 use solana_sdk::{
     clock::sysvar,
@@ -27,12 +31,13 @@ async fn test_create_index() {
     let program_id = _setup.program_id;
     let manager = Keypair::new();
     //Initialize Protocol
-    let init_protocol_instruction = init_protocol_transaction(&_setup);
+    let init_protocol_instruction =
+        init_protocol_transaction(&_setup.payer, _setup.program_id, _setup.recent_blockhashes);
     let protocol_pda = find_protocol_address(&program_id).0;
 
     let _ = _setup
         .banks_client
-        .process_transaction(init_protocol_instruction.transaction.clone())
+        .process_transaction(init_protocol_instruction.clone())
         .await;
 
     let protocol_account = _setup
@@ -45,11 +50,16 @@ async fn test_create_index() {
     let protocol = Protocol::try_from_slice(&protocol_account.data).unwrap();
     // Initialize Controller
     let controller_id = protocol.get_next_controller_id();
-    let init_controller_tx = init_controller_transaction(controller_id, &_setup);
-    let controller_pda = init_controller_tx.controller_pda;
+    let init_controller_tx = init_controller_transaction(
+        &_setup.payer,
+        _setup.program_id,
+        controller_id,
+        _setup.recent_blockhashes,
+    );
+    let controller_pda = find_controller_address(&program_id, controller_id).0;
     let _ = _setup
         .banks_client
-        .process_transaction(init_controller_tx.transaction.clone())
+        .process_transaction(init_controller_tx.clone())
         .await
         .err();
     let controller_account = _setup
@@ -62,9 +72,16 @@ async fn test_create_index() {
     // Create Index tx
     let mint =
         find_index_mint_address(&program_id, &controller_pda, controller.get_next_index_id()).0;
-    let create_index_tx =
-        create_index_transaction(1, controller.id, mint.clone(), manager.pubkey(), &_setup);
-    // Create controller global  config tx
+    let create_index_tx = create_index_transaction(
+        &_setup.payer,
+        _setup.program_id,
+        1,
+        controller_id,
+        mint,
+        manager.pubkey(),
+        _setup.recent_blockhashes,
+    );
+
     let controller_global_tx = init_controller_global_config_transaction(10, &_setup);
     let _ = _setup
         .banks_client
@@ -73,17 +90,19 @@ async fn test_create_index() {
     //
     let _ = _setup
         .banks_client
-        .process_transaction(init_controller_tx.transaction.clone())
+        .process_transaction(init_controller_tx.clone())
         .await
         .err();
     let result = _setup
         .banks_client
-        .process_transaction(create_index_tx.transaction)
+        .process_transaction(create_index_tx)
         .await;
+
+    let index_pda = find_index_address(&program_id, &controller_pda, 1).0;
 
     let index_account = _setup
         .banks_client
-        .get_account(create_index_tx.index_pda)
+        .get_account(index_pda)
         .await
         .unwrap()
         .unwrap();
