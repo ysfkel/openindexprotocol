@@ -4,11 +4,12 @@ use crate::{get_issuance_program_id, get_open_index_program_id, get_payer_keypai
 use solana_client::rpc_client::RpcClient;
 use solana_sdk::{commitment_config::CommitmentConfig, pubkey::Pubkey, signature::Keypair};
 
+
 pub struct TestContext {
     pub payer: Keypair,
     pub open_index_program_id: Pubkey,
     pub issuance_program_id: Pubkey,
-    pub client: Arc<RpcClient>,
+    pub client: RpcClient,
 }
 
 pub fn setup() -> TestContext {
@@ -19,6 +20,6 @@ pub fn setup() -> TestContext {
         payer: get_payer_keypair(),
         open_index_program_id: get_open_index_program_id(),
         issuance_program_id: get_issuance_program_id(),
-        client: Arc::new(client),
+        client,
     }
 }

@@ -42,14 +42,14 @@ async fn test_add_index_components() -> Result<()> {
     let _context = setup();
     let payer = _context.payer;
     let program_id = _context.open_index_program_id;
-    let client = _context.client.clone();
-    let recent_blockhashes =
-        tokio::task::spawn_blocking(move || client.get_latest_blockhash()).await??;
+    let client = &_context.client; 
+
+    let recent_blockhashes =client.get_latest_blockhash().unwrap();
     let protocol_address = find_protocol_address(&program_id).0;
     let controller_global_config_address = find_controller_global_config_address(&program_id).0;
 
     // Initialize protocol if not already initialized
-    let mut protocol_account_result = _context.client.get_account(&protocol_address);
+    let mut protocol_account_result = client.get_account(&protocol_address);
     let mut protocol_account = Account::default();
 
     if let Err(e) = protocol_account_result {
