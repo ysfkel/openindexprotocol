@@ -1,4 +1,5 @@
-use crate::{setup, Setup};
+use solana_sdk::hash::Hash;
+use solana_sdk::rent::Rent;
 use solana_sdk::signature::Signer;
 use solana_sdk::{
     program_pack::Pack, signature::Keypair, system_instruction::create_account,
@@ -6,18 +7,14 @@ use solana_sdk::{
 };
 use spl_token::{instruction::initialize_mint, state::Mint};
 
-pub struct CreateMintAccountTransaction {
-    pub transaction: Transaction,
-}
 pub fn create_mint_acccount_transaction(
+    payer: &Keypair,
     mint: &Keypair,
-    _setup: &Setup,
-) -> CreateMintAccountTransaction {
-    let payer = &_setup.payer;
-    let recent_blockhashes = &_setup.recent_blockhashes;
-
+    recent_blockhashes: Hash,
+    rent: &Rent,
+) -> Transaction {
     let mint_space = Mint::LEN;
-    let lamports = _setup.rent.minimum_balance(mint_space);
+    let lamports = rent.minimum_balance(mint_space);
 
     let create_account_instruction = create_account(
         &payer.pubkey(),
@@ -36,11 +33,10 @@ pub fn create_mint_acccount_transaction(
     )
     .unwrap();
 
-    let transaction = Transaction::new_signed_with_payer(
+    Transaction::new_signed_with_payer(
         &[create_account_instruction, initialize_mint_instruction],
         Some(&payer.pubkey()),
-        &[&payer, mint],
-        recent_blockhashes.clone(),
-    );
-    CreateMintAccountTransaction { transaction }
+        &[payer, mint],
+        recent_blockhashes,
+    )
 }

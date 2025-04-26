@@ -82,3 +82,18 @@ macro_rules! require {
         }
     };
 }
+
+/// Instruction errors
+#[derive(Clone, Debug, PartialEq, Eq, Error)]
+pub enum TransactionBuilderError {
+    #[error("Error: Creating mint_to instruction failed")]
+    MintTo(ProgramError),
+    #[error("Error: Number of accounts exceeds transaction accounts limit")]
+    TransactionAccountsLimit,
+}
+
+impl From<ProgramError> for TransactionBuilderError {
+    fn from(e: ProgramError) -> Self {
+        TransactionBuilderError::MintTo(e)
+    }
+}

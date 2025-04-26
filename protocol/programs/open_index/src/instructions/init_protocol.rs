@@ -1,6 +1,6 @@
 use crate::{error::ProtocolError, state::Protocol};
 use borsh::{BorshDeserialize, BorshSerialize};
-use open_index_lib::seeds::PROTOCOL_SEED;
+use open_index_lib::{pda::find_protocol_address, seeds::PROTOCOL_SEED};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint::ProgramResult,
@@ -27,7 +27,7 @@ pub fn init_protocol(program_id: Pubkey, accounts: &[AccountInfo]) -> ProgramRes
         return Err(ProgramError::AccountAlreadyInitialized);
     }
 
-    let (protocol_pda, protocol_bump) = Pubkey::find_program_address(&[PROTOCOL_SEED], &program_id);
+    let (protocol_pda, protocol_bump) = find_protocol_address(&program_id);
 
     if *protocol_account.key != protocol_pda {
         return Err(ProtocolError::IncorrectProtocolAccount.into());

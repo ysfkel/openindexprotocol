@@ -1,5 +1,16 @@
-use solana_sdk::{hash::Hash, instruction::Instruction, transaction::Transaction};
-use crate::{instruction::add_index_components_instruction, pda::{find_controller_address, find_controller_global_config_address, find_index_address, find_index_mints_data_address}};
+use crate::{
+    instruction::add_index_components_instruction,
+    pda::{
+        find_component_address, find_component_vault_address, find_controller_address,
+        find_controller_global_config_address, find_index_address, find_index_mints_data_address,
+    },
+};
+use solana_sdk::{
+    hash::Hash,
+    instruction::Instruction,
+    transaction::{Transaction, VersionedTransaction},
+};
+use spl_associated_token_account::get_associated_token_address_with_program_id;
 
 use {
     solana_program::pubkey::Pubkey,
@@ -8,18 +19,18 @@ use {
 
 pub fn add_index_components_transaction(
     payer: &Keypair,
-    program_id: &Pubkey,
+    program_id: Pubkey,
     index_id: u64,
     controller_id: u64,
     recent_blockhashes: Hash,
     mints: Vec<Pubkey>,
     amounts: Vec<u64>,
 ) -> Transaction {
-    let controller_pda = find_controller_address(program_id, controller_id).0;
-    let (index_pda, _) = find_index_address(program_id, &controller_pda, index_id);
-    let (controller_global, _) = find_controller_global_config_address(program_id);
+    let controller_pda = find_controller_address(&program_id, controller_id).0;
+    let (index_pda, _) = find_index_address(&program_id, &controller_pda, index_id);
+    let (controller_global, _) = find_controller_global_config_address(&program_id);
     let (index_mints_data_pda, _) =
-        find_index_mints_data_address(program_id, &controller_pda, index_id);
+        find_index_mints_data_address(&program_id, &controller_pda, index_id);
 
     let instruction = add_index_components_instruction(
         program_id.clone(),
@@ -31,6 +42,19 @@ pub fn add_index_components_transaction(
         mints,
         amounts,
     );
+
+    let mut dynamic_accounts = Vec::<Pubkey>::new();
+    for mint in mints.iter() {
+        let (component_pda, _) = find_component_address(&program_id, &index_pda, mint);
+        let (vault_pda, _) = find_component_vault_address(&program_id, &index_pda, mint);
+        let vault_ata =
+            get_associated_token_address_with_program_id(&vault_pda, mint, &spl_token::ID);
+
+        dynamic_accounts.push(mint.clone());
+        dynamic_accounts.push(component_pda);
+        dynamic_accounts.push(vault_pda);
+        dynamic_accounts.push(vault_ata);
+    }
 
     Transaction::new_signed_with_payer(
         &[instruction],

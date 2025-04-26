@@ -176,19 +176,6 @@ pub fn add_index_components_instruction(
         AccountMeta::new_readonly(spl_associated_token_account::ID, false),
         AccountMeta::new_readonly(spl_token::ID, false),
     ];
-
-    for mint in mints.iter() {
-        let (component_pda, _) = find_component_address(&program_id, &index_account, mint);
-        let (vault_pda, _) = find_component_vault_address(&program_id, &index_account, mint);
-        let vault_ata =
-            get_associated_token_address_with_program_id(&vault_pda, mint, &spl_token::ID);
-
-        accounts.push(AccountMeta::new(mint.clone(), false));
-        accounts.push(AccountMeta::new(component_pda, false));
-        accounts.push(AccountMeta::new(vault_pda, false));
-        accounts.push(AccountMeta::new(vault_ata, false));
-    }
-
     let instruction = ProtocolInstruction::AddIndexComponents { amounts, mints };
     let data = borsh::to_vec(&instruction).unwrap();
     Instruction {

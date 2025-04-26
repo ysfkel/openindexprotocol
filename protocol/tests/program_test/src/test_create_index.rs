@@ -1,4 +1,4 @@
-use crate::{init_controller_global_config_transaction, setup, Setup};
+use crate::{setup, Setup};
 
 use borsh::BorshDeserialize;
 use open_index::state::{Controller, Index, Protocol};
@@ -7,7 +7,8 @@ use open_index_lib::{
         find_controller_address, find_index_address, find_index_mint_address, find_protocol_address,
     },
     transaction::{
-        create_index_transaction, init_controller_transaction, init_protocol_transaction,
+        create_index_transaction, init_controller_global_config_transaction,
+        init_controller_transaction, init_protocol_transaction,
     },
 };
 use solana_program_test::BanksClientError;
@@ -82,10 +83,16 @@ async fn test_create_index() {
         _setup.recent_blockhashes,
     );
 
-    let controller_global_tx = init_controller_global_config_transaction(10, &_setup);
+    let controller_global_tx = init_controller_global_config_transaction(
+        &_setup.payer,
+        _setup.program_id,
+        10,
+        _setup.recent_blockhashes,
+    );
+
     let _ = _setup
         .banks_client
-        .process_transaction(controller_global_tx.transaction.clone())
+        .process_transaction(controller_global_tx.clone())
         .await;
     //
     let _ = _setup

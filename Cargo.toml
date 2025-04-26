@@ -4,7 +4,8 @@ members = [
     "protocol/open_index_lib",
     "protocol/programs/open_index",
     "protocol/programs/modules/issuance", 
-    "protocol/tests"]
+    "protocol/tests/program_test"
+    , "protocol/tests/test-validator"]
 resolver = "2"
 
 [profile.release]

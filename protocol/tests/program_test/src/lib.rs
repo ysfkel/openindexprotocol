@@ -6,7 +6,8 @@ mod test_init_controller;
 mod test_init_module;
 mod test_init_protocol;
 mod test_module_issuance_mint_index_transaction;
-mod transactions;
+
 //
 pub use setup::*;
-pub use transactions::*;
+
+ 

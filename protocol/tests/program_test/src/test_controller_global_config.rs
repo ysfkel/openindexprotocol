@@ -1,19 +1,22 @@
-use crate::{
-    init_controller_global_config_transaction, setup, InitControllerGlobalTransaction, Setup,
-};
+use crate::{setup, Setup};
 use borsh::BorshDeserialize;
 use open_index::state::ControllerGlobalConfig;
-use open_index_lib::transaction::init_protocol_transaction;
+use open_index_lib::{
+    pda::find_controller_global_config_address,
+    transaction::{init_controller_global_config_transaction, init_protocol_transaction},
+};
 use {solana_program_test::tokio, solana_sdk::signature::Signer};
 
 #[tokio::test]
 async fn test_controller_global_config() {
     let _setup: Setup = setup().await;
     let max_index_components = 10;
-    let InitControllerGlobalTransaction {
-        controller_global_pda,
-        transaction,
-    } = init_controller_global_config_transaction(max_index_components, &_setup);
+    let transaction = init_controller_global_config_transaction(
+        &_setup.payer,
+        _setup.program_id,
+        max_index_components,
+        _setup.recent_blockhashes,
+    );
 
     let init_protocol_instruction =
         init_protocol_transaction(&_setup.payer, _setup.program_id, _setup.recent_blockhashes);
@@ -29,6 +32,7 @@ async fn test_controller_global_config() {
         .await;
     assert!(result.is_err() == false);
 
+    let controller_global_pda = find_controller_global_config_address(&_setup.program_id).0;
     let controller_global_account = _setup
         .banks_client
         .get_account(controller_global_pda)
