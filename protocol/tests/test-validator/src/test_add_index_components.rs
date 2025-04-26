@@ -151,17 +151,10 @@ async fn test_add_index_components() -> Result<()> {
     assert!(index_data.initialized);
     assert_eq!(index_data.manager, manager);
     assert!(index_data.owner == payer.pubkey());
-
-    // Create controller
-    // let controller_id = protocol_data.get_next_controller_id();
-    // let init_controller_tx =
-    //     init_controller_transaction(&payer, program_id, controller_id, recent_blockhashes);
-    // _context
-    //     .client
-    //     .send_and_confirm_transaction(&init_controller_tx)?;
-    // // Create controller global  config tx
-    // let controller_global_tx =
-    //     init_controller_global_config_transaction(&payer, program_id, 10, recent_blockhashes);
-
+   
+    // todo
+    // - create lookup table 
+    // create versioned add components tx
+    // submit and test
     Ok(())
 }
