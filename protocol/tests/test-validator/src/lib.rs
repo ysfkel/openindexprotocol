@@ -1,4 +1,4 @@
-#![cfg(all(test, feature = "test-validator"))]
+// #![cfg(all(test, feature = "test-validator"))]
 
 mod read_keys;
 mod setup;

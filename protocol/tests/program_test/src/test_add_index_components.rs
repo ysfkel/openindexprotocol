@@ -46,7 +46,7 @@ async fn test_add_index_components() {
     let mint_4 = Keypair::new();
     let mint_5 = Keypair::new();
     let mint_6 = Keypair::new();
-    let mint_7 = Keypair::new(); 
+    let mint_7 = Keypair::new();
     // Initialize protocol
     let init_protocol_instruction =
         init_protocol_transaction(&_setup.payer, _setup.program_id, _setup.recent_blockhashes);
@@ -62,7 +62,7 @@ async fn test_add_index_components() {
         controller_id,
         _setup.recent_blockhashes,
     );
-    let controller_pda = find_controller_address(&program_id, controller_id).0;
+
     let _ = _setup
         .banks_client
         .process_transaction(init_controller_tx.clone())
@@ -79,6 +79,8 @@ async fn test_add_index_components() {
         .banks_client
         .process_transaction(controller_global_tx.clone())
         .await;
+
+    let controller_pda = find_controller_address(&program_id, controller_id).0;
 
     // Create Index tx
     let mint = find_index_mint_address(&program_id, &controller_pda, controller_id).0;
@@ -142,12 +144,6 @@ async fn test_add_index_components() {
         _setup.recent_blockhashes,
         &_setup.rent,
     );
-    let create_mint_8_transaction = create_mint_acccount_transaction(
-        &_setup.payer,
-        &mint_8,
-        _setup.recent_blockhashes,
-        &_setup.rent,
-    );
 
     let _ = _setup
         .banks_client
@@ -177,10 +173,7 @@ async fn test_add_index_components() {
         .banks_client
         .process_transaction(create_mint_7_transaction)
         .await;
-    let _ = _setup
-        .banks_client
-        .process_transaction(create_mint_8_transaction)
-        .await;
+
     let mints = vec![
         mint_1.pubkey(),
         mint_2.pubkey(),
@@ -188,7 +181,7 @@ async fn test_add_index_components() {
         mint_4.pubkey(),
         mint_5.pubkey(),
         mint_6.pubkey(),
-        mint_7.pubkey(), 
+        mint_7.pubkey(),
     ];
 
     let transaction = add_index_components_transaction(
@@ -204,7 +197,7 @@ async fn test_add_index_components() {
             mint_4.pubkey(),
             mint_5.pubkey(),
             mint_6.pubkey(),
-            mint_7.pubkey(), 
+            mint_7.pubkey(),
         ],
         vec![10, 20, 30, 40, 50, 60, 70],
     );
