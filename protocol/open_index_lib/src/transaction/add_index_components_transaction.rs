@@ -43,19 +43,6 @@ pub fn add_index_components_transaction(
         amounts,
     );
 
-    let mut dynamic_accounts = Vec::<Pubkey>::new();
-    for mint in mints.iter() {
-        let (component_pda, _) = find_component_address(&program_id, &index_pda, mint);
-        let (vault_pda, _) = find_component_vault_address(&program_id, &index_pda, mint);
-        let vault_ata =
-            get_associated_token_address_with_program_id(&vault_pda, mint, &spl_token::ID);
-
-        dynamic_accounts.push(mint.clone());
-        dynamic_accounts.push(component_pda);
-        dynamic_accounts.push(vault_pda);
-        dynamic_accounts.push(vault_ata);
-    }
-
     Transaction::new_signed_with_payer(
         &[instruction],
         Some(&payer.pubkey()),

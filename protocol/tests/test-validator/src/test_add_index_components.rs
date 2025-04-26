@@ -1,9 +1,15 @@
-
 use anyhow::Result;
 use borsh::BorshSerialize;
 use solana_client::rpc_client::RpcClient;
 use solana_sdk::{
-    address_lookup_table::instruction::create_lookup_table, commitment_config::CommitmentConfig, instruction::{AccountMeta, Instruction}, message::Message, pubkey::Pubkey, signature::{read_keypair_file, Keypair, Signer}, system_program, transaction::Transaction
+    address_lookup_table::instruction::create_lookup_table,
+    commitment_config::CommitmentConfig,
+    instruction::{AccountMeta, Instruction},
+    message::Message,
+    pubkey::Pubkey,
+    signature::{Keypair, Signer, read_keypair_file},
+    system_program,
+    transaction::Transaction,
 };
 use std::env;
 use std::{path::PathBuf, str::FromStr};
@@ -27,11 +33,12 @@ use crate::{get_open_index_program_id, setup};
 async fn test_add_index_components() -> Result<()> {
     let _context = setup();
     let payer = _context.payer;
-    let program_id = _context.open_index_program_id; 
+    let program_id = _context.open_index_program_id;
     let client = _context.client.clone();
-    let recent_blockhashes = tokio::task::spawn_blocking(move || client.get_latest_blockhash()).await??;
- 
-    // Connect to local validator 
+    let recent_blockhashes =
+        tokio::task::spawn_blocking(move || client.get_latest_blockhash()).await??;
+
+    // Connect to local validator
     // let recent_slot = client.get_slot_with_commitment(CommitmentConfig::finalized())?;
     // let manager = Keypair::new();
     // let mint_1 = Keypair::new();
@@ -43,11 +50,13 @@ async fn test_add_index_components() -> Result<()> {
     // let mint_7 = Keypair::new();
     // let mint_8 = Keypair::new();
     //
-   let init_protocol_instruction = init_protocol_transaction(&payer, program_id, recent_blockhashes);
-   _context.client.send_and_confirm_transaction(&init_protocol_instruction)?;
+    let init_protocol_instruction =
+        init_protocol_transaction(&payer, program_id, recent_blockhashes);
+    _context
+        .client
+        .send_and_confirm_transaction(&init_protocol_instruction)?;
 
- 
-        // Load keypairs
+    // Load keypairs
     // let payer_path =env::var("HOME").map_err(|e| anyhow::anyhow!("Failed to get HOME env var: {}", e))?;
     // let payer = read_keypair_file(format!("{}/.config/solana/id.json", payer_path)).map_err(|e| anyhow::anyhow!("Failed to read payer keypair: {}", e))?;
     // let recent_slot = client.get_slot_with_commitment(CommitmentConfig::finalized())?;
@@ -60,7 +69,7 @@ async fn test_add_index_components() -> Result<()> {
 
     // let (create_account_instruction, lookup_table_address) =
     // create_lookup_table(payer.pubkey(), payer.pubkey(), recent_slot);
-   
+
     // let latest_blockhash = client.get_latest_blockhash()?;
     // let transaction = Transaction::new_signed_with_payer(
     //     &[create_account_instruction],

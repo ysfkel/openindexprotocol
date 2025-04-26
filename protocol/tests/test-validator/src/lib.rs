@@ -1,8 +1,8 @@
-#![cfg(all(test,feature = "test-validator"))]
+#![cfg(all(test, feature = "test-validator"))]
 
-mod test_add_index_components;
 mod read_keys;
 mod setup;
+mod test_add_index_components;
 
 pub use read_keys::*;
-pub use setup::*; 
+pub use setup::*;

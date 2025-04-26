@@ -32,8 +32,6 @@ pub fn create_lookup_table_transaction(
     let (create_account_instruction, lookup_table_address) =
         create_lookup_table(authority_address, payer.pubkey(), recent_slot);
 
-        
-
     let mut instructions = vec![create_account_instruction];
 
     let _extend_lookup_table = |addresses_chunk: Vec<Pubkey>| {

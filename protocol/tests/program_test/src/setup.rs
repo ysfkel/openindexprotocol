@@ -1,7 +1,15 @@
 use std::ops::{Add, Mul};
 
 use {
-    solana_address_lookup_table_program::processor::Entrypoint, solana_program_test::{processor, BanksClient, ProgramTest}, solana_sdk::{hash::Hash, pubkey::Pubkey, rent::Rent, signature::Keypair, sysvar::{Sysvar, SysvarId}}
+    solana_address_lookup_table_program::processor::Entrypoint,
+    solana_program_test::{processor, BanksClient, ProgramTest},
+    solana_sdk::{
+        hash::Hash,
+        pubkey::Pubkey,
+        rent::Rent,
+        signature::Keypair,
+        sysvar::{Sysvar, SysvarId},
+    },
 };
 
 pub struct Setup {
@@ -41,10 +49,9 @@ use solana_program_test::InvokeContext;
 //     // This arithmetic loop is intended to use some cycles.
 //     let mut dummy: u64 = 1;
 //     for i in 0..100{
-//         dummy +=i; 
+//         dummy +=i;
 //     }
 //     // Prevent compiler from optimizing away the loop.
-  
 
 //     // Log the remaining compute units.
 //     sol_log_compute_units();
@@ -64,8 +71,7 @@ pub async fn setup() -> Setup {
     //     solana_program::address_lookup_table::program::ID,
     //     solana_address_lookup_table_program::processor::
     // );
-    
- 
+
     // program_test.add_builtin_program(
     //     "solana_address_lookup_table_program",
     //     solana_program::address_lookup_table::program::ID,

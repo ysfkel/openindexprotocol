@@ -16,7 +16,21 @@ use open_index_lib::{
 };
 use serde::Deserialize;
 use solana_sdk::{
-    account::Account, address_lookup_table::instruction::derive_lookup_table_address, clock::{sysvar, Clock}, instruction::InstructionError, message::AddressLookupTableAccount, msg, program_pack::{IsInitialized, Pack}, pubkey::Pubkey, rent::Rent, signature::Keypair, signer::SeedDerivable, syscalls, system_instruction::create_account, sysvar::{Sysvar, SysvarId}, transaction::TransactionError
+    account::Account,
+    address_lookup_table::instruction::derive_lookup_table_address,
+    clock::{sysvar, Clock},
+    instruction::InstructionError,
+    message::AddressLookupTableAccount,
+    msg,
+    program_pack::{IsInitialized, Pack},
+    pubkey::Pubkey,
+    rent::Rent,
+    signature::Keypair,
+    signer::SeedDerivable,
+    syscalls,
+    system_instruction::create_account,
+    sysvar::{Sysvar, SysvarId},
+    transaction::TransactionError,
 };
 use spl_associated_token_account::get_associated_token_address_with_program_id;
 
@@ -32,8 +46,7 @@ async fn test_add_index_components() {
     let mint_4 = Keypair::new();
     let mint_5 = Keypair::new();
     let mint_6 = Keypair::new();
-    let mint_7 = Keypair::new();
-    let mint_8 = Keypair::new();
+    let mint_7 = Keypair::new(); 
     // Initialize protocol
     let init_protocol_instruction =
         init_protocol_transaction(&_setup.payer, _setup.program_id, _setup.recent_blockhashes);
@@ -175,11 +188,9 @@ async fn test_add_index_components() {
         mint_4.pubkey(),
         mint_5.pubkey(),
         mint_6.pubkey(),
-        mint_7.pubkey(),
-        // mint_8.pubkey(),
+        mint_7.pubkey(), 
     ];
- 
-   
+
     let transaction = add_index_components_transaction(
         &_setup.payer,
         _setup.program_id,
@@ -193,8 +204,7 @@ async fn test_add_index_components() {
             mint_4.pubkey(),
             mint_5.pubkey(),
             mint_6.pubkey(),
-            mint_7.pubkey(),
-            // mint_8.pubkey(),
+            mint_7.pubkey(), 
         ],
         vec![10, 20, 30, 40, 50, 60, 70],
     );
@@ -202,53 +212,53 @@ async fn test_add_index_components() {
     let result = _setup.banks_client.process_transaction(transaction).await;
     assert!(result.is_err() == false);
 
-    // // Get component pda
-    // let controller_pda = find_controller_address(&program_id, controller_id).0;
-    // let index_pda = find_index_address(&program_id, &controller_pda, index_id).0;
-    // let mut components: Vec<Pubkey> = vec![];
-    // for mint in mints.iter() {
-    //     let component_pda = find_component_address(&program_id, &index_pda, mint).0;
-    //     components.push(component_pda);
-    // }
-    // let index_mints_data_pda =
-    //     find_index_mints_data_address(&program_id, &controller_pda, index_id).0;
+    // Get component pda
+    let controller_pda = find_controller_address(&program_id, controller_id).0;
+    let index_pda = find_index_address(&program_id, &controller_pda, index_id).0;
+    let mut components: Vec<Pubkey> = vec![];
+    for mint in mints.iter() {
+        let component_pda = find_component_address(&program_id, &index_pda, mint).0;
+        components.push(component_pda);
+    }
+    let index_mints_data_pda =
+        find_index_mints_data_address(&program_id, &controller_pda, index_id).0;
 
-    // let index_mints_data_account = _setup
-    //     .banks_client
-    //     .get_account(index_mints_data_pda)
-    //     .await
-    //     .unwrap()
-    //     .unwrap();
+    let index_mints_data_account = _setup
+        .banks_client
+        .get_account(index_mints_data_pda)
+        .await
+        .unwrap()
+        .unwrap();
 
-    // let component_1 = components.get(0).unwrap();
-    // let component_2 = components.get(1).unwrap();
-    // let component_1_data_account = _setup
-    //     .banks_client
-    //     .get_account(component_1.clone())
-    //     .await
-    //     .unwrap()
-    //     .unwrap();
+    let component_1 = components.get(0).unwrap();
+    let component_2 = components.get(1).unwrap();
+    let component_1_data_account = _setup
+        .banks_client
+        .get_account(component_1.clone())
+        .await
+        .unwrap()
+        .unwrap();
 
-    // let component_2_data_account = _setup
-    //     .banks_client
-    //     .get_account(component_2.clone())
-    //     .await
-    //     .unwrap()
-    //     .unwrap();
-    // let component_1_data = Component::try_from_slice(&component_1_data_account.data).unwrap();
-    // let component_2_data = Component::try_from_slice(&component_2_data_account.data).unwrap();
+    let component_2_data_account = _setup
+        .banks_client
+        .get_account(component_2.clone())
+        .await
+        .unwrap()
+        .unwrap();
+    let component_1_data = Component::try_from_slice(&component_1_data_account.data).unwrap();
+    let component_2_data = Component::try_from_slice(&component_2_data_account.data).unwrap();
 
-    // let index_mints_data = IndexMints::try_from_slice(&index_mints_data_account.data).unwrap();
-    // let index_mint_1 = index_mints_data.mints.get(0).unwrap();
-    // let index_mint_2 = index_mints_data.mints.get(1).unwrap();
-    // assert!(index_mints_data.is_initialized());
-    // assert_eq!(index_mints_data.mints.len(), mints.len());
-    // assert_eq!(index_mint_1.clone(), mint_1.pubkey());
-    // assert_eq!(index_mint_2.clone(), mint_2.pubkey());
-    // assert!(component_1_data.is_initialized());
-    // assert_eq!(component_1_data.mint, *index_mint_1);
-    // assert_eq!(component_1_data.uints, 10);
-    // assert!(component_2_data.is_initialized());
-    // assert_eq!(component_2_data.mint, *index_mint_2);
-    // assert_eq!(component_2_data.uints, 20);
+    let index_mints_data = IndexMints::try_from_slice(&index_mints_data_account.data).unwrap();
+    let index_mint_1 = index_mints_data.mints.get(0).unwrap();
+    let index_mint_2 = index_mints_data.mints.get(1).unwrap();
+    assert!(index_mints_data.is_initialized());
+    assert_eq!(index_mints_data.mints.len(), mints.len());
+    assert_eq!(index_mint_1.clone(), mint_1.pubkey());
+    assert_eq!(index_mint_2.clone(), mint_2.pubkey());
+    assert!(component_1_data.is_initialized());
+    assert_eq!(component_1_data.mint, *index_mint_1);
+    assert_eq!(component_1_data.uints, 10);
+    assert!(component_2_data.is_initialized());
+    assert_eq!(component_2_data.mint, *index_mint_2);
+    assert_eq!(component_2_data.uints, 20);
 }

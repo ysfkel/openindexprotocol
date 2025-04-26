@@ -9,5 +9,3 @@ mod test_module_issuance_mint_index_transaction;
 
 //
 pub use setup::*;
-
- 
