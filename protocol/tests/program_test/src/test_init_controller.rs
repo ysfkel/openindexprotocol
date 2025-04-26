@@ -114,6 +114,7 @@ async fn test_init_controller() {
     assert_eq!(protocol.next_controller_id, 3);
     assert!(controller.is_initialized());
     assert_eq!(controller.get_next_index_id(), 1);
+    assert_eq!(controller.owner, _setup.payer.pubkey());
     // unwrap transaction error when ProtocolError is caught IncorrectControllerAccount
     // if let Some(error) = result {
     //     match error {

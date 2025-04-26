@@ -1,5 +1,5 @@
 use crate::{get_open_index_program_id, setup};
-use open_index::state::{Controller, ControllerGlobalConfig};
+use open_index::state::{Controller, ControllerGlobalConfig, Index};
 use open_index_lib::pda::find_controller_global_config_address;
 use solana_client::rpc_request::RpcError;
 use solana_sdk::account::Account;
@@ -114,12 +114,9 @@ async fn test_add_index_components() -> Result<()> {
     // Create controller
     let controller_address =
         find_controller_address(&program_id, protocol_data.get_next_controller_id()).0;
-    let init_controller_tx = init_controller_transaction(
-        &payer,
-        program_id,
-        protocol_data.get_next_controller_id(),
-        recent_blockhashes,
-    );
+    let controller_id = protocol_data.get_next_controller_id();
+    let init_controller_tx =
+        init_controller_transaction(&payer, program_id, controller_id, recent_blockhashes);
     _context
         .client
         .send_and_confirm_transaction(&init_controller_tx)
@@ -128,6 +125,33 @@ async fn test_add_index_components() -> Result<()> {
     let controller_account = _context.client.get_account(&controller_address).unwrap();
     let controller_data = Controller::try_from_slice(&controller_account.data)?;
     assert!(controller_data.initialized);
+    assert!(controller_data.next_index_id == 1);
+    assert!(controller_data.owner == payer.pubkey());
+
+    // Create Index tx
+    let index_id = controller_data.next_index_id;
+    let index_address = find_index_address(&program_id, &controller_address, index_id).0;
+    let mint = find_index_mint_address(&program_id, &controller_address, index_id).0;
+    let manager =        Keypair::new().pubkey();
+    let create_index_tx = create_index_transaction(
+        &payer,
+        program_id,
+        index_id,
+        controller_id,
+        mint,
+        manager,
+        recent_blockhashes,
+    );
+    _context
+        .client
+        .send_and_confirm_transaction(&create_index_tx)
+        .unwrap();
+    let index_account = _context.client.get_account(&index_address).unwrap();
+    let index_data = Index::try_from_slice(&index_account.data)?;
+    assert!(index_data.initialized);
+    assert_eq!(index_data.manager, manager);
+    assert!(index_data.owner == payer.pubkey());
+
     // Create controller
     // let controller_id = protocol_data.get_next_controller_id();
     // let init_controller_tx =

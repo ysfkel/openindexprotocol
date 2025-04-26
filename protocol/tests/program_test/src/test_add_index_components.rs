@@ -83,7 +83,7 @@ async fn test_add_index_components() {
     let controller_pda = find_controller_address(&program_id, controller_id).0;
 
     // Create Index tx
-    let mint = find_index_mint_address(&program_id, &controller_pda, controller_id).0;
+    let mint = find_index_mint_address(&program_id, &controller_pda, 1).0;
 
     let create_index_tx = create_index_transaction(
         &_setup.payer,
