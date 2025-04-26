@@ -49,23 +49,18 @@ async fn test_add_index_components() -> Result<()> {
     let controller_global_config_address = find_controller_global_config_address(&program_id).0;
 
     // Initialize protocol if not already initialized
-    let protocol_account = initialize_account_if_needed(client, &protocol_address,|| {
+    let protocol_data: Protocol = initialize_account_if_needed(client, &protocol_address,|| {
         init_protocol_transaction(&payer, program_id, recent_blockhashes)
     })?;
-
-    assert!(protocol_account.lamports > 0);
-    let protocol_data = Protocol::try_from_slice(&protocol_account.data)?;
     assert!(protocol_data.initialized);
+    assert_eq!(protocol_data.owner, payer.pubkey());
 
     // Initialize Controller global config if not already initialized
-    let controller_global_config_account = initialize_account_if_needed(client, &controller_global_config_address,|| {
-        init_protocol_transaction(&payer, program_id, recent_blockhashes)
+    let controller_global_config_data: ControllerGlobalConfig = initialize_account_if_needed(client, &controller_global_config_address,|| {
+        init_controller_global_config_transaction(&payer, program_id, 10,recent_blockhashes)
     })?;
-
-    assert!(controller_global_config_account.lamports > 0);
-    let controller_global_config_data =
-        ControllerGlobalConfig::try_from_slice(&controller_global_config_account.data)?;
     assert!(controller_global_config_data.initialized);
+    assert_eq!(controller_global_config_data.max_index_components, 10);
 
     // Create controller
     let controller_address =
@@ -116,22 +111,28 @@ async fn test_add_index_components() -> Result<()> {
 }
 
 
-fn initialize_account_if_needed<F>(
+fn initialize_account_if_needed<T,F>(
     client: &RpcClient,
     address: &Pubkey,
     init_tx_fn: F,
-) -> Result<Account>
+) -> Result<T>
 where
+    T: BorshDeserialize,
     F: FnOnce() -> Transaction,
 {
     match client.get_account(address) {
-        Ok(account) => Ok(account),
+        Ok(account) => {
+            let data = T::try_from_slice(&account.data)?;
+            Ok(data)
+        },
         Err(e) => {
             if let ClientErrorKind::RpcError(RpcError::ForUser(msg)) = e.kind() {
                 if msg.contains("AccountNotFound") {
                     let tx = init_tx_fn();
                     client.send_and_confirm_transaction(&tx)?;
-                    Ok(client.get_account(address)?)
+                    let account = client.get_account(address)?;
+                    let data = T::try_from_slice(&account.data)?;
+                    Ok(data)
                 } else {
                     Err(anyhow::anyhow!("Unexpected RPC error: {}", msg))
                 }
