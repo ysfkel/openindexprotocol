@@ -52,6 +52,7 @@ async fn test_add_index_components() -> Result<()> {
     let protocol_data: Protocol = initialize_account_if_needed(client, &protocol_address,|| {
         init_protocol_transaction(&payer, program_id, recent_blockhashes)
     })?;
+    
     assert!(protocol_data.initialized);
     assert_eq!(protocol_data.owner, payer.pubkey());
 
@@ -118,7 +119,7 @@ fn initialize_account_if_needed<T,F>(
 ) -> Result<T>
 where
     T: BorshDeserialize,
-    F: FnOnce() -> Transaction,
+    F: Fn() -> Transaction,
 {
     match client.get_account(address) {
         Ok(account) => {
