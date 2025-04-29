@@ -71,14 +71,12 @@ async fn test_create_index() {
         .unwrap();
     let controller = Controller::try_from_slice(&controller_account.data).unwrap();
     // Create Index tx
-    let mint =
-        find_index_mint_address(&program_id, &controller_pda, controller.get_next_index_id()).0;
+
     let create_index_tx = create_index_transaction(
         &_setup.payer,
         _setup.program_id,
         1,
         controller_id,
-        mint,
         manager.pubkey(),
         _setup.recent_blockhashes,
     );

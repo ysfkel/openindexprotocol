@@ -23,6 +23,8 @@ pub fn mint_index_instruction(
     open_index_account: Pubkey,
     token_account_account: Pubkey,
     token_program_account: Pubkey,
+    index_id: u64,
+    amount: u64,
 
 ) -> Instruction {
     let accounts = vec![
@@ -38,7 +40,7 @@ pub fn mint_index_instruction(
         AccountMeta::new(token_account_account, false),
         AccountMeta::new(spl_token::ID, false),
     ];
-    let instruction = ProtocolInstruction::InitProtocol;
+    let instruction = IssuanceInstruction::Mint{index_id, amount};
     let data = borsh::to_vec(&instruction).unwrap();
     Instruction {
         program_id,
@@ -63,8 +65,10 @@ pub fn mint_index_instruction_with_dynamic_accounts(
     token_account_account: Pubkey,
     token_program_account: Pubkey,
     mints: Vec<Pubkey>,
+    index_id: u64,
+    amount: u64,
 ) -> Instruction {
-    let accounts = vec![
+    let mut accounts = vec![
         AccountMeta::new(caller, true),
         AccountMeta::new_readonly(module_account, false),
         AccountMeta::new_readonly(registered_module_account, false),
@@ -77,12 +81,13 @@ pub fn mint_index_instruction_with_dynamic_accounts(
         AccountMeta::new(token_account_account, false),
         AccountMeta::new(spl_token::ID, false),
     ];
-    let instruction = ProtocolInstruction::InitProtocol;
+    let instruction = IssuanceInstruction::Mint { index_id, amount };
     let data = borsh::to_vec(&instruction).unwrap();
  
  
     for mint in mints.iter() {
         let (component_pda, _) = find_component_address(&program_id, &index_account, mint);
+        let (vault_pda, _) = find_component_vault_address(&program_id, &index_account, mint);
         let vault_ata =
             get_associated_token_address_with_program_id(&vault_pda, mint, &spl_token::ID);
 

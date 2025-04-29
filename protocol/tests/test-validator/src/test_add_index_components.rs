@@ -91,7 +91,6 @@ async fn test_add_index_components() -> Result<()> {
         program_id,
         index_id,
         controller_id,
-        mint,
         manager,
         recent_blockhashes,
     );
