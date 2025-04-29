@@ -1,11 +1,11 @@
-use borsh::{BorshDeserialize, BorshSerialize};
-use solana_program::{instruction::Instruction, pubkey::Pubkey};
+// use borsh::{BorshDeserialize, BorshSerialize};
+// use solana_program::{instruction::Instruction, pubkey::Pubkey};
 
-#[derive(BorshDeserialize, BorshSerialize, Debug, PartialEq)]
-pub enum IssuanceInstruction {
-    Mint { index_id: u64, amount: u64 },
-    Redeem,
-}
+// #[derive(BorshDeserialize, BorshSerialize, Debug, PartialEq)]
+// pub enum IssuanceInstruction {
+//     Mint { index_id: u64, amount: u64 },
+//     Redeem,
+// }
 
 // #[allow(clippy::too_many_arguments)]
 // pub fn issue_instruction(

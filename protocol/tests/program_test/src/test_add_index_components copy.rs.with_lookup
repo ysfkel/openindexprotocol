@@ -1,8 +1,8 @@
 use crate::setup;
 
 use borsh::BorshDeserialize;
-use open_index::state::{Component, Controller, Index, IndexMints, Protocol};
-use open_index_lib::{
+use openindex::state::{Component, Controller, Index, IndexMints, Protocol};
+use openindex_sdk::{
     pda::{
         find_component_address, find_component_vault_address, find_controller_address,
         find_index_address, find_index_mint_address, find_index_mints_data_address,
@@ -17,7 +17,7 @@ use open_index_lib::{
 use serde::Deserialize;
 use solana_sdk::{
     account::Account, address_lookup_table::instruction::derive_lookup_table_address, clock::{sysvar, Clock}, instruction::InstructionError, message::AddressLookupTableAccount, msg, program_pack::{IsInitialized, Pack}, pubkey::Pubkey, rent::Rent, signature::Keypair, signer::SeedDerivable, syscalls, system_instruction::create_account, sysvar::{Sysvar, SysvarId}, transaction::TransactionError
-};
+};§
 use spl_associated_token_account::get_associated_token_address_with_program_id;
 
 use {solana_program_test::tokio, solana_sdk::signature::Signer};

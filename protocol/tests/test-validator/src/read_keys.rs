@@ -25,9 +25,9 @@ pub fn get_payer_keypair() -> Keypair {
         .expect("Failed to read payer keypair")
 }
 
-pub fn get_open_index_keypair() -> Keypair {
-    let keypair_path = get_workspace_root().join("target/deploy/open_index-keypair.json");
-    read_keypair_file(&keypair_path).expect("Failed to read open_index keypair")
+pub fn get_openindex_keypair() -> Keypair {
+    let keypair_path = get_workspace_root().join("target/deploy/openindex-keypair.json");
+    read_keypair_file(&keypair_path).expect("Failed to read openindex keypair")
 }
 
 pub fn get_issuance_keypair() -> Keypair {
@@ -35,8 +35,8 @@ pub fn get_issuance_keypair() -> Keypair {
     read_keypair_file(&keypair_path).expect("Failed to read issuance program keypair")
 }
 
-pub fn get_open_index_program_id() -> Pubkey {
-    let k = get_open_index_keypair();
+pub fn get_openindex_program_id() -> Pubkey {
+    let k = get_openindex_keypair();
     k.pubkey()
 }
 pub fn get_issuance_program_id() -> Pubkey {

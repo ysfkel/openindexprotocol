@@ -1,7 +1,7 @@
 use crate::{setup, Setup};
 use borsh::BorshDeserialize;
-use open_index::state::ControllerGlobalConfig;
-use open_index_lib::{
+use openindex::state::ControllerGlobalConfig;
+use openindex_sdk::openindex::{
     pda::find_controller_global_config_address,
     transaction::{init_controller_global_config_transaction, init_protocol_transaction},
 };

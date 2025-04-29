@@ -1,4 +1,4 @@
-use open_index_lib::transaction::{
+use openindex_sdk::openindex::transaction::{
     create_mint_acccount_transaction, create_token_account_transaction, mint_to_transaction,
 };
 use solana_program_test::tokio;

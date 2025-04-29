@@ -1,5 +1,5 @@
 use crate::processor;
-use open_index::instructions;
+use openindex::instructions;
 use solana_program::{
     account_info::AccountInfo,
     address_lookup_table::{instruction, program},

@@ -1,4 +1,4 @@
-use open_index::entrypoint::process_instruction;
+use openindex::entrypoint::process_instruction;
 use solana_program::example_mocks::solana_sdk::{system_instruction, sysvar::recent_blockhashes};
 use solana_sdk::{
     instruction::{AccountMeta, Instruction},
@@ -27,8 +27,8 @@ async fn test_controller() {
     let (authority_pubkey, _) = Pubkey::find_program_address(&[b"authority"], &program_id);
 
     let mut program_test = ProgramTest::default();
-    //  let mut program_test = ProgramTest::new("open_index", program_id,  processor!(process_instruction);
-    // program_test.add_program("open_index", program_id,  processor!(process_instruction));
+    //  let mut program_test = ProgramTest::new("openindex", program_id,  processor!(process_instruction);
+    // program_test.add_program("openindex", program_id,  processor!(process_instruction));
 
     let (mut banks_client, payer, recent_blockhashes) = program_test.start().await;
 

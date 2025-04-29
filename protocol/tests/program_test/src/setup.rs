@@ -25,16 +25,15 @@ pub async fn setup() -> Setup {
     let program_id = Pubkey::new_unique();
     let issuance_program_id = Pubkey::new_unique();
     let mut program_test = ProgramTest::new(
-        "open_index",
+        "openindex",
         program_id,
-        processor!(open_index::entrypoint::process_instruction),
+        processor!(openindex::entrypoint::process_instruction),
     );
 
-   
     program_test.add_program(
-        "issuance",
+        "openindex-issuance",
         issuance_program_id,
-        processor!(issuance::entrypoint::process_instruction),
+        processor!(openindex_issuance::entrypoint::process_instruction),
     );
 
     let (mut banks_client, payer, recent_blockhashes) = program_test.start().await;

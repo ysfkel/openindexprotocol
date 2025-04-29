@@ -12,11 +12,11 @@ use solana_program::{
 };
 
 use crate::{
-    error::ProtocolError,
+    error::IssuanceError,
     require,
     state::{Component, IndexMints},
 };
-use open_index_lib::{
+use openindex_sdk::openindex::{
     instruction::ProtocolInstruction,
     seeds::{COMPONENT_SEED, COMPONENT_VAULT_SEED, INDEX_MINTS_DATA_SEED, MODULE_SEED},
 };
@@ -42,7 +42,7 @@ pub fn mint_index(
 
     require!(
         amount > 0,
-        ProtocolError::AmountMustBeGreaterThanZero.into(),
+        IssuanceError::AmountMustBeGreaterThanZero.into(),
         "amount must be greater than 0"
     );
 
@@ -54,14 +54,14 @@ pub fn mint_index(
 
     require!(
         module_account.owner == program_id,
-        ProtocolError::UnknownModuleAccount.into(),
+        IssuanceError::UnknownModuleAccount.into(),
         "program does not own module"
     );
 
     let (signer_pda, bump) = Pubkey::find_program_address(&[program_id.as_ref()], program_id);
     require!(
         *module_account.key == signer_pda,
-        ProtocolError::IncorrectModuleAccount.into(),
+        IssuanceError::IncorrectModuleAccount.into(),
         "incorrect module account"
     );
 
@@ -72,7 +72,7 @@ pub fn mint_index(
 
     require!(
         *registered_module_account.key == registered_module_pda,
-        ProtocolError::InvalidRegisredModuleAccount.into(),
+        IssuanceError::InvalidRegisredModuleAccount.into(),
         "invalid registered module account"
     );
 
@@ -90,7 +90,7 @@ pub fn mint_index(
 
     require!(
         *index_mints_account.key == index_mints_pda,
-        ProtocolError::IncorrectIndexMintsAccount.into(),
+        IssuanceError::IncorrectIndexMintsAccount.into(),
         "incorrect index mints account"
     );
 
@@ -115,7 +115,7 @@ pub fn mint_index(
 
         require!(
             component_mint_account.key == mint,
-            ProtocolError::InvalidMintAccount.into(),
+            IssuanceError::InvalidMintAccount.into(),
             "invalid mint account"
         );
 
@@ -130,7 +130,7 @@ pub fn mint_index(
         );
         require!(
             *component_account.key == component_pda,
-            ProtocolError::IncorrectComponentAccount.into(),
+            IssuanceError::IncorrectComponentAccount.into(),
             "incorrect component account"
         );
 
@@ -142,7 +142,7 @@ pub fn mint_index(
         );
         require!(
             *vault_ata.key == expected_vault_ata,
-            ProtocolError::IncorrectVaultATA.into(),
+            IssuanceError::IncorrectVaultATA.into(),
             "incorrect vault ata"
         );
         let component = Component::try_from_slice(&component_account.data.borrow_mut()[..])
@@ -153,7 +153,7 @@ pub fn mint_index(
 
         require!(
             component.is_initialized(),
-            ProtocolError::ComponentNotInitialized.into(),
+            IssuanceError::ComponentNotInitialized.into(),
             format!("component not initialized {:?}", component_account.key).as_str()
         );
 
@@ -169,7 +169,7 @@ pub fn mint_index(
 
         require!(
             *vault_pda.key == expected_vault_pda,
-            ProtocolError::IncorrectVaultAccount.into(),
+            IssuanceError::IncorrectVaultAccount.into(),
             "incorrect vault account"
         );
 

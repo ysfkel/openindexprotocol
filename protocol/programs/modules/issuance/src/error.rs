@@ -2,7 +2,7 @@ use solana_program::{address_lookup_table::error, program_error::ProgramError};
 use thiserror::Error;
 
 #[derive(Clone, Debug, PartialEq, Eq, Error)]
-pub enum ProtocolError {
+pub enum IssuanceError {
     #[error("Error:Incorrect module account")]
     IncorrectModuleAccount,
     #[error("Error:Unknown module account")]
@@ -27,8 +27,8 @@ pub enum ProtocolError {
     ComponentNotInitialized,
 }
 
-impl From<ProtocolError> for ProgramError {
-    fn from(e: ProtocolError) -> Self {
+impl From<IssuanceError> for ProgramError {
+    fn from(e: IssuanceError) -> Self {
         ProgramError::Custom(e as u32)
     }
 }

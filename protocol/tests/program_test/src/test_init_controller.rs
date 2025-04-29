@@ -4,12 +4,12 @@ use crate::{setup, Setup};
 use borsh::BorshDeserialize;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
-use open_index::{
+use openindex::{
     error::ProtocolError,
     state::{Controller, Protocol},
 };
 
-use open_index_lib::{
+use openindex_sdk::openindex::{
     pda::{find_controller_address, find_protocol_address},
     transaction::{init_controller_transaction, init_protocol_transaction},
 };

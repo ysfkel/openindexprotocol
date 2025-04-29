@@ -1,7 +1,7 @@
 use crate::{setup, Setup};
 use borsh::BorshDeserialize;
-use open_index::state::Protocol;
-use open_index_lib::{pda::find_protocol_address, transaction::init_protocol_transaction};
+use openindex::state::Protocol;
+use openindex_sdk::openindex::{pda::find_protocol_address, transaction::init_protocol_transaction};
 use {solana_program_test::tokio, solana_sdk::signature::Signer};
 
 #[tokio::test]
