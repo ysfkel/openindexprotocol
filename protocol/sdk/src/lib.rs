@@ -1,5 +1,4 @@
 #[cfg(feature = "issuance")]
-pub mod issuance; 
+pub mod issuance;
 #[cfg(feature = "openindex")]
-pub mod openindex; 
-
+pub mod openindex;

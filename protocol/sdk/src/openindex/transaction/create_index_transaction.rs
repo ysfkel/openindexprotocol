@@ -1,6 +1,9 @@
 use crate::openindex::{
     instruction::create_index_instruction,
-    pda::{find_controller_address, find_controller_global_config_address, find_index_address, find_index_mint_address},
+    pda::{
+        find_controller_address, find_controller_global_config_address, find_index_address,
+        find_index_mint_address,
+    },
 };
 use solana_sdk::{
     hash::Hash, instruction::Instruction, signature::Keypair, transaction::Transaction,
@@ -18,8 +21,7 @@ pub fn create_index_transaction(
     let controller_pda = find_controller_address(&program_id, controller_id).0;
     let index_pda = find_index_address(&program_id, &controller_pda, index_id).0;
     let (controller_global, _) = find_controller_global_config_address(&program_id);
-    let mint =
-        find_index_mint_address(&program_id, &controller_pda, controller_id).0;
+    let mint = find_index_mint_address(&program_id, &controller_pda, index_id).0;
     let instruction = create_index_instruction(
         program_id.clone(),
         payer.pubkey().clone(),

@@ -1,5 +1,4 @@
-#[cfg(feature="transaction")]
+#[cfg(feature = "transaction")]
 pub mod transaction;
 
 pub mod instruction;
-

@@ -52,11 +52,11 @@ pub fn mint_index(
         "caller must be signer"
     );
 
-    require!(
-        module_account.owner == program_id,
-        IssuanceError::UnknownModuleAccount.into(),
-        "program does not own module"
-    );
+    // require!(
+    //     module_account.owner == program_id,
+    //     IssuanceError::UnknownModuleAccount.into(),
+    //     "program does not own module"
+    // );
 
     let (signer_pda, bump) = Pubkey::find_program_address(&[program_id.as_ref()], program_id);
     require!(
@@ -76,9 +76,9 @@ pub fn mint_index(
         "invalid registered module account"
     );
 
-    //TODO validate open_index_account, controller_account
+    // TODO validate open_index_account, controller_account
 
-    // Get Index Mints
+    //Get Index Mints
     let (index_mints_pda, index_mints_bump) = Pubkey::find_program_address(
         &[
             INDEX_MINTS_DATA_SEED,
@@ -106,6 +106,13 @@ pub fn mint_index(
         let component_account = next_account_info(accounts_iter)?;
         let vault_pda = next_account_info(accounts_iter)?;
         let vault_ata = next_account_info(accounts_iter)?;
+        let token_account = next_account_info(accounts_iter)?;
+
+        require!(
+            token_account.owner == token_program_account.key,
+            ProgramError::InvalidAccountOwner,
+            "Invalid token account owner"
+        );
 
         require!(
             component_mint_account.owner == token_program_account.key,
@@ -126,7 +133,7 @@ pub fn mint_index(
                 index_account.key.as_ref(),
                 component_mint_account.key.as_ref(),
             ],
-            program_id,
+            open_index_account.key,
         );
         require!(
             *component_account.key == component_pda,
@@ -164,7 +171,7 @@ pub fn mint_index(
                 component_mint_account.key.as_ref(),
                 &[component.vault_bump],
             ],
-            program_id,
+            open_index_account.key,
         )?;
 
         require!(
@@ -180,7 +187,7 @@ pub fn mint_index(
         invoke(
             &transfer(
                 token_program_account.key,
-                caller_account.key,
+                token_account.key,
                 vault_ata.key,
                 caller_account.key,
                 &[],
@@ -188,13 +195,14 @@ pub fn mint_index(
             )?,
             &[
                 caller_account.clone(),
+                token_account.clone(),
                 vault_ata.clone(),
                 token_program_account.clone(),
             ],
         )?;
     }
 
-    // Mint index token
+    // // Mint index token
     let initialize_ix = &ProtocolInstruction::Mint { amount, index_id };
     let mut initialize_ix_data = Vec::new();
     initialize_ix.serialize(&mut initialize_ix_data).unwrap();
@@ -203,7 +211,7 @@ pub fn mint_index(
         AccountMeta::new_readonly(module_account.key.clone(), true),
         AccountMeta::new_readonly(registered_module_account.key.clone(), false),
         AccountMeta::new_readonly(controller_account.key.clone(), false),
-        AccountMeta::new_readonly(mint_account.key.clone(), false),
+        AccountMeta::new(mint_account.key.clone(), false),
         AccountMeta::new_readonly(mint_authority_account.key.clone(), false),
         AccountMeta::new(token_account.key.clone(), false),
         AccountMeta::new_readonly(token_program_account.key.clone(), false),
@@ -217,7 +225,15 @@ pub fn mint_index(
 
     invoke_signed(
         &cpi_instruction,
-        &[module_account.clone(), registered_module_account.clone()], // Pass the actual AccountInfo references
+        &[
+            module_account.clone(),
+            registered_module_account.clone(),
+            controller_account.clone(),
+            mint_account.clone(),
+            mint_authority_account.clone(),
+            token_account.clone(),
+            token_program_account.clone(),
+        ], // Pass the actual AccountInfo references
         &[&[program_id.as_ref(), &[bump]]],
     )?;
 

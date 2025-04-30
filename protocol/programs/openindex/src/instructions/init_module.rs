@@ -41,10 +41,6 @@ pub fn init_module(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResu
         return Err(ProtocolError::OnlyProtocolOwner.into());
     }
 
-    if module_signer_account.lamports() > 0 {
-        return Err(ProgramError::AccountAlreadyInitialized);
-    }
-
     if !protocol.is_initialized() {
         return Err(ProtocolError::ProtocolNotInitialized.into());
     }

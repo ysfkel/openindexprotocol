@@ -1,10 +1,10 @@
 use crate::instructions::mint_index;
 use borsh::BorshDeserialize;
+use openindex_sdk::issuance::instruction::IssuanceInstruction;
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, msg, program_error::ProgramError,
     pubkey::Pubkey,
 };
-use openindex_sdk::issuance::instruction::IssuanceInstruction;
 
 pub fn process_instruction(
     program_id: &Pubkey,

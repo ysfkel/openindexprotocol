@@ -1,4 +1,7 @@
-use crate::{setup, Setup};
+use crate::{
+    process_controller_global_config, process_create_index, process_init_controller,
+    process_init_protocol, setup, ProcessCreateIndexResult, ProcessInitControllerResult, Setup,
+};
 
 use borsh::BorshDeserialize;
 use openindex::state::{Controller, Index, Protocol};
@@ -32,14 +35,9 @@ async fn test_create_index() {
     let program_id = _setup.program_id;
     let manager = Keypair::new();
     //Initialize Protocol
-    let init_protocol_instruction =
-        init_protocol_transaction(&_setup.payer, _setup.program_id, _setup.recent_blockhashes);
-    let protocol_pda = find_protocol_address(&program_id).0;
+    let _ = process_init_protocol(&_setup).await;
 
-    let _ = _setup
-        .banks_client
-        .process_transaction(init_protocol_instruction.clone())
-        .await;
+    let protocol_pda = find_protocol_address(&program_id).0;
 
     let protocol_account = _setup
         .banks_client
@@ -48,60 +46,20 @@ async fn test_create_index() {
         .unwrap()
         .unwrap();
 
-    let protocol = Protocol::try_from_slice(&protocol_account.data).unwrap();
+    let _ = process_controller_global_config(10, &_setup).await;
+
     // Initialize Controller
-    let controller_id = protocol.get_next_controller_id();
-    let init_controller_tx = init_controller_transaction(
-        &_setup.payer,
-        _setup.program_id,
+    let ProcessInitControllerResult {
         controller_id,
-        _setup.recent_blockhashes,
-    );
-    let controller_pda = find_controller_address(&program_id, controller_id).0;
-    let _ = _setup
-        .banks_client
-        .process_transaction(init_controller_tx.clone())
-        .await
-        .err();
-    let controller_account = _setup
-        .banks_client
-        .get_account(controller_pda)
-        .await
-        .unwrap()
-        .unwrap();
-    let controller = Controller::try_from_slice(&controller_account.data).unwrap();
-    // Create Index tx
+        controller_pda,
+        result,
+    } = process_init_controller(&_setup).await;
 
-    let create_index_tx = create_index_transaction(
-        &_setup.payer,
-        _setup.program_id,
-        1,
-        controller_id,
-        manager.pubkey(),
-        _setup.recent_blockhashes,
-    );
-
-    let controller_global_tx = init_controller_global_config_transaction(
-        &_setup.payer,
-        _setup.program_id,
-        10,
-        _setup.recent_blockhashes,
-    );
-
-    let _ = _setup
-        .banks_client
-        .process_transaction(controller_global_tx.clone())
-        .await;
-    //
-    let _ = _setup
-        .banks_client
-        .process_transaction(init_controller_tx.clone())
-        .await
-        .err();
-    let result = _setup
-        .banks_client
-        .process_transaction(create_index_tx)
-        .await;
+    let ProcessCreateIndexResult {
+        index_id,
+        controller_pda,
+        result,
+    } = process_create_index(controller_id, manager.pubkey(), &_setup).await;
 
     let index_pda = find_index_address(&program_id, &controller_pda, 1).0;
 
@@ -126,36 +84,4 @@ async fn test_create_index() {
     assert_eq!(index.owner, _setup.payer.pubkey());
     assert!(!result.is_err());
     assert_eq!(controller.get_next_index_id(), 2);
-
-    //        if let Some(error) = result {
-    //         match error {
-    //             BanksClientError::Io(e) => {
-    //                 println!("io error");
-    //             }
-    //             BanksClientError::RpcError(e) => {
-    //                 println!(" RpcError {:?}", e);
-    //             }
-    //             BanksClientError::TransactionError(tx_error) => {
-    //                 match tx_error {
-    //                     TransactionError::InstructionError(n, ix_error) => {
-    //                         match ix_error {
-    //                             InstructionError::Custom(code) => {
-    //                                 match code {
-    //                                     7 => {
-    //                                         println!("hello controller roor");
-    //                                         //  return Err(ProtocolError::IncorrectControllerAccount.into()); // Return error
-    //                                     }
-
-    //                                     _ => {}
-    //                                 }
-    //                             }
-    //                             _ => {}
-    //                         }
-    //                     }
-    //                     _ => {}
-    //                 }
-    //             }
-    //             _ => {}
-    //         }
-    //     }
 }

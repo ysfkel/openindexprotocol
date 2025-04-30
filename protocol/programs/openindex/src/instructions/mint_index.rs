@@ -128,10 +128,10 @@ pub fn mint_index(
             amount,
         )?,
         &[
+            token_program_account.clone(),
             mint_account.clone(),
             token_account.clone(),
             mint_authority_account.clone(),
-            token_program_account.clone(),
         ],
         &[&[
             INDEX_MINT_AUTHORITY_SEED,

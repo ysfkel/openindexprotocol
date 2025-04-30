@@ -1,6 +1,6 @@
 use solana_sdk::{
     pubkey::Pubkey,
-    signature::{Keypair, read_keypair_file},
+    signature::{read_keypair_file, Keypair},
     signer::Signer,
 };
 use std::{

@@ -1,21 +1,16 @@
-use crate::{setup, Setup};
+use crate::{process_init_protocol, setup, ProcessInitProtocolResult, Setup};
 use borsh::BorshDeserialize;
 use openindex::state::Protocol;
-use openindex_sdk::openindex::{pda::find_protocol_address, transaction::init_protocol_transaction};
+use openindex_sdk::openindex::{
+    pda::find_protocol_address, transaction::init_protocol_transaction,
+};
 use {solana_program_test::tokio, solana_sdk::signature::Signer};
 
 #[tokio::test]
 async fn test_init_protocol() {
     let _setup: Setup = setup().await;
 
-    let transaction =
-        init_protocol_transaction(&_setup.payer, _setup.program_id, _setup.recent_blockhashes);
-
-    let result = _setup
-        .banks_client
-        .process_transaction(transaction.clone())
-        .await;
-    assert!(result.is_err() == false);
+    let ProcessInitProtocolResult { result } = process_init_protocol(&_setup).await;
 
     let protocol_pda = find_protocol_address(&_setup.program_id).0;
 
@@ -26,6 +21,7 @@ async fn test_init_protocol() {
         .unwrap()
         .unwrap();
     let protocol = Protocol::try_from_slice(&protocol_account.data).unwrap();
+    assert!(result.is_err() == false);
     assert_eq!(protocol.initialized, true);
     assert_eq!(protocol.next_controller_id, 1);
     assert_eq!(protocol.owner, _setup.payer.pubkey());

@@ -186,7 +186,6 @@ pub fn add_index_components_instruction(
     }
 }
 
-
 #[allow(clippy::too_many_arguments)]
 pub fn add_index_components_instruction_with_dynamic_accounts(
     program_id: Pubkey,
