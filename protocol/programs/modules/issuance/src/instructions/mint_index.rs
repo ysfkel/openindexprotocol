@@ -1,4 +1,5 @@
 use borsh::{BorshDeserialize, BorshSerialize};
+use openindex::state::Module;
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint::{entrypoint, ProgramResult},
@@ -52,12 +53,6 @@ pub fn mint_index(
         "caller must be signer"
     );
 
-    // require!(
-    //     module_account.owner == program_id,
-    //     IssuanceError::UnknownModuleAccount.into(),
-    //     "program does not own module"
-    // );
-
     let (signer_pda, bump) = Pubkey::find_program_address(&[program_id.as_ref()], program_id);
     require!(
         *module_account.key == signer_pda,
@@ -79,14 +74,21 @@ pub fn mint_index(
     // TODO validate open_index_account, controller_account
 
     //Get Index Mints
-    let (index_mints_pda, index_mints_bump) = Pubkey::find_program_address(
+    let index_mints_data = IndexMints::try_from_slice(&index_mints_account.data.borrow_mut()[..])
+        .map_err(|_| {
+        msg!("Failed to deserialize index_mints_account data ");
+        ProgramError::InvalidAccountData
+    })?;
+
+    let index_mints_pda = Pubkey::create_program_address(
         &[
             INDEX_MINTS_DATA_SEED,
             controller_account.key.as_ref(),
             &index_id.to_le_bytes(),
+            &[index_mints_data.bump],
         ],
         open_index_account.key,
-    );
+    )?;
 
     require!(
         *index_mints_account.key == index_mints_pda,
@@ -126,15 +128,23 @@ pub fn mint_index(
             "invalid mint account"
         );
 
+        let component = Component::try_from_slice(&component_account.data.borrow_mut()[..])
+            .map_err(|_| {
+                msg!("Failed to deserialize component data ");
+                ProgramError::InvalidAccountData
+            })?;
+
         // Get component
-        let (component_pda, component_bump) = Pubkey::find_program_address(
+        let component_pda = Pubkey::create_program_address(
             &[
                 COMPONENT_SEED,
                 index_account.key.as_ref(),
                 component_mint_account.key.as_ref(),
+                &[component.bump],
             ],
             open_index_account.key,
-        );
+        )?;
+
         require!(
             *component_account.key == component_pda,
             IssuanceError::IncorrectComponentAccount.into(),
@@ -152,11 +162,6 @@ pub fn mint_index(
             IssuanceError::IncorrectVaultATA.into(),
             "incorrect vault ata"
         );
-        let component = Component::try_from_slice(&component_account.data.borrow_mut()[..])
-            .map_err(|_| {
-                msg!("Failed to deserialize component data ");
-                ProgramError::InvalidAccountData
-            })?;
 
         require!(
             component.is_initialized(),

@@ -147,8 +147,8 @@ async fn test_module_issuance_mint_index_transaction() {
 
     let result = _setup.banks_client.process_transaction(mint_index_tx).await;
     assert!(result.is_err() == false);
-    
-    // verify that components token amounts were transfered to each component token ata vault 
+
+    // verify that components token amounts were transfered to each component token ata vault
     for (index, mint) in mints.iter().enumerate() {
         let index_account = find_index_address(&open_index_program_id, &controller_pda, index_id).0;
         let component_pda = find_component_address(&open_index_program_id, &index_account, mint).0;
@@ -163,30 +163,32 @@ async fn test_module_issuance_mint_index_transaction() {
             .await
             .unwrap()
             .unwrap();
-        
+
         let account = _setup
             .banks_client
             .get_account(vault_ata)
             .await
             .unwrap()
             .unwrap();
-        
+
         let component = Component::try_from_slice(&component_account.data).unwrap();
         let token_account = TokenAccount::unpack(&account.data).unwrap();
         let amount = component.uints * mint_amount;
-        println!("index vault token accout.amoun {:?} == tx amount {:?}",token_account.amount, amount);
+        println!(
+            "index vault token accout.amoun {:?} == tx amount {:?}",
+            token_account.amount, amount
+        );
         assert_eq!(token_account.amount, amount);
     }
 
     // verify user index token balance
     let account = _setup
-            .banks_client
-            .get_account(token_account)
-            .await
-            .unwrap()
-            .unwrap();
+        .banks_client
+        .get_account(token_account)
+        .await
+        .unwrap()
+        .unwrap();
 
     let token_account = TokenAccount::unpack(&account.data).unwrap();
-     assert_eq!(token_account.amount, mint_amount);
-
+    assert_eq!(token_account.amount, mint_amount);
 }
