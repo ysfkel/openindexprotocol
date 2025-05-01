@@ -1,10 +1,10 @@
-use crate::state::{Component, IndexMints};
 use borsh::BorshDeserialize;
 use openindex_sdk::{
     openindex::{
         error::ProtocolError,
         seeds::{
             COMPONENT_SEED, COMPONENT_VAULT_SEED, INDEX_MINTS_DATA_SEED, INDEX_MINT_AUTHORITY_SEED,
+            MODULE_SEED,
         },
     },
     require,
@@ -14,19 +14,20 @@ use solana_program::{
     entrypoint::ProgramResult,
     program::{invoke, invoke_signed},
     program_error::ProgramError,
-    program_pack::IsInitialized,
     pubkey::Pubkey,
 };
-use spl_token::instruction::{mint_to, transfer};
+use spl_token::instruction::{burn, burn_checked, transfer};
 
-pub fn mint(
+use crate::state::{Component, IndexMints, Protocol};
+
+pub fn process_redeem(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
     index_id: u64,
     amount: u64,
 ) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
-    let caller_account = next_account_info(accounts_iter)?;
+    let caller = next_account_info(accounts_iter)?;
     let controller_account = next_account_info(accounts_iter)?;
     let mint_account = next_account_info(accounts_iter)?;
     let mint_authority_account = next_account_info(accounts_iter)?;
@@ -36,7 +37,7 @@ pub fn mint(
     let token_program_account = next_account_info(accounts_iter)?;
 
     require!(
-        caller_account.is_signer,
+        caller.is_signer == true,
         ProgramError::MissingRequiredSignature
     );
 
@@ -105,6 +106,11 @@ pub fn mint(
             ProgramError::IncorrectProgramId
         );
 
+        require!(
+            component_mint_account.key == mint,
+            ProtocolError::InvalidMintAccount.into()
+        );
+
         let component = Component::try_from_slice(&component_account.data.borrow_mut()[..])
             .map_err(|_| ProtocolError::InvalidComponentData)?;
 
@@ -132,11 +138,6 @@ pub fn mint(
             ProtocolError::IncorrectVaultATA.into()
         );
 
-        require!(
-            component.is_initialized(),
-            ProtocolError::ComponentNotInitialized.into()
-        );
-
         let expected_vault_pda = Pubkey::create_program_address(
             &[
                 COMPONENT_VAULT_SEED,
@@ -156,46 +157,45 @@ pub fn mint(
             .checked_mul(component.uints)
             .ok_or(ProgramError::ArithmeticOverflow)?;
 
-        invoke(
+        invoke_signed(
             &transfer(
                 token_program_account.key,
-                token_account.key,
                 vault_ata.key,
-                caller_account.key,
+                token_account.key,
+                vault_pda.key,
                 &[],
                 component_amount,
             )?,
             &[
-                caller_account.clone(),
-                token_account.clone(),
-                vault_ata.clone(),
                 token_program_account.clone(),
+                vault_ata.clone(),
+                token_account.clone(),
+                vault_pda.clone(),
             ],
+            &[&[
+                COMPONENT_VAULT_SEED,
+                index_account.key.as_ref(),
+                component_mint_account.key.as_ref(),
+                &[component.vault_bump],
+            ]],
         )?;
     }
 
-    invoke_signed(
-        &mint_to(
+    invoke(
+        &burn(
             token_program_account.key,
-            mint_account.key,
             token_account.key,
-            &mint_authority_pda,
+            mint_account.key,
+            &caller.key,
             &[],
             amount,
         )?,
         &[
             token_program_account.clone(),
-            mint_account.clone(),
             token_account.clone(),
-            mint_authority_account.clone(),
+            mint_account.clone(),
+            caller.clone(),
         ],
-        &[&[
-            INDEX_MINT_AUTHORITY_SEED,
-            controller_account.key.as_ref(),
-            &index_id.to_le_bytes(),
-            &[mint_authority_bump],
-        ]],
     )?;
-
     Ok(())
 }

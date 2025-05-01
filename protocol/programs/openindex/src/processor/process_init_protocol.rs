@@ -15,7 +15,7 @@ use solana_program::{
     system_instruction, system_program,
     sysvar::Sysvar,
 };
-pub fn init_protocol(program_id: Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
+pub fn process_init_protocol(program_id: Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
     let owner = next_account_info(accounts_iter)?;
     let protocol_account = next_account_info(accounts_iter)?;

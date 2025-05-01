@@ -20,7 +20,7 @@ use solana_program::{
 };
 use spl_associated_token_account::instruction::create_associated_token_account;
 
-pub fn add_index_components(
+pub fn process_add_index_components(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
     mints: Vec<Pubkey>,

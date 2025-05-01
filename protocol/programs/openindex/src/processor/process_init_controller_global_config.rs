@@ -18,7 +18,7 @@ use solana_program::{
     system_instruction, system_program,
     sysvar::Sysvar,
 };
-pub fn init_controller_global_config(
+pub fn process_init_controller_global_config(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
     max_index_components: u32,

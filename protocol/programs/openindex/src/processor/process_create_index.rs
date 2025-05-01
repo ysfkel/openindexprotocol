@@ -20,7 +20,7 @@ use solana_program::{
 };
 use spl_token::{instruction::initialize_mint2, state::Mint};
 
-pub fn create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
+pub fn process_create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
     let owner = next_account_info(accounts_iter)?;
     let manager = next_account_info(accounts_iter)?;
