@@ -2,7 +2,6 @@ use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint::ProgramResult,
-    msg,
     program::invoke_signed,
     program_error::ProgramError,
     program_pack::IsInitialized,
@@ -12,11 +11,14 @@ use solana_program::{
     sysvar::Sysvar,
 };
 
-use crate::{
-    error::ProtocolError,
-    state::{Controller, Protocol},
+use crate::state::{Controller, Protocol};
+use openindex_sdk::{
+    openindex::{
+        error::ProtocolError,
+        seeds::{CONTROLLER_SEED, PROTOCOL_SEED},
+    },
+    require,
 };
-use openindex_sdk::openindex::seeds::{CONTROLLER_SEED, PROTOCOL_SEED};
 pub fn init_controller(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
     let owner = next_account_info(accounts_iter)?;
@@ -24,31 +26,33 @@ pub fn init_controller(program_id: &Pubkey, accounts: &[AccountInfo]) -> Program
     let controller_account = next_account_info(accounts_iter)?;
     let system_program = next_account_info(accounts_iter)?;
 
-    if !owner.is_signer {
-        return Err(ProgramError::MissingRequiredSignature);
-    }
+    require!(owner.is_signer, ProgramError::MissingRequiredSignature);
 
-    if protocol_account.owner != program_id {
-        return Err(ProtocolError::UnknownProtocolAccount.into());
-    }
+    require!(
+        protocol_account.owner == program_id,
+        ProtocolError::UnknownProtocolAccount.into()
+    );
 
-    if controller_account.lamports() > 0 {
-        return Err(ProgramError::AccountAlreadyInitialized);
-    }
+    require!(
+        controller_account.lamports() == 0,
+        ProgramError::AccountAlreadyInitialized
+    );
 
     let mut protocol: Protocol = Protocol::try_from_slice(&protocol_account.data.borrow())
-        .map_err(|_| ProgramError::InvalidAccountData)?;
+        .map_err(|_| ProtocolError::InvalidProtocolAccountData)?;
 
-    if !protocol.is_initialized() {
-        return Err(ProtocolError::ProtocolNotInitialized.into());
-    }
+    require!(
+        protocol.is_initialized(),
+        ProtocolError::ProtocolNotInitialized.into()
+    );
 
     let protocol_pda =
         Pubkey::create_program_address(&[&PROTOCOL_SEED, &[protocol.bump]], program_id)?;
 
-    if *protocol_account.key != protocol_pda {
-        return Err(ProtocolError::IncorrectProtocolAccount.into());
-    }
+    require!(
+        *protocol_account.key == protocol_pda,
+        ProtocolError::IncorrectProtocolAccount.into()
+    );
 
     let controller_id = protocol.get_next_controller_id();
 
@@ -57,23 +61,14 @@ pub fn init_controller(program_id: &Pubkey, accounts: &[AccountInfo]) -> Program
         program_id,
     );
 
-    msg!(
-        "Controller ID: {}, bump: {}",
-        controller_id,
-        controller_bump
+    require!(
+        *controller_account.key == controller_pda,
+        ProtocolError::IncorrectControllerAccount.into()
     );
-
-    if *controller_account.key != controller_pda {
-        return Err(ProtocolError::IncorrectControllerAccount.into());
-    }
 
     let rent = Rent::get()?;
     let lamports = rent.minimum_balance(Controller::LEN);
 
-    msg!(
-        "invoking system_instruction::create_account -> controller {:?}",
-        controller_account.key
-    );
     invoke_signed(
         &system_instruction::create_account(
             &owner.key,
@@ -94,14 +89,11 @@ pub fn init_controller(program_id: &Pubkey, accounts: &[AccountInfo]) -> Program
         ]],
     )?;
 
-    // initialize controller
     let controller = Controller::new(controller_id, owner.key.clone(), controller_bump);
     controller.serialize(&mut &mut controller_account.data.borrow_mut()[..])?;
 
-    //update next controller_id
     protocol.generate_next_controller_id();
     protocol.serialize(&mut &mut protocol_account.data.borrow_mut()[..])?;
 
-    msg!("controller initialized {:?}", controller_account.key);
     Ok(())
 }

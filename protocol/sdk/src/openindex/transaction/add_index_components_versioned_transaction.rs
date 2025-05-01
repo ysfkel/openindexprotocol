@@ -1,20 +1,15 @@
 use crate::openindex::{
-    instruction::{
-        add_index_components_instruction, add_index_components_instruction_with_dynamic_accounts,
-    },
+    instruction::add_index_components_instruction,
     pda::{
-        find_component_address, find_component_vault_address, find_controller_address,
-        find_controller_global_config_address, find_index_address, find_index_mints_data_address,
+        find_controller_address, find_controller_global_config_address, find_index_address,
+        find_index_mints_data_address,
     },
 };
-use solana_program::example_mocks::solana_sdk::system_program;
 use solana_sdk::{
     hash::Hash,
-    instruction::Instruction,
     message::{v0::Message as V0Message, AddressLookupTableAccount, VersionedMessage},
-    transaction::{Transaction, VersionedTransaction},
+    transaction::VersionedTransaction,
 };
-use spl_associated_token_account::get_associated_token_address_with_program_id;
 
 use {
     solana_program::pubkey::Pubkey,

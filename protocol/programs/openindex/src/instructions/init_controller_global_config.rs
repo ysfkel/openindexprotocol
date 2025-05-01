@@ -1,8 +1,15 @@
+use crate::state::{ControllerGlobalConfig, Protocol};
 use borsh::{BorshDeserialize, BorshSerialize};
+use openindex_sdk::{
+    openindex::{
+        error::ProtocolError,
+        seeds::{CONTROLLER_GLOBAL_CONFIG_SEED, PROTOCOL_SEED},
+    },
+    require,
+};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint::ProgramResult,
-    msg,
     program::invoke_signed,
     program_error::ProgramError,
     program_pack::IsInitialized,
@@ -11,20 +18,11 @@ use solana_program::{
     system_instruction, system_program,
     sysvar::Sysvar,
 };
-
-use crate::{
-    error::ProtocolError,
-    require,
-    state::{ControllerGlobalConfig, Protocol},
-};
-use openindex_sdk::openindex::seeds::{CONTROLLER_GLOBAL_CONFIG_SEED, PROTOCOL_SEED};
 pub fn init_controller_global_config(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
     max_index_components: u32,
 ) -> ProgramResult {
-    msg!("initializing controlelr global config");
-
     if max_index_components == 0 {
         return Err(ProtocolError::InvalidMaxIndexComponents.into());
     }
@@ -35,52 +33,46 @@ pub fn init_controller_global_config(
     let controller_global_config_account = next_account_info(accounts_iter)?;
     let system_program_account = next_account_info(accounts_iter)?;
 
-    if !owner.is_signer {
-        return Err(ProgramError::MissingRequiredSignature);
-    }
+    require!(owner.is_signer, ProgramError::MissingRequiredSignature);
 
-    if controller_global_config_account.lamports() > 0 {
-        return Err(ProgramError::AccountAlreadyInitialized);
-    }
+    require!(
+        controller_global_config_account.lamports() == 0,
+        ProgramError::AccountAlreadyInitialized
+    );
 
     require!(
         protocol_account.owner == program_id,
-        ProtocolError::UnknownProtocolAccount.into(),
-        "Unknown protocol account"
+        ProtocolError::UnknownProtocolAccount.into()
     );
 
     let protocol: Protocol = Protocol::try_from_slice(&protocol_account.data.borrow())
-        .map_err(|_| ProgramError::InvalidAccountData)?;
+        .map_err(|_| ProtocolError::InvalidProtocolAccountData)?;
 
-    if !protocol.is_initialized() {
-        return Err(ProtocolError::ProtocolNotInitialized.into());
-    }
+    require!(
+        protocol.is_initialized(),
+        ProtocolError::ProtocolNotInitialized.into()
+    );
 
     let protocol_pda =
         Pubkey::create_program_address(&[&PROTOCOL_SEED, &[protocol.bump]], &program_id)?;
 
-    if *protocol_account.key != protocol_pda {
-        return Err(ProtocolError::IncorrectProtocolAccount.into());
-    }
+    require!(
+        *protocol_account.key == protocol_pda,
+        ProtocolError::IncorrectProtocolAccount.into()
+    );
 
     require!(
         *owner.key == protocol.owner,
-        ProtocolError::OnlyProtocolOwner.into(),
-        "only protocol owner can execute this instruction"
+        ProtocolError::OnlyProtocolOwner.into()
     );
 
     let (controller_global_config_pda, controller_global_conifg_bump) =
         Pubkey::find_program_address(&[CONTROLLER_GLOBAL_CONFIG_SEED], &program_id);
 
-    if *controller_global_config_account.key != controller_global_config_pda {
-        return Err(ProtocolError::IncorrectControllerGlobalConfigAccount.into());
-    }
-
-    msg!(
-        "controller global config bump: {}",
-        controller_global_conifg_bump
+    require!(
+        *controller_global_config_account.key == controller_global_config_pda,
+        ProtocolError::IncorrectControllerGlobalConfigAccount.into()
     );
-    msg!("max index components: {}", max_index_components);
 
     let rent = Rent::get()?;
     let lamports = rent.minimum_balance(ControllerGlobalConfig::LEN);
@@ -109,9 +101,5 @@ pub fn init_controller_global_config(
     controller_global_conifg
         .serialize(&mut &mut controller_global_config_account.data.borrow_mut()[..])?;
 
-    msg!(
-        "controller global config initialized {:?}",
-        controller_global_config_account.key
-    );
     Ok(())
 }

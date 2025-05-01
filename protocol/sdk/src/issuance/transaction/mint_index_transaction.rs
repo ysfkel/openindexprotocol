@@ -1,22 +1,12 @@
 use crate::{
     issuance::instruction::mint_index_instruction_with_dynamic_accounts,
-    openindex::{
-        instruction::add_index_components_instruction_with_dynamic_accounts,
-        pda::{
-            find_component_address, find_component_vault_address, find_controller_address,
-            find_controller_global_config_address, find_index_address, find_index_mint_address,
-            find_index_mint_authority_address, find_index_mints_data_address,
-            find_module_signer_address, find_registered_module_address,
-        },
+    openindex::pda::{
+        find_controller_address, find_index_address, find_index_mint_address,
+        find_index_mint_authority_address, find_index_mints_data_address,
+        find_module_signer_address, find_registered_module_address,
     },
 };
-use solana_sdk::{
-    hash::Hash,
-    instruction::Instruction,
-    transaction::{Transaction, VersionedTransaction},
-};
-use spl_associated_token_account::get_associated_token_address_with_program_id;
-
+use solana_sdk::{hash::Hash, transaction::Transaction};
 use {
     solana_program::pubkey::Pubkey,
     solana_sdk::signature::{Keypair, Signer},

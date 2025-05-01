@@ -1,5 +1,3 @@
-use core::num;
-
 use crate::{
     process_init_controller, process_init_protocol, setup, ProcessInitControllerResult,
     ProcessInitProtocolResult, Setup,
@@ -7,10 +5,7 @@ use crate::{
 use borsh::BorshDeserialize;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
-use openindex::{
-    error::ProtocolError,
-    state::{Controller, Protocol},
-};
+use openindex::state::{Controller, Protocol};
 
 use openindex_sdk::openindex::{
     pda::{find_controller_address, find_protocol_address},

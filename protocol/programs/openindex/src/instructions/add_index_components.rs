@@ -1,22 +1,21 @@
-use crate::{
-    error::ProtocolError,
-    require,
-    state::{Component, Controller, ControllerGlobalConfig, Index, IndexMints, Protocol},
-};
+use crate::state::{Component, Controller, ControllerGlobalConfig, Index, IndexMints};
 use borsh::{BorshDeserialize, BorshSerialize};
-use openindex_sdk::openindex::seeds::{
-    COMPONENT_SEED, COMPONENT_VAULT_SEED, INDEX_MINTS_DATA_SEED, INDEX_SEED,
+use openindex_sdk::{
+    openindex::{
+        error::ProtocolError,
+        seeds::{COMPONENT_SEED, COMPONENT_VAULT_SEED, INDEX_MINTS_DATA_SEED, INDEX_SEED},
+    },
+    require,
 };
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint::ProgramResult,
-    msg,
     program::invoke_signed,
     program_error::ProgramError,
     program_pack::{IsInitialized, Pack},
     pubkey::Pubkey,
     rent::Rent,
-    system_instruction, system_program,
+    system_instruction,
     sysvar::Sysvar,
 };
 use spl_associated_token_account::instruction::create_associated_token_account;
@@ -37,46 +36,36 @@ pub fn add_index_components(
     let associated_token_program_account = next_account_info(accounts_iter)?;
     let token_program_account = next_account_info(accounts_iter)?;
 
-    require!(
-        owner.is_signer,
-        ProgramError::MissingRequiredSignature,
-        "owner must be signer"
-    );
+    require!(owner.is_signer, ProgramError::MissingRequiredSignature);
 
     require!(
         index_account.owner == program_id,
-        ProtocolError::UnknownIndexAccount.into(),
-        "inalid index account"
+        ProtocolError::UnknownIndexAccount.into()
     );
 
     require!(
         controller_global_config_account.owner == program_id,
-        ProtocolError::UnknownControllerGlobalConfigAccount.into(),
-        "invalid controller global config account"
+        ProtocolError::UnknownControllerGlobalConfigAccount.into()
     );
 
     require!(
         controller_account.owner == program_id,
-        ProtocolError::UnknownControllerAccount.into(),
-        "invalid controller account"
+        ProtocolError::UnknownControllerAccount.into()
     );
 
     let mut controller = Controller::try_from_slice(&controller_account.data.borrow())?;
     require!(
         controller.owner == *owner.key,
-        ProtocolError::OnlyControllerOwner.into(),
-        "only controller owner can execute this instruction"
+        ProtocolError::OnlyControllerOwner.into()
     );
 
     let controller_global_config =
         ControllerGlobalConfig::try_from_slice(&controller_global_config_account.data.borrow())?;
     require!(
         controller_global_config.is_initialized(),
-        ProtocolError::ControllerGlobalConfigNotInitialized.into(),
-        "controller global config not initialized"
+        ProtocolError::ControllerGlobalConfigNotInitialized.into()
     );
 
-    // TODO! REMOVE
     let index_data = Index::try_from_slice(&index_account.data.borrow())?;
     let index_id = index_data.id;
 
@@ -92,16 +81,14 @@ pub fn add_index_components(
 
     require!(
         *index_account.key == index_pda,
-        ProtocolError::IncorrectIndexAccount.into(),
-        "incorrect index account"
+        ProtocolError::IncorrectIndexAccount.into()
     );
 
     let index_data: Index = Index::try_from_slice(&index_account.data.borrow())?;
 
     require!(
         index_data.is_initialized(),
-        ProtocolError::IndexNotInitialized.into(),
-        "index not initialized"
+        ProtocolError::IndexNotInitialized.into()
     );
 
     let (index_mints_pda, index_mints_bump) = Pubkey::find_program_address(
@@ -115,27 +102,20 @@ pub fn add_index_components(
 
     require!(
         *index_mints_account.key == index_mints_pda,
-        ProtocolError::IncorrectIndexMintsAccount.into(),
-        "incorrect index mints account"
+        ProtocolError::IncorrectIndexMintsAccount.into()
     );
 
     let mints_len = mints.len();
-    require!(
-        mints_len > 0,
-        ProtocolError::NoMintsProvided.into(),
-        "no mints provided"
-    );
+    require!(mints_len > 0, ProtocolError::NoMintsProvided.into());
 
     require!(
         mints_len <= controller_global_config.max_index_components as usize,
-        ProtocolError::MaxIndexComponentsExceeded.into(),
-        "max index components exceeded"
+        ProtocolError::MaxIndexComponentsExceeded.into()
     );
 
     require!(
         mints_len == amounts.len(),
-        ProtocolError::MintsAmountsLenMismatch.into(),
-        "mints and amounts len mismatch"
+        ProtocolError::MintsAmountsLenMismatch.into()
     );
 
     let space = IndexMints::calc_len(mints_len);
@@ -173,20 +153,18 @@ pub fn add_index_components(
 
         require!(
             mint_account.owner == token_program_account.key,
-            ProgramError::IncorrectProgramId,
-            "token program does not own mint account"
+            ProgramError::IncorrectProgramId
         );
 
         require!(
             mint_account.key == mint,
-            ProtocolError::InvalidMintAccount.into(),
-            "invalid mint account"
+            ProtocolError::InvalidMintAccount.into()
         );
 
         let amount = amounts
             .get(index)
             .ok_or(ProtocolError::ComponentAmountError)?;
-        /// Get component PDA
+
         let (component_pda, component_bump) = Pubkey::find_program_address(
             &[
                 COMPONENT_SEED,
@@ -197,10 +175,9 @@ pub fn add_index_components(
         );
         require!(
             *component_account.key == component_pda,
-            ProtocolError::IncorrectComponentAccount.into(),
-            "incorrect component account"
+            ProtocolError::IncorrectComponentAccount.into()
         );
-        /// Get Vault PDA
+
         let (expected_vault_pda, vault_bump) = Pubkey::find_program_address(
             &[
                 COMPONENT_VAULT_SEED,
@@ -211,8 +188,7 @@ pub fn add_index_components(
         );
         require!(
             *vault_pda.key == expected_vault_pda,
-            ProtocolError::IncorrectVaultAccount.into(),
-            "incorrect vault account"
+            ProtocolError::IncorrectVaultAccount.into()
         );
 
         let expected_vault_ata = spl_associated_token_account::get_associated_token_address(
@@ -221,11 +197,10 @@ pub fn add_index_components(
         );
         require!(
             *vault_ata.key == expected_vault_ata,
-            ProtocolError::IncorrectVaultATA.into(),
-            "incorrect vault ata"
+            ProtocolError::IncorrectVaultATA.into()
         );
 
-        /// create component account
+        // create component account
         invoke_signed(
             &system_instruction::create_account(
                 &owner.key,
@@ -247,7 +222,7 @@ pub fn add_index_components(
             ]],
         )?;
 
-        /// Initialize component data
+        // Initialize component data
         let component = Component::new(
             *amount,
             mint_account.key.clone(),
@@ -255,7 +230,7 @@ pub fn add_index_components(
             vault_bump,
         );
         component.serialize(&mut &mut component_account.data.borrow_mut()[..])?;
-        /// create vault associated token account
+        // create vault associated token account
         invoke_signed(
             &create_associated_token_account(
                 owner.key,
@@ -282,9 +257,7 @@ pub fn add_index_components(
     }
 
     let index_mints = IndexMints::new(mints, index_mints_bump);
-
     index_mints.serialize(&mut &mut index_mints_account.data.borrow_mut()[..])?;
-    msg!("index_mints initialized {:?}", index_mints_account.key);
 
     Ok(())
 }

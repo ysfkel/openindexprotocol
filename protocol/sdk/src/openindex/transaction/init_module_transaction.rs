@@ -2,7 +2,7 @@ use crate::openindex::{
     instruction::init_module_instruction,
     pda::{find_module_signer_address, find_protocol_address, find_registered_module_address},
 };
-use solana_sdk::{hash::Hash, instruction::Instruction, system_program, transaction::Transaction};
+use solana_sdk::{hash::Hash, transaction::Transaction};
 
 use {
     solana_program::pubkey::Pubkey,

@@ -9,8 +9,9 @@ mod init_controller_global_config_transaction;
 mod init_controller_transaction;
 mod init_module_transaction;
 mod init_protocol_transaction;
-mod issuance_mint_index_transaction;
 mod mint_to_transaction;
+mod mint_transaction;
+mod redeem_transaction;
 
 pub use add_index_components_transaction::*;
 pub use add_index_components_versioned_transaction::*;
@@ -23,5 +24,6 @@ pub use init_controller_global_config_transaction::*;
 pub use init_controller_transaction::*;
 pub use init_module_transaction::*;
 pub use init_protocol_transaction::*;
-pub use issuance_mint_index_transaction::*;
 pub use mint_to_transaction::*;
+pub use mint_transaction::*;
+pub use redeem_transaction::*;

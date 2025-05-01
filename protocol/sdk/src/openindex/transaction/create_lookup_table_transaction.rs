@@ -1,9 +1,6 @@
 use solana_sdk::{
-    address_lookup_table::instruction::{
-        create_lookup_table, derive_lookup_table_address, extend_lookup_table,
-    },
+    address_lookup_table::instruction::{create_lookup_table, extend_lookup_table},
     hash::Hash,
-    instruction::Instruction,
     pubkey::Pubkey,
     signature::Keypair,
     signer::Signer,
@@ -23,7 +20,7 @@ pub fn create_lookup_table_transaction(
     addresses: Vec<Pubkey>,
 ) -> Result<Transaction, TransactionBuilderError> {
     // Each lookup table can store up to 256 addresses
-    if (addresses.len() > 256) {
+    if addresses.len() > 256 {
         // return err
     }
 

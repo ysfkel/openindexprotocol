@@ -5,9 +5,7 @@ use crate::openindex::{
         find_index_mint_address,
     },
 };
-use solana_sdk::{
-    hash::Hash, instruction::Instruction, signature::Keypair, transaction::Transaction,
-};
+use solana_sdk::{hash::Hash, signature::Keypair, transaction::Transaction};
 use {solana_program::pubkey::Pubkey, solana_sdk::signature::Signer};
 
 pub fn create_index_transaction(

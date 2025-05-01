@@ -2,9 +2,7 @@ use crate::openindex::{
     instruction::init_controller_global_config_instruction,
     pda::{find_controller_global_config_address, find_protocol_address},
 };
-use solana_sdk::{
-    hash::Hash, instruction::Instruction, signature::Keypair, transaction::Transaction,
-};
+use solana_sdk::{hash::Hash, signature::Keypair, transaction::Transaction};
 
 use {solana_program::pubkey::Pubkey, solana_sdk::signature::Signer};
 

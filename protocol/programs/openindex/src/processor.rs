@@ -1,6 +1,6 @@
 use crate::instructions::{
     add_index_components, create_index, init_controller, init_controller_global_config,
-    init_module, init_protocol, mint_index,
+    init_module, init_protocol, mint, redeem,
 };
 use borsh::BorshDeserialize;
 use openindex_sdk::openindex::instruction::ProtocolInstruction as Instruction;
@@ -28,9 +28,8 @@ pub fn process_instruction(
         Instruction::AddIndexComponents { amounts, mints } => {
             add_index_components(program_id, accounts, mints, amounts)?
         }
-        Instruction::Mint { index_id, amount } => {
-            mint_index(program_id, accounts, index_id, amount)?
-        }
+        Instruction::Mint { index_id, amount } => mint(program_id, accounts, index_id, amount)?,
+        Instruction::Redeem { index_id, amount } => redeem(program_id, accounts, index_id, amount)?,
         Instruction::InitModule => init_module(program_id, accounts)?,
         Instruction::InitController => init_controller(program_id, accounts)?,
         _ => Err(ProgramError::InvalidInstructionData)?,

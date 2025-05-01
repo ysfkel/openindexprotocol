@@ -1,17 +1,15 @@
-use crate::{
-    error::ProtocolError,
-    instructions::mint_index,
-    require,
-    state::{Component, Controller, ControllerGlobalConfig, Index, Protocol},
-};
+use crate::state::{Controller, ControllerGlobalConfig, Index};
 use borsh::{BorshDeserialize, BorshSerialize};
-use openindex_sdk::openindex::seeds::{
-    COMPONENT_SEED, INDEX_MINT_AUTHORITY_SEED, INDEX_MINT_SEED, INDEX_SEED,
+use openindex_sdk::{
+    openindex::{
+        error::ProtocolError,
+        seeds::{INDEX_MINT_AUTHORITY_SEED, INDEX_MINT_SEED, INDEX_SEED},
+    },
+    require,
 };
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint::ProgramResult,
-    msg,
     program::invoke_signed,
     program_error::ProgramError,
     program_pack::{IsInitialized, Pack},
@@ -20,11 +18,7 @@ use solana_program::{
     system_instruction, system_program,
     sysvar::Sysvar,
 };
-use spl_associated_token_account::instruction::create_associated_token_account;
-use spl_token::{
-    instruction::{initialize_mint, initialize_mint2},
-    state::Mint,
-};
+use spl_token::{instruction::initialize_mint2, state::Mint};
 
 pub fn create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
@@ -37,49 +31,38 @@ pub fn create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramRes
     let system_program_account = next_account_info(accounts_iter)?;
     let token_program_account = next_account_info(accounts_iter)?;
 
-    require!(
-        owner.is_signer,
-        ProgramError::MissingRequiredSignature,
-        "owner must be signer"
-    );
+    require!(owner.is_signer, ProgramError::MissingRequiredSignature);
     require!(
         index_account.lamports() == 0,
-        ProgramError::AccountAlreadyInitialized,
-        "index already initialized"
+        ProgramError::AccountAlreadyInitialized
     );
 
     require!(
         mint_account.lamports() == 0,
-        ProgramError::AccountAlreadyInitialized,
-        "mint already initialized"
+        ProgramError::AccountAlreadyInitialized
     );
 
     require!(
         controller_global_config_account.owner == program_id,
-        ProtocolError::UnknownControllerGlobalConfigAccount.into(),
-        "program does not own controller global config account"
+        ProtocolError::UnknownControllerGlobalConfigAccount.into()
     );
 
     require!(
         controller_account.owner == program_id,
-        ProtocolError::UnknownControllerAccount.into(),
-        "program does not own controller account"
+        ProtocolError::UnknownControllerAccount.into()
     );
 
     let mut controller = Controller::try_from_slice(&controller_account.data.borrow())?;
     require!(
         controller.owner == *owner.key,
-        ProtocolError::OnlyControllerOwner.into(),
-        "only controller owner can execute this instruction"
+        ProtocolError::OnlyControllerOwner.into()
     );
 
-    ///
     let controller_global_config =
         ControllerGlobalConfig::try_from_slice(&controller_global_config_account.data.borrow())?;
     require!(
         controller_global_config.is_initialized(),
-        ProtocolError::ControllerGlobalConfigNotInitialized.into(),
-        "controller global config not initialized"
+        ProtocolError::ControllerGlobalConfigNotInitialized.into()
     );
 
     let index_id = controller.get_next_index_id();
@@ -94,8 +77,7 @@ pub fn create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramRes
 
     require!(
         *index_account.key == index_pda,
-        ProtocolError::IncorrectIndexAccount.into(),
-        "incorrect index account"
+        ProtocolError::IncorrectIndexAccount.into()
     );
 
     let (mint_pda, mint_bump) = Pubkey::find_program_address(
@@ -109,19 +91,17 @@ pub fn create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramRes
 
     require!(
         *mint_account.key == mint_pda,
-        ProtocolError::IncorrectMintAccount.into(),
-        "incorrect mint account"
+        ProtocolError::IncorrectMintAccount.into()
     );
 
     require!(
         *system_program_account.key == system_program::ID,
-        ProgramError::IncorrectProgramId,
-        "invalid system program"
+        ProgramError::IncorrectProgramId
     );
 
     let rent = Rent::get()?;
 
-    /// Create Index
+    // Create Index
     let space = Index::LEN;
     let lamports = rent.minimum_balance(space);
     invoke_signed(
@@ -195,16 +175,12 @@ pub fn create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramRes
             &[mint_authority_bump],
         ]],
     )?;
-    msg!("mint account initialized {:?}", mint_account.key);
 
-    // Serialize Data
     let index = Index::new(index_id, owner.key.clone(), manager.key.clone(), index_bump);
     index.serialize(&mut &mut index_account.data.borrow_mut()[..])?;
 
     controller.generate_next_index_id();
     controller.serialize(&mut &mut controller_account.data.borrow_mut()[..])?;
-
-    msg!("index created  {:?}", index_account.key);
 
     Ok(())
 }

@@ -1,10 +1,5 @@
-use openindex_sdk::openindex::{
-    pda::find_controller_address,
-    transaction::{
-        add_index_components_transaction, create_index_transaction,
-        create_mint_acccount_transaction, init_controller_global_config_transaction,
-        init_controller_transaction, init_protocol_transaction,
-    },
+use openindex_sdk::openindex::transaction::{
+    add_index_components_transaction, create_mint_acccount_transaction,
 };
 use solana_sdk::signature::Signer;
 use solana_sdk::{pubkey::Pubkey, signature::Keypair};
@@ -16,6 +11,7 @@ pub async fn process_add_index_components(
     controller_id: u64,
     manager: Pubkey,
     mints_count: u64,
+    units: Vec<u64>,
     _setup: &Setup,
 ) -> ProcessAddIndexComponentsResult {
     let program_id = _setup.program_id;
@@ -37,8 +33,6 @@ pub async fn process_add_index_components(
         mints.push(mint.pubkey());
     }
 
-    let amounts: Vec<_> = (0..mints.len()).map(|i| (i as u64 + 10)).collect();
-
     let transaction = add_index_components_transaction(
         &_setup.payer,
         _setup.program_id,
@@ -46,7 +40,7 @@ pub async fn process_add_index_components(
         controller_id,
         _setup.recent_blockhashes.clone(),
         mints.clone(),
-        amounts.clone(),
+        units.clone(),
     );
 
     let result = _setup.banks_client.process_transaction(transaction).await;
@@ -55,7 +49,7 @@ pub async fn process_add_index_components(
         index_id,
         controller_id,
         mints,
-        amounts,
+        units,
         result,
     }
 }

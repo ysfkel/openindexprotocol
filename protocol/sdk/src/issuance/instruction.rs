@@ -1,6 +1,5 @@
 use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{
-    hash::Hash,
     instruction::{AccountMeta, Instruction},
     pubkey::Pubkey,
 };
@@ -41,7 +40,7 @@ pub fn mint_index_instruction(
         AccountMeta::new_readonly(index_mints_data_account, false),
         AccountMeta::new_readonly(open_index_program_id, false),
         AccountMeta::new(token_account, false),
-        AccountMeta::new(spl_token::ID, false),
+        AccountMeta::new(token_program_account, false),
     ];
     let instruction = IssuanceInstruction::Mint { index_id, amount };
     let data = borsh::to_vec(&instruction).unwrap();
@@ -82,7 +81,7 @@ pub fn mint_index_instruction_with_dynamic_accounts(
         AccountMeta::new_readonly(index_mints_data_account, false),
         AccountMeta::new_readonly(open_index_program_id, false),
         AccountMeta::new(token_account, false),
-        AccountMeta::new(spl_token::ID, false),
+        AccountMeta::new(token_program_account, false),
     ];
     let instruction = IssuanceInstruction::Mint { index_id, amount };
     let data = borsh::to_vec(&instruction).unwrap();

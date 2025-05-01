@@ -1,5 +1,5 @@
 use borsh::{BorshDeserialize, BorshSerialize};
-use openindex::state::Module;
+use openindex::state::{Component, IndexMints, Module};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint::{entrypoint, ProgramResult},
@@ -12,11 +12,7 @@ use solana_program::{
     pubkey::Pubkey,
 };
 
-use crate::{
-    error::IssuanceError,
-    require,
-    state::{Component, IndexMints},
-};
+use crate::{error::IssuanceError, require};
 use openindex_sdk::openindex::{
     instruction::ProtocolInstruction,
     seeds::{COMPONENT_SEED, COMPONENT_VAULT_SEED, INDEX_MINTS_DATA_SEED, MODULE_SEED},
@@ -42,15 +38,15 @@ pub fn mint_index(
     let token_program_account = next_account_info(accounts_iter)?;
 
     require!(
-        amount > 0,
-        IssuanceError::AmountMustBeGreaterThanZero.into(),
-        "amount must be greater than 0"
-    );
-
-    require!(
         caller_account.is_signer,
         ProgramError::MissingRequiredSignature,
         "caller must be signer"
+    );
+
+    require!(
+        amount > 0,
+        IssuanceError::AmountMustBeGreaterThanZero.into(),
+        "amount must be greater than 0"
     );
 
     let (signer_pda, bump) = Pubkey::find_program_address(&[program_id.as_ref()], program_id);

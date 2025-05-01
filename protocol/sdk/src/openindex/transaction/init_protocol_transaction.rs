@@ -1,9 +1,5 @@
 use crate::openindex::{instruction::init_protocol_instruction, pda::find_protocol_address};
-use solana_sdk::{
-    hash::Hash,
-    instruction::{AccountMeta, Instruction},
-    transaction::Transaction,
-};
+use solana_sdk::{hash::Hash, transaction::Transaction};
 use {
     solana_program::pubkey::Pubkey,
     solana_sdk::signature::{Keypair, Signer},

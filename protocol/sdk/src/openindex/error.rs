@@ -1,16 +1,27 @@
-use solana_program::{address_lookup_table::error, program_error::ProgramError};
+use num_derive::FromPrimitive;
+use solana_program::program_error::ProgramError;
+use solana_sdk::{decode_error::DecodeError, msg, program_error::PrintProgramError};
 use thiserror::Error;
 
-#[derive(Clone, Debug, PartialEq, Eq, Error)]
+#[derive(Clone, Debug, Eq, Error, FromPrimitive, PartialEq)]
 pub enum ProtocolError {
+    #[error("Error:Invalid token account")]
+    InvalidTokenAccount,
+    #[error("Error:Invalid protocol account data")]
+    InvalidProtocolAccountData,
+    #[error("Error:Amount must be greater than zero")]
+    AmountMustBeGreaterThanZero,
     #[error("Error:Invalid token mint")]
     InvalidTokenMint,
     #[error("Error:Invalid mint account")]
     InvalidMintAccount,
     #[error("Error:Invalid max index components")]
     InvalidMaxIndexComponents,
-    #[error("Error:Invalid token account")]
-    InvalidTokenAccount,
+    #[error("Invalid index mints account data")]
+    InvalidIndexMintsAccountData,
+    #[error("Invalid component account data")]
+    InvalidComponentData,
+
     #[error("Error:incorrect protocol account")]
     IncorrectProtocolAccount,
     #[error("Error:incorrect mint authority")]
@@ -53,6 +64,10 @@ pub enum ProtocolError {
     UnknownControllerGlobalConfigAccount,
     #[error("Error:Invalid controller account owner")]
     UnknownControllerAccount,
+    #[error("Error:Invalid index account")]
+    UnknownIndexAccount,
+    #[error("Error: Invalid index mints account")]
+    UnknownIndexMintsAccount,
     #[error("Error:Invalid protocol account owner")]
     UnknownProtocolAccount,
     #[error("Error:Invalid Module owner")]
@@ -63,6 +78,8 @@ pub enum ProtocolError {
     InvalidMint,
     #[error("Error:Component amount error")]
     ComponentAmountError,
+    #[error("Error: Comoponent not initialized")]
+    ComponentNotInitialized,
     #[error("Error:Index not initialized")]
     IndexNotInitialized,
 }
@@ -73,11 +90,22 @@ impl From<ProtocolError> for ProgramError {
     }
 }
 
+impl PrintProgramError for ProtocolError {
+    fn print<E>(&self) {
+        msg!("PROTOCOL-ERROR: {}", &self.to_string());
+    }
+}
+
+impl<T> DecodeError<T> for ProtocolError {
+    fn type_of() -> &'static str {
+        "Protocol Error"
+    }
+}
+
 #[macro_export]
 macro_rules! require {
-    ($cond:expr, $err:expr, $msg:expr) => {
+    ($cond:expr, $err:expr) => {
         if !$cond {
-            msg!($msg);
             return Err($err);
         }
     };

@@ -6,38 +6,24 @@ use crate::{
 
 use borsh::BorshDeserialize;
 use openindex::state::{Component, Controller, Index, IndexMints, Protocol};
-use openindex_sdk::openindex::{
-    pda::{
-        find_component_address, find_component_vault_address, find_controller_address,
-        find_index_address, find_index_mint_address, find_index_mints_data_address,
-    },
-    transaction::{
-        add_index_components_transaction, create_index_transaction,
-        create_lookup_table_transaction, create_mint_acccount_transaction,
-        init_controller_global_config_transaction, init_controller_transaction,
-        init_protocol_transaction,
-    },
+use openindex_sdk::openindex::pda::{
+    find_component_address, find_controller_address, find_index_address,
+    find_index_mints_data_address,
 };
 use serde::Deserialize;
 use solana_program_test::BanksClientError;
 use solana_sdk::{
     account::Account,
-    address_lookup_table::instruction::derive_lookup_table_address,
     clock::{sysvar, Clock},
     instruction::InstructionError,
-    message::AddressLookupTableAccount,
     msg,
     program_pack::{IsInitialized, Pack},
     pubkey::Pubkey,
     rent::Rent,
     signature::Keypair,
-    signer::SeedDerivable,
-    syscalls,
-    system_instruction::create_account,
     sysvar::{Sysvar, SysvarId},
     transaction::TransactionError,
 };
-use spl_associated_token_account::get_associated_token_address_with_program_id;
 
 use {solana_program_test::tokio, solana_sdk::signature::Signer};
 
@@ -60,16 +46,27 @@ async fn test_add_index_components() {
     let ProcessCreateIndexResult {
         index_id,
         controller_pda,
-        result,
+        result: _,
     } = process_create_index(controller_id, manager.pubkey(), &_setup).await;
+
+    let components_count = 4;
+    let units: Vec<_> = (0..components_count).map(|i| (i as u64 + 10)).collect();
 
     let ProcessAddIndexComponentsResult {
         index_id,
         controller_id,
         mints,
-        amounts,
+        units,
         result,
-    } = process_add_index_components(index_id, controller_id, manager.pubkey(), 4, &_setup).await;
+    } = process_add_index_components(
+        index_id,
+        controller_id,
+        manager.pubkey(),
+        components_count,
+        units,
+        &_setup,
+    )
+    .await;
 
     assert!(result.is_err() == false);
 
@@ -120,10 +117,10 @@ async fn test_add_index_components() {
     assert_eq!(index_mint_2.clone(), mint_2);
     assert!(component_1_data.is_initialized());
     assert_eq!(component_1_data.mint, *index_mint_1);
-    let mint_1_amount = amounts.get(0).unwrap().clone();
+    let mint_1_amount = units.get(0).unwrap().clone();
     assert_eq!(component_1_data.uints, mint_1_amount);
     assert!(component_2_data.is_initialized());
     assert_eq!(component_2_data.mint, *index_mint_2);
-    let mint_2_amount = amounts.get(1).unwrap().clone();
+    let mint_2_amount = units.get(1).unwrap().clone();
     assert_eq!(component_2_data.uints, mint_2_amount);
 }

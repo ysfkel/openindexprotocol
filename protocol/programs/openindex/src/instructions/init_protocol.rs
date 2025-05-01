@@ -1,10 +1,12 @@
-use crate::{error::ProtocolError, state::Protocol};
+use crate::state::Protocol;
 use borsh::{BorshDeserialize, BorshSerialize};
-use openindex_sdk::{openindex::pda::find_protocol_address, openindex::seeds::PROTOCOL_SEED};
+use openindex_sdk::{
+    openindex::{error::ProtocolError, pda::find_protocol_address, seeds::PROTOCOL_SEED},
+    require,
+};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint::ProgramResult,
-    msg,
     program::invoke_signed,
     program_error::ProgramError,
     program_pack::IsInitialized,
@@ -19,19 +21,19 @@ pub fn init_protocol(program_id: Pubkey, accounts: &[AccountInfo]) -> ProgramRes
     let protocol_account = next_account_info(accounts_iter)?;
     let system_program_account = next_account_info(accounts_iter)?;
 
-    if !owner.is_signer {
-        return Err(ProgramError::MissingRequiredSignature);
-    }
+    require!(owner.is_signer, ProgramError::MissingRequiredSignature);
 
-    if protocol_account.lamports() > 0 {
-        return Err(ProgramError::AccountAlreadyInitialized);
-    }
+    require!(
+        protocol_account.lamports() == 0,
+        ProgramError::AccountAlreadyInitialized
+    );
 
     let (protocol_pda, protocol_bump) = find_protocol_address(&program_id);
 
-    if *protocol_account.key != protocol_pda {
-        return Err(ProtocolError::IncorrectProtocolAccount.into());
-    }
+    require!(
+        *protocol_account.key == protocol_pda,
+        ProtocolError::IncorrectProtocolAccount.into()
+    );
 
     let rent = Rent::get()?;
     let lamports = rent.minimum_balance(Protocol::LEN);

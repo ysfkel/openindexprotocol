@@ -1,7 +1,6 @@
 use borsh::BorshDeserialize;
 use borsh::BorshSerialize;
 use solana_program::instruction::{AccountMeta, Instruction};
-use solana_program::program_error::ProgramError;
 use solana_program::pubkey::Pubkey;
 use solana_program::system_program;
 use spl_associated_token_account::get_associated_token_address_with_program_id;
@@ -35,7 +34,10 @@ pub enum ProtocolInstruction {
         index_id: u64,
         amount: u64,
     },
-    Redeem,
+    Redeem {
+        index_id: u64,
+        amount: u64,
+    },
     //..
 }
 
@@ -166,7 +168,7 @@ pub fn add_index_components_instruction(
     mints: Vec<Pubkey>,
     amounts: Vec<u64>,
 ) -> Instruction {
-    let mut accounts = vec![
+    let accounts = vec![
         AccountMeta::new(caller, true),
         AccountMeta::new(index_account, false),
         AccountMeta::new(index_mints_data_account, false),
@@ -222,6 +224,174 @@ pub fn add_index_components_instruction_with_dynamic_accounts(
 
     let instruction = ProtocolInstruction::AddIndexComponents { amounts, mints };
     let data = borsh::to_vec(&instruction).unwrap();
+    Instruction {
+        program_id,
+        accounts,
+        data,
+    }
+}
+
+/// redeem
+pub fn mint_instruction(
+    caller: Pubkey,
+    program_id: Pubkey,
+    controller_account: Pubkey,
+    mint_account: Pubkey,
+    mint_authority_account: Pubkey,
+    index_account: Pubkey,
+    index_mints_data_account: Pubkey,
+    token_account: Pubkey,
+    token_program_account: Pubkey,
+    index_id: u64,
+    amount: u64,
+) -> Instruction {
+    let accounts = vec![
+        AccountMeta::new(caller, true),
+        AccountMeta::new_readonly(controller_account, false),
+        AccountMeta::new(mint_account, false),
+        AccountMeta::new_readonly(mint_authority_account, false),
+        AccountMeta::new_readonly(index_account, false),
+        AccountMeta::new_readonly(index_mints_data_account, false),
+        AccountMeta::new_readonly(program_id, false),
+        AccountMeta::new(token_account, false),
+        AccountMeta::new(token_program_account, false),
+    ];
+    let instruction = ProtocolInstruction::Mint { index_id, amount };
+    let data = borsh::to_vec(&instruction).unwrap();
+    Instruction {
+        program_id,
+        accounts,
+        data,
+    }
+}
+
+#[allow(clippy::too_many_arguments)]
+pub fn mint_instruction_with_dynamic_accounts(
+    caller: Pubkey,
+    program_id: Pubkey,
+    controller_account: Pubkey,
+    mint_account: Pubkey,
+    mint_authority_account: Pubkey,
+    index_account: Pubkey,
+    index_mints_data_account: Pubkey,
+    token_account: Pubkey,
+    token_program_account: Pubkey,
+    mints: Vec<Pubkey>,
+    token_accounts: Vec<Pubkey>,
+    index_id: u64,
+    amount: u64,
+) -> Instruction {
+    let mut accounts = vec![
+        AccountMeta::new(caller, true),
+        AccountMeta::new_readonly(controller_account, false),
+        AccountMeta::new(mint_account, false),
+        AccountMeta::new_readonly(mint_authority_account, false),
+        AccountMeta::new_readonly(index_account, false),
+        AccountMeta::new_readonly(index_mints_data_account, false),
+        AccountMeta::new(token_account, false),
+        AccountMeta::new(token_program_account, false),
+    ];
+    let instruction = ProtocolInstruction::Mint { index_id, amount };
+    let data = borsh::to_vec(&instruction).unwrap();
+
+    for (index, _mint) in mints.iter().enumerate() {
+        let (component_pda, _) = find_component_address(&program_id, &index_account, _mint);
+        let (vault_pda, _) = find_component_vault_address(&program_id, &index_account, _mint);
+        let vault_ata =
+            get_associated_token_address_with_program_id(&vault_pda, _mint, &spl_token::ID);
+
+        accounts.push(AccountMeta::new(_mint.clone(), false));
+        accounts.push(AccountMeta::new(component_pda, false));
+        accounts.push(AccountMeta::new(vault_pda, false));
+        accounts.push(AccountMeta::new(vault_ata, false));
+        let _token_account = token_accounts.get(index).unwrap();
+        accounts.push(AccountMeta::new(*_token_account, false));
+    }
+
+    Instruction {
+        program_id,
+        accounts,
+        data,
+    }
+}
+
+/// redeem
+pub fn redeem_instruction(
+    caller: Pubkey,
+    program_id: Pubkey,
+    controller_account: Pubkey,
+    mint_account: Pubkey,
+    mint_authority_account: Pubkey,
+    index_account: Pubkey,
+    index_mints_data_account: Pubkey,
+    token_account: Pubkey,
+    token_program_account: Pubkey,
+    index_id: u64,
+    amount: u64,
+) -> Instruction {
+    let accounts = vec![
+        AccountMeta::new(caller, true),
+        AccountMeta::new_readonly(controller_account, false),
+        AccountMeta::new(mint_account, false),
+        AccountMeta::new_readonly(mint_authority_account, false),
+        AccountMeta::new_readonly(index_account, false),
+        AccountMeta::new_readonly(index_mints_data_account, false),
+        AccountMeta::new_readonly(program_id, false),
+        AccountMeta::new(token_account, false),
+        AccountMeta::new(token_program_account, false),
+    ];
+    let instruction = ProtocolInstruction::Redeem { index_id, amount };
+    let data = borsh::to_vec(&instruction).unwrap();
+    Instruction {
+        program_id,
+        accounts,
+        data,
+    }
+}
+
+#[allow(clippy::too_many_arguments)]
+pub fn redeem_instruction_with_dynamic_accounts(
+    caller: Pubkey,
+    program_id: Pubkey,
+    controller_account: Pubkey,
+    mint_account: Pubkey,
+    mint_authority_account: Pubkey,
+    index_account: Pubkey,
+    index_mints_data_account: Pubkey,
+    token_account: Pubkey,
+    token_program_account: Pubkey,
+    mints: Vec<Pubkey>,
+    token_accounts: Vec<Pubkey>,
+    index_id: u64,
+    amount: u64,
+) -> Instruction {
+    let mut accounts = vec![
+        AccountMeta::new(caller, true),
+        AccountMeta::new_readonly(controller_account, false),
+        AccountMeta::new(mint_account, false),
+        AccountMeta::new_readonly(mint_authority_account, false),
+        AccountMeta::new_readonly(index_account, false),
+        AccountMeta::new_readonly(index_mints_data_account, false),
+        AccountMeta::new(token_account, false),
+        AccountMeta::new(token_program_account, false),
+    ];
+    let instruction = ProtocolInstruction::Redeem { index_id, amount };
+    let data = borsh::to_vec(&instruction).unwrap();
+
+    for (index, _mint) in mints.iter().enumerate() {
+        let (component_pda, _) = find_component_address(&program_id, &index_account, _mint);
+        let (vault_pda, _) = find_component_vault_address(&program_id, &index_account, _mint);
+        let vault_ata =
+            get_associated_token_address_with_program_id(&vault_pda, _mint, &spl_token::ID);
+
+        accounts.push(AccountMeta::new(_mint.clone(), false));
+        accounts.push(AccountMeta::new(component_pda, false));
+        accounts.push(AccountMeta::new(vault_pda, false));
+        accounts.push(AccountMeta::new(vault_ata, false));
+        let _token_account = token_accounts.get(index).unwrap();
+        accounts.push(AccountMeta::new(*_token_account, false));
+    }
+
     Instruction {
         program_id,
         accounts,
