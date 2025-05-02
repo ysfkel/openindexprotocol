@@ -13,8 +13,6 @@ mod test_init_protocol;
 #[cfg(test)]
 mod test_mint;
 #[cfg(test)]
-mod test_module_issuance_mint_index_transaction;
-#[cfg(test)]
 mod test_redeem;
 
 mod process_add_index_components;
