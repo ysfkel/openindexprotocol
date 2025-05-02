@@ -16,8 +16,6 @@ pub fn create_protocol_address(program_id: &Pubkey, bump: u8) -> Result<Pubkey, 
     Ok(protocol_pda)
 }
 
-
-
 pub fn find_controller_address(program_id: &Pubkey, controller_id: u64) -> (Pubkey, u8) {
     let (pda, bump) = Pubkey::find_program_address(
         &[CONTROLLER_SEED, &controller_id.to_le_bytes()],
@@ -56,8 +54,6 @@ pub fn create_index_address(
     Ok(index_pda)
 }
 
-
-
 pub fn find_controller_global_config_address(program_id: &Pubkey) -> (Pubkey, u8) {
     let (pda, bump) = Pubkey::find_program_address(&[CONTROLLER_GLOBAL_CONFIG_SEED], program_id);
     (pda, bump)
@@ -95,9 +91,12 @@ pub fn find_index_mints_data_address(
     (pda, bump)
 }
 
-pub fn create_index_mints_data_address(program_id: &Pubkey,
+pub fn create_index_mints_data_address(
+    program_id: &Pubkey,
     controller_account: &Pubkey,
-    index_id: u64,bump: u8) -> Result<Pubkey, PubkeyError> {
+    index_id: u64,
+    bump: u8,
+) -> Result<Pubkey, PubkeyError> {
     let index_mints_pda = Pubkey::create_program_address(
         &[
             INDEX_MINTS_DATA_SEED,
@@ -121,9 +120,12 @@ pub fn find_component_address(
     (pda, bump)
 }
 
-pub fn create_component_address( program_id: &Pubkey,
+pub fn create_component_address(
+    program_id: &Pubkey,
     index_key: &Pubkey,
-    mint_key: &Pubkey,bump: u8) -> Result<Pubkey, PubkeyError> {
+    mint_key: &Pubkey,
+    bump: u8,
+) -> Result<Pubkey, PubkeyError> {
     let component_pda = Pubkey::create_program_address(
         &[
             COMPONENT_SEED,
@@ -152,8 +154,8 @@ pub fn create_component_vault_address(
     program_id: &Pubkey,
     index_key: &Pubkey,
     mint_key: &Pubkey,
-    bump: u8
-)  -> Result<Pubkey, PubkeyError> {
+    bump: u8,
+) -> Result<Pubkey, PubkeyError> {
     let expected_vault_pda = Pubkey::create_program_address(
         &[
             COMPONENT_VAULT_SEED,
@@ -165,8 +167,6 @@ pub fn create_component_vault_address(
     )?;
     Ok(expected_vault_pda)
 }
-
-
 
 pub fn find_module_signer_address(program_id: &Pubkey) -> (Pubkey, u8) {
     let (pda, bump) = Pubkey::find_program_address(&[program_id.as_ref()], program_id);

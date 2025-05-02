@@ -14,7 +14,9 @@ use solana_program::{
 use crate::state::{Controller, Protocol};
 use openindex_sdk::{
     openindex::{
-        error::ProtocolError, pda::{create_protocol_address, find_controller_address}, seeds::CONTROLLER_SEED
+        error::ProtocolError,
+        pda::{create_protocol_address, find_controller_address},
+        seeds::CONTROLLER_SEED,
     },
     require,
 };
@@ -45,7 +47,7 @@ pub fn process_init_controller(program_id: &Pubkey, accounts: &[AccountInfo]) ->
         ProtocolError::ProtocolNotInitialized.into()
     );
 
-     let protocol_pda = create_protocol_address(program_id, protocol.bump)?;
+    let protocol_pda = create_protocol_address(program_id, protocol.bump)?;
 
     require!(
         *protocol_account.key == protocol_pda,

@@ -2,7 +2,9 @@ use crate::state::{Controller, ControllerGlobalConfig, Index};
 use borsh::{BorshDeserialize, BorshSerialize};
 use openindex_sdk::{
     openindex::{
-        error::ProtocolError, pda::{find_index_address, find_index_mint_address}, seeds::{INDEX_MINT_AUTHORITY_SEED, INDEX_MINT_SEED, INDEX_SEED}
+        error::ProtocolError,
+        pda::{find_index_address, find_index_mint_address},
+        seeds::{INDEX_MINT_AUTHORITY_SEED, INDEX_MINT_SEED, INDEX_SEED},
     },
     require,
 };
@@ -66,14 +68,15 @@ pub fn process_create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> Pr
 
     let index_id = controller.get_next_index_id();
 
-    let (index_pda, index_bump)  = find_index_address(program_id, controller_account.key, index_id);
+    let (index_pda, index_bump) = find_index_address(program_id, controller_account.key, index_id);
 
     require!(
         *index_account.key == index_pda,
         ProtocolError::IncorrectIndexAccount.into()
     );
 
-    let (mint_pda, mint_bump) = find_index_mint_address(program_id, controller_account.key, index_id);
+    let (mint_pda, mint_bump) =
+        find_index_mint_address(program_id, controller_account.key, index_id);
 
     require!(
         *mint_account.key == mint_pda,

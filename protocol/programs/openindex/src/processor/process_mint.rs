@@ -2,7 +2,12 @@ use crate::state::{Component, IndexMints};
 use borsh::BorshDeserialize;
 use openindex_sdk::{
     openindex::{
-        error::ProtocolError, pda::{create_component_address, create_component_vault_address, create_index_mints_data_address, find_index_mint_authority_address}, seeds::INDEX_MINT_AUTHORITY_SEED,
+        error::ProtocolError,
+        pda::{
+            create_component_address, create_component_vault_address,
+            create_index_mints_data_address, find_index_mint_authority_address,
+        },
+        seeds::INDEX_MINT_AUTHORITY_SEED,
     },
     require,
 };
@@ -55,7 +60,12 @@ pub fn process_mint(
     let index_mints_data = IndexMints::try_from_slice(&index_mints_account.data.borrow_mut()[..])
         .map_err(|_| ProtocolError::InvalidIndexMintsAccountData)?;
 
-    let index_mints_pda = create_index_mints_data_address(program_id, controller_account.key, index_id, index_mints_data.bump)?;
+    let index_mints_pda = create_index_mints_data_address(
+        program_id,
+        controller_account.key,
+        index_id,
+        index_mints_data.bump,
+    )?;
 
     require!(
         *index_mints_account.key == index_mints_pda,
@@ -64,8 +74,9 @@ pub fn process_mint(
 
     let mints = index_mints_data.mints;
 
-    let (mint_authority_pda, mint_authority_bump) = find_index_mint_authority_address(program_id, controller_account.key, index_id);
-    
+    let (mint_authority_pda, mint_authority_bump) =
+        find_index_mint_authority_address(program_id, controller_account.key, index_id);
+
     require!(
         *mint_authority_account.key == mint_authority_pda,
         ProtocolError::IncorrectMintAuthority.into()
@@ -91,7 +102,12 @@ pub fn process_mint(
         let component = Component::try_from_slice(&component_account.data.borrow_mut()[..])
             .map_err(|_| ProtocolError::InvalidComponentData)?;
 
-        let component_pda = create_component_address(program_id, index_account.key, component_mint_account.key, component.bump)?;
+        let component_pda = create_component_address(
+            program_id,
+            index_account.key,
+            component_mint_account.key,
+            component.bump,
+        )?;
 
         require!(
             *component_account.key == component_pda,
@@ -112,7 +128,12 @@ pub fn process_mint(
             ProtocolError::ComponentNotInitialized.into()
         );
 
-        let expected_vault_pda = create_component_vault_address(program_id, index_account.key, component_mint_account.key, component.vault_bump)?;
+        let expected_vault_pda = create_component_vault_address(
+            program_id,
+            index_account.key,
+            component_mint_account.key,
+            component.vault_bump,
+        )?;
 
         require!(
             *vault_pda.key == expected_vault_pda,
