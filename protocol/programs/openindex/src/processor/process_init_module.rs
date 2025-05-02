@@ -14,8 +14,7 @@ use solana_program::{
 use crate::state::{Module, Protocol};
 use openindex_sdk::{
     openindex::{
-        error::ProtocolError,
-        seeds::{MODULE_SEED, PROTOCOL_SEED},
+        error::ProtocolError, pda::{create_protocol_address, find_registered_module_address}, seeds::MODULE_SEED
     },
     require,
 };
@@ -48,18 +47,14 @@ pub fn process_init_module(program_id: &Pubkey, accounts: &[AccountInfo]) -> Pro
         ProtocolError::ProtocolNotInitialized.into()
     );
 
-    let protocol_pda =
-        Pubkey::create_program_address(&[&PROTOCOL_SEED, &[protocol.bump]], program_id)?;
+    let protocol_pda = create_protocol_address(program_id, protocol.bump)?;
 
     require!(
         *protocol_account.key == protocol_pda,
         ProtocolError::IncorrectProtocolAccount.into()
     );
 
-    let (registered_module_pda, registered_module_bump) = Pubkey::find_program_address(
-        &[&MODULE_SEED, &module_signer_account.key.as_ref()],
-        program_id,
-    );
+    let (registered_module_pda, registered_module_bump) = find_registered_module_address(program_id, module_signer_account.key); 
 
     require!(
         *registered_module_account.key == registered_module_pda,

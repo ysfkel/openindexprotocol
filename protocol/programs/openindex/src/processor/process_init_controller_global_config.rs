@@ -2,8 +2,7 @@ use crate::state::{ControllerGlobalConfig, Protocol};
 use borsh::{BorshDeserialize, BorshSerialize};
 use openindex_sdk::{
     openindex::{
-        error::ProtocolError,
-        seeds::{CONTROLLER_GLOBAL_CONFIG_SEED, PROTOCOL_SEED},
+        error::ProtocolError, pda::{create_protocol_address, find_controller_global_config_address}, seeds::CONTROLLER_GLOBAL_CONFIG_SEED
     },
     require,
 };
@@ -53,9 +52,8 @@ pub fn process_init_controller_global_config(
         ProtocolError::ProtocolNotInitialized.into()
     );
 
-    let protocol_pda =
-        Pubkey::create_program_address(&[&PROTOCOL_SEED, &[protocol.bump]], &program_id)?;
-
+    let protocol_pda = create_protocol_address(program_id, protocol.bump)?;
+    
     require!(
         *protocol_account.key == protocol_pda,
         ProtocolError::IncorrectProtocolAccount.into()
@@ -66,8 +64,8 @@ pub fn process_init_controller_global_config(
         ProtocolError::OnlyProtocolOwner.into()
     );
 
-    let (controller_global_config_pda, controller_global_conifg_bump) =
-        Pubkey::find_program_address(&[CONTROLLER_GLOBAL_CONFIG_SEED], &program_id);
+
+    let (controller_global_config_pda, controller_global_conifg_bump)  = find_controller_global_config_address(program_id);
 
     require!(
         *controller_global_config_account.key == controller_global_config_pda,

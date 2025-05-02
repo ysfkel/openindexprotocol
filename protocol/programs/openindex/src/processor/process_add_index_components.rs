@@ -2,8 +2,7 @@ use crate::state::{Component, Controller, ControllerGlobalConfig, Index, IndexMi
 use borsh::{BorshDeserialize, BorshSerialize};
 use openindex_sdk::{
     openindex::{
-        error::ProtocolError,
-        seeds::{COMPONENT_SEED, COMPONENT_VAULT_SEED, INDEX_MINTS_DATA_SEED, INDEX_SEED},
+        error::ProtocolError, pda::{create_index_address, find_component_address, find_component_vault_address, find_index_address, find_index_mints_data_address}, seeds::{COMPONENT_SEED, COMPONENT_VAULT_SEED, INDEX_MINTS_DATA_SEED}
     },
     require,
 };
@@ -69,15 +68,7 @@ pub fn process_add_index_components(
     let index_data = Index::try_from_slice(&index_account.data.borrow())?;
     let index_id = index_data.id;
 
-    let index_pda = Pubkey::create_program_address(
-        &[
-            INDEX_SEED,
-            controller_account.key.as_ref(),
-            &index_id.to_le_bytes(),
-            &[index_data.bump],
-        ],
-        program_id,
-    )?;
+    let index_pda = create_index_address(program_id, controller_account.key, index_id, index_data.bump)?;
 
     require!(
         *index_account.key == index_pda,
@@ -91,14 +82,8 @@ pub fn process_add_index_components(
         ProtocolError::IndexNotInitialized.into()
     );
 
-    let (index_mints_pda, index_mints_bump) = Pubkey::find_program_address(
-        &[
-            INDEX_MINTS_DATA_SEED,
-            controller_account.key.as_ref(),
-            &index_id.to_le_bytes(),
-        ],
-        program_id,
-    );
+
+    let (index_mints_pda, index_mints_bump) = find_index_mints_data_address(program_id, controller_account.key, index_id);
 
     require!(
         *index_mints_account.key == index_mints_pda,
@@ -165,27 +150,15 @@ pub fn process_add_index_components(
             .get(index)
             .ok_or(ProtocolError::ComponentAmountError)?;
 
-        let (component_pda, component_bump) = Pubkey::find_program_address(
-            &[
-                COMPONENT_SEED,
-                index_account.key.as_ref(),
-                mint_account.key.as_ref(),
-            ],
-            program_id,
-        );
+        let (component_pda, component_bump)  = find_component_address(program_id, index_account.key, mint_account.key);
+
         require!(
             *component_account.key == component_pda,
             ProtocolError::IncorrectComponentAccount.into()
         );
 
-        let (expected_vault_pda, vault_bump) = Pubkey::find_program_address(
-            &[
-                COMPONENT_VAULT_SEED,
-                index_account.key.as_ref(),
-                mint_account.key.as_ref(),
-            ],
-            program_id,
-        );
+       let  (expected_vault_pda, vault_bump) =  find_component_vault_address(program_id, index_account.key, mint_account.key);
+
         require!(
             *vault_pda.key == expected_vault_pda,
             ProtocolError::IncorrectVaultAccount.into()
