@@ -2429,6 +2429,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "mpl-token-metadata"
+version = "5.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "989e6a3000e761d3b2d685662a3a9ee99826f9369fb033bd1bc7011b1cf02ed9"
+dependencies = [
+ "borsh 0.10.4",
+ "num-derive 0.3.3",
+ "num-traits",
+ "solana-program",
+ "thiserror 1.0.69",
+]
+
+[[package]]
 name = "nix"
 version = "0.29.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2519,6 +2532,17 @@ name = "num-conv"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "51d515d32fb182ee37cda2ccdcb92950d6a3c2893aa280e540671c2cd0f3b1d9"
+
+[[package]]
+name = "num-derive"
+version = "0.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "876a53fff98e03a936a674b29568b0e605f06b29372c2489ff4de23f1949743d"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 1.0.109",
+]
 
 [[package]]
 name = "num-derive"
@@ -2671,7 +2695,7 @@ version = "0.1.0"
 dependencies = [
  "borsh 1.5.7",
  "borsh-derive 1.5.7",
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "solana-program",
  "solana-sdk",
@@ -3890,7 +3914,7 @@ dependencies = [
  "bincode 1.3.3",
  "bytemuck",
  "log",
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "solana-address-lookup-table-interface",
  "solana-bincode",
@@ -5106,7 +5130,7 @@ dependencies = [
  "log",
  "memoffset",
  "num-bigint 0.4.6",
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "rand 0.8.5",
  "serde",
@@ -5584,7 +5608,7 @@ dependencies = [
  "memmap2",
  "mockall",
  "modular-bitfield",
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "num_cpus",
  "num_enum",
@@ -6536,7 +6560,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6b630547b7f12ee742e1c5069951fedba0fe5cbd4786f6342a779384e2b11f71"
 dependencies = [
  "bincode 1.3.3",
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "serde",
  "serde_derive",
@@ -6562,7 +6586,7 @@ dependencies = [
  "agave-feature-set",
  "bincode 1.3.3",
  "log",
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "serde",
  "serde_derive",
@@ -6593,7 +6617,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d352601fa721288f0a3a2b48c930aa6badb83c95cab47b5b14015a2915f04995"
 dependencies = [
  "bytemuck",
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "solana-instruction",
  "solana-log-collector",
@@ -6618,7 +6642,7 @@ dependencies = [
  "js-sys",
  "lazy_static",
  "merlin",
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "rand 0.8.5",
  "serde",
@@ -6647,7 +6671,7 @@ checksum = "e4086b331151047f6be5c71210e6690f3a4de222ccf43c90ec715ea60e860189"
 dependencies = [
  "agave-feature-set",
  "bytemuck",
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "solana-instruction",
  "solana-log-collector",
@@ -6671,7 +6695,7 @@ dependencies = [
  "itertools 0.12.1",
  "lazy_static",
  "merlin",
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "rand 0.8.5",
  "serde",
@@ -6708,7 +6732,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "76fee7d65013667032d499adc3c895e286197a35a0d3a4643c80e7fd3e9969e3"
 dependencies = [
  "borsh 1.5.7",
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "solana-program",
  "spl-associated-token-account-client",
@@ -6799,7 +6823,7 @@ dependencies = [
  "borsh 1.5.7",
  "bytemuck",
  "bytemuck_derive",
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "solana-decode-error",
  "solana-msg",
@@ -6816,7 +6840,7 @@ version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9d39b5186f42b2b50168029d81e58e800b690877ef0b30580d107659250da1d1"
 dependencies = [
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "solana-program",
  "spl-program-error-derive",
@@ -6842,7 +6866,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cd99ff1e9ed2ab86e3fd582850d47a739fec1be9f4661cba1782d3a0f26805f3"
 dependencies = [
  "bytemuck",
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "solana-account-info",
  "solana-decode-error",
@@ -6865,7 +6889,7 @@ checksum = "ed320a6c934128d4f7e54fe00e16b8aeaecf215799d060ae14f93378da6dc834"
 dependencies = [
  "arrayref",
  "bytemuck",
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "num_enum",
  "solana-program",
@@ -6880,7 +6904,7 @@ checksum = "053067c6a82c705004f91dae058b11b4780407e9ccd6799dc9e7d0fab5f242da"
 dependencies = [
  "arrayref",
  "bytemuck",
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "num_enum",
  "solana-account-info",
@@ -6908,7 +6932,7 @@ checksum = "5b27f7405010ef816587c944536b0eafbcc35206ab6ba0f2ca79f1d28e488f4f"
 dependencies = [
  "arrayref",
  "bytemuck",
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "num_enum",
  "solana-program",
@@ -6972,7 +6996,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d595667ed72dbfed8c251708f406d7c2814a3fa6879893b323d56a10bedfc799"
 dependencies = [
  "bytemuck",
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "solana-decode-error",
  "solana-instruction",
@@ -6991,7 +7015,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dfb9c89dbc877abd735f05547dcf9e6e12c00c11d6d74d8817506cab4c99fdbb"
 dependencies = [
  "borsh 1.5.7",
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "solana-borsh",
  "solana-decode-error",
@@ -7013,7 +7037,7 @@ checksum = "4aa7503d52107c33c88e845e1351565050362c2314036ddf19a36cd25137c043"
 dependencies = [
  "arrayref",
  "bytemuck",
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "solana-account-info",
  "solana-cpi",
@@ -7037,7 +7061,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ba70ef09b13af616a4c987797870122863cba03acc4284f226a4473b043923f9"
 dependencies = [
  "bytemuck",
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "solana-account-info",
  "solana-decode-error",
@@ -7261,6 +7285,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "borsh 1.5.7",
+ "mpl-token-metadata",
  "openindex",
  "openindex-issuance",
  "openindex-sdk",
@@ -7279,7 +7304,7 @@ dependencies = [
  "bincode 2.0.1",
  "borsh 1.5.7",
  "borsh-derive 1.5.7",
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "openindex",
  "openindex-issuance",

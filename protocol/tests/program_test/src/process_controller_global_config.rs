@@ -1,7 +1,6 @@
 use openindex_sdk::openindex::transaction::{
     init_controller_global_config_transaction, init_protocol_transaction,
 };
-
 use crate::{ProcessControllerGlobalConfigResult, Setup};
 
 pub async fn process_controller_global_config(

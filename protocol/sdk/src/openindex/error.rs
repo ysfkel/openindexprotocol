@@ -1,12 +1,15 @@
 use num_derive::FromPrimitive;
-use solana_program::program_error::ProgramError;
-use solana_sdk::{decode_error::DecodeError, msg, program_error::PrintProgramError};
+use solana_program::{
+    decode_error::DecodeError,
+    msg,
+    program_error::{PrintProgramError, ProgramError},
+};
 use thiserror::Error;
 
 #[derive(Clone, Debug, Eq, Error, FromPrimitive, PartialEq)]
 pub enum ProtocolError {
     #[error("Error:Invalid token account")]
-    InvalidTokenAccount,
+    InvalidTokenAccount = 500,
     #[error("Error:Invalid protocol account data")]
     InvalidProtocolAccountData,
     #[error("Error:Amount must be greater than zero")]

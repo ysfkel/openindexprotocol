@@ -22,12 +22,12 @@ use openindex_sdk::{
 };
 pub fn process_init_controller(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
-    let owner = next_account_info(accounts_iter)?;
+    let signer = next_account_info(accounts_iter)?;
     let protocol_account = next_account_info(accounts_iter)?;
     let controller_account = next_account_info(accounts_iter)?;
     let system_program = next_account_info(accounts_iter)?;
 
-    require!(owner.is_signer, ProgramError::MissingRequiredSignature);
+    require!(signer.is_signer, ProgramError::MissingRequiredSignature);
 
     require!(
         protocol_account.owner == program_id,
@@ -68,14 +68,14 @@ pub fn process_init_controller(program_id: &Pubkey, accounts: &[AccountInfo]) ->
 
     invoke_signed(
         &system_instruction::create_account(
-            &owner.key,
+            &signer.key,
             &controller_account.key,
             lamports,
             Controller::LEN as u64,
             program_id,
         ),
         &[
-            owner.clone(),
+            signer.clone(),
             controller_account.clone(),
             system_program.clone(),
         ],
@@ -86,7 +86,7 @@ pub fn process_init_controller(program_id: &Pubkey, accounts: &[AccountInfo]) ->
         ]],
     )?;
 
-    let controller = Controller::new(controller_id, owner.key.clone(), controller_bump);
+    let controller = Controller::new(controller_id, signer.key.clone(), controller_bump);
     controller.serialize(&mut &mut controller_account.data.borrow_mut()[..])?;
 
     protocol.generate_next_controller_id();

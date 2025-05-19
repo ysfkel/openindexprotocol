@@ -29,12 +29,12 @@ pub fn process_init_controller_global_config(
     }
 
     let accounts_iter = &mut accounts.iter();
-    let owner = next_account_info(accounts_iter)?;
+    let signer = next_account_info(accounts_iter)?;
     let protocol_account = next_account_info(accounts_iter)?;
     let controller_global_config_account = next_account_info(accounts_iter)?;
     let system_program_account = next_account_info(accounts_iter)?;
 
-    require!(owner.is_signer, ProgramError::MissingRequiredSignature);
+    require!(signer.is_signer, ProgramError::MissingRequiredSignature);
 
     require!(
         controller_global_config_account.lamports() == 0,
@@ -62,7 +62,7 @@ pub fn process_init_controller_global_config(
     );
 
     require!(
-        *owner.key == protocol.owner,
+        *signer.key == protocol.owner,
         ProtocolError::OnlyProtocolOwner.into()
     );
 
@@ -79,14 +79,14 @@ pub fn process_init_controller_global_config(
 
     invoke_signed(
         &system_instruction::create_account(
-            &owner.key,
+            &signer.key,
             &controller_global_config_account.key,
             lamports,
             ControllerGlobalConfig::LEN as u64,
             &program_id,
         ),
         &[
-            owner.clone(),
+            signer.clone(),
             controller_global_config_account.clone(),
             system_program_account.clone(),
         ],

@@ -25,7 +25,7 @@ pub fn mint_transaction(
 ) -> Transaction {
     let controller_account = find_controller_address(&program_id, controller_id).0;
     let index_account = find_index_address(&program_id, &controller_account, index_id).0;
-    let mint_account = find_index_mint_address(&program_id, &controller_account, controller_id).0;
+    let mint_account = find_index_mint_address(&program_id, &controller_account, index_id).0;
 
     let mint_authority_account =
         find_index_mint_authority_address(&program_id, &controller_account, index_id).0;

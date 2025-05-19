@@ -28,7 +28,7 @@ pub fn process_redeem(
     amount: u64,
 ) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
-    let caller = next_account_info(accounts_iter)?;
+    let signer = next_account_info(accounts_iter)?;
     let controller_account = next_account_info(accounts_iter)?;
     let mint_account = next_account_info(accounts_iter)?;
     let mint_authority_account = next_account_info(accounts_iter)?;
@@ -38,7 +38,7 @@ pub fn process_redeem(
     let token_program_account = next_account_info(accounts_iter)?;
 
     require!(
-        caller.is_signer == true,
+        signer.is_signer == true,
         ProgramError::MissingRequiredSignature
     );
 
@@ -173,7 +173,7 @@ pub fn process_redeem(
             token_program_account.key,
             token_account.key,
             mint_account.key,
-            &caller.key,
+            &signer.key,
             &[],
             amount,
         )?,
@@ -181,7 +181,7 @@ pub fn process_redeem(
             token_program_account.clone(),
             token_account.clone(),
             mint_account.clone(),
-            caller.clone(),
+            signer.clone(),
         ],
     )?;
     Ok(())

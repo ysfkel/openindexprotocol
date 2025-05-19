@@ -31,7 +31,7 @@ pub fn process_add_index_components(
     amounts: Vec<u64>,
 ) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
-    let owner = next_account_info(accounts_iter)?;
+    let signer = next_account_info(accounts_iter)?;
     let index_account = next_account_info(accounts_iter)?;
     let index_mints_account = next_account_info(accounts_iter)?;
     let controller_account = next_account_info(accounts_iter)?;
@@ -40,7 +40,7 @@ pub fn process_add_index_components(
     let associated_token_program_account = next_account_info(accounts_iter)?;
     let token_program_account = next_account_info(accounts_iter)?;
 
-    require!(owner.is_signer, ProgramError::MissingRequiredSignature);
+    require!(signer.is_signer, ProgramError::MissingRequiredSignature);
 
     require!(
         index_account.owner == program_id,
@@ -59,7 +59,7 @@ pub fn process_add_index_components(
 
     let mut controller = Controller::try_from_slice(&controller_account.data.borrow())?;
     require!(
-        controller.owner == *owner.key,
+        controller.owner == *signer.key,
         ProtocolError::OnlyControllerOwner.into()
     );
 
@@ -119,14 +119,14 @@ pub fn process_add_index_components(
 
     invoke_signed(
         &system_instruction::create_account(
-            &owner.key,
+            &signer.key,
             &index_mints_account.key,
             lamports,
             space as u64,
             program_id,
         ),
         &[
-            owner.clone(),
+            signer.clone(),
             index_mints_account.clone(),
             system_program_account.clone(),
         ],
@@ -188,14 +188,14 @@ pub fn process_add_index_components(
         // create component account
         invoke_signed(
             &system_instruction::create_account(
-                &owner.key,
+                &signer.key,
                 &component_account.key,
                 component_lamports,
                 Component::LEN as u64,
                 program_id,
             ),
             &[
-                owner.clone(),
+                signer.clone(),
                 component_account.clone(),
                 system_program_account.clone(),
             ],
@@ -218,13 +218,13 @@ pub fn process_add_index_components(
         // create vault associated token account
         invoke_signed(
             &create_associated_token_account(
-                owner.key,
+                signer.key,
                 vault_pda.key,
                 mint_account.key,
                 &spl_token::ID,
             ),
             &[
-                owner.clone(),
+                signer.clone(),
                 vault_ata.clone(),
                 vault_pda.clone(),
                 mint_account.clone(),

@@ -1,7 +1,7 @@
 use solana_sdk::{
     hash::Hash, pubkey::Pubkey, signature::Keypair, signer::Signer, transaction::Transaction,
 };
-use spl_associated_token_account::instruction::create_associated_token_account;
+use spl_associated_token_account::create_associated_token_account;
 
 pub fn create_token_account_transaction(
     payer: &Keypair,
@@ -10,8 +10,7 @@ pub fn create_token_account_transaction(
     mint: Pubkey,
     recent_blockhashes: Hash,
 ) -> Transaction {
-    let instruction =
-        create_associated_token_account(&funding, &wallet_address, &mint, &spl_token::ID);
+    let instruction = create_associated_token_account(&funding, &wallet_address, &mint);
 
     Transaction::new_signed_with_payer(
         &[instruction],

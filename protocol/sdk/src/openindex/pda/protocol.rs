@@ -3,8 +3,7 @@ use crate::openindex::seeds::{
     INDEX_MINTS_DATA_SEED, INDEX_MINT_AUTHORITY_SEED, INDEX_MINT_SEED, INDEX_SEED, MODULE_SEED,
     PROTOCOL_SEED,
 };
-use solana_program::pubkey::Pubkey;
-use solana_sdk::{entrypoint_deprecated::ProgramResult, pubkey::PubkeyError};
+use solana_program::pubkey::{Pubkey, PubkeyError};
 
 pub fn find_protocol_address(program_id: &Pubkey) -> (Pubkey, u8) {
     let (pda, bump) = Pubkey::find_program_address(&[PROTOCOL_SEED], program_id);

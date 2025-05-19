@@ -17,11 +17,11 @@ use solana_program::{
 };
 pub fn process_init_protocol(program_id: Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
-    let owner = next_account_info(accounts_iter)?;
+    let signer = next_account_info(accounts_iter)?;
     let protocol_account = next_account_info(accounts_iter)?;
     let system_program_account = next_account_info(accounts_iter)?;
 
-    require!(owner.is_signer, ProgramError::MissingRequiredSignature);
+    require!(signer.is_signer, ProgramError::MissingRequiredSignature);
 
     require!(
         protocol_account.lamports() == 0,
@@ -40,21 +40,21 @@ pub fn process_init_protocol(program_id: Pubkey, accounts: &[AccountInfo]) -> Pr
 
     invoke_signed(
         &system_instruction::create_account(
-            &owner.key,
+            &signer.key,
             &protocol_account.key,
             lamports,
             Protocol::LEN as u64,
             &program_id,
         ),
         &[
-            owner.clone(),
+            signer.clone(),
             protocol_account.clone(),
             system_program_account.clone(),
         ],
         &[&[PROTOCOL_SEED, &[protocol_bump]]],
     )?;
 
-    let protocol = Protocol::new(owner.key.clone(), protocol_bump);
+    let protocol = Protocol::new(signer.key.clone(), protocol_bump);
     protocol.serialize(&mut &mut protocol_account.data.borrow_mut()[..])?;
 
     Ok(())

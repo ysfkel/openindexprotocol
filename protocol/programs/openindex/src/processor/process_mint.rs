@@ -16,7 +16,7 @@ use solana_program::{
     entrypoint::ProgramResult,
     program::{invoke, invoke_signed},
     program_error::ProgramError,
-    program_pack::IsInitialized,
+    program_pack::{IsInitialized, Pack},
     pubkey::Pubkey,
 };
 use spl_token::instruction::{mint_to, transfer};
@@ -28,7 +28,7 @@ pub fn process_mint(
     amount: u64,
 ) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
-    let caller_account = next_account_info(accounts_iter)?;
+    let signer = next_account_info(accounts_iter)?;
     let controller_account = next_account_info(accounts_iter)?;
     let mint_account = next_account_info(accounts_iter)?;
     let mint_authority_account = next_account_info(accounts_iter)?;
@@ -38,7 +38,7 @@ pub fn process_mint(
     let token_program_account = next_account_info(accounts_iter)?;
 
     require!(
-        caller_account.is_signer,
+        signer.is_signer,
         ProgramError::MissingRequiredSignature
     );
 
@@ -87,10 +87,10 @@ pub fn process_mint(
         let component_account = next_account_info(accounts_iter)?;
         let vault_pda = next_account_info(accounts_iter)?;
         let vault_ata = next_account_info(accounts_iter)?;
-        let token_account = next_account_info(accounts_iter)?;
+        let component_token_account = next_account_info(accounts_iter)?;
 
         require!(
-            token_account.owner == token_program_account.key,
+            component_token_account.owner == token_program_account.key,
             ProgramError::InvalidAccountOwner
         );
 
@@ -147,20 +147,25 @@ pub fn process_mint(
         invoke(
             &transfer(
                 token_program_account.key,
-                token_account.key,
+                component_token_account.key,
                 vault_ata.key,
-                caller_account.key,
+                signer.key,
                 &[],
                 component_amount,
             )?,
             &[
-                caller_account.clone(),
-                token_account.clone(),
+                signer.clone(),
+                component_token_account.clone(),
                 vault_ata.clone(),
                 token_program_account.clone(),
             ],
         )?;
     }
+    let token_account_data = spl_token::state::Account::unpack(&token_account.data.borrow())?;
+    require!(
+        *mint_account.key == token_account_data.mint,
+        ProtocolError::InvalidMintAccount.into()
+    );
 
     invoke_signed(
         &mint_to(

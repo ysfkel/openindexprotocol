@@ -23,7 +23,7 @@ use spl_token::{instruction::initialize_mint2, state::Mint};
 
 pub fn process_create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
-    let owner = next_account_info(accounts_iter)?;
+    let signer = next_account_info(accounts_iter)?;
     let manager = next_account_info(accounts_iter)?;
     let index_account = next_account_info(accounts_iter)?;
     let mint_account = next_account_info(accounts_iter)?;
@@ -32,7 +32,7 @@ pub fn process_create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> Pr
     let system_program_account = next_account_info(accounts_iter)?;
     let token_program_account = next_account_info(accounts_iter)?;
 
-    require!(owner.is_signer, ProgramError::MissingRequiredSignature);
+    require!(signer.is_signer, ProgramError::MissingRequiredSignature);
     require!(
         index_account.lamports() == 0,
         ProgramError::AccountAlreadyInitialized
@@ -55,7 +55,7 @@ pub fn process_create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> Pr
 
     let mut controller = Controller::try_from_slice(&controller_account.data.borrow())?;
     require!(
-        controller.owner == *owner.key,
+        controller.owner == *signer.key,
         ProtocolError::OnlyControllerOwner.into()
     );
 
@@ -95,14 +95,14 @@ pub fn process_create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> Pr
     let lamports = rent.minimum_balance(space);
     invoke_signed(
         &system_instruction::create_account(
-            &owner.key,
+            &signer.key,
             &index_account.key,
             lamports,
             space as u64,
             program_id,
         ),
         &[
-            owner.clone(),
+            signer.clone(),
             index_account.clone(),
             system_program_account.clone(),
         ],
@@ -119,14 +119,14 @@ pub fn process_create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> Pr
     let mint_lamports = rent.minimum_balance(mint_space);
     invoke_signed(
         &system_instruction::create_account(
-            owner.key,
+            signer.key,
             mint_account.key,
             mint_lamports,
             mint_space as u64,
             token_program_account.key,
         ),
         &[
-            owner.clone(),
+            signer.clone(),
             mint_account.clone(),
             system_program_account.clone(),
         ],
@@ -165,7 +165,7 @@ pub fn process_create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> Pr
         ]],
     )?;
 
-    let index = Index::new(index_id, owner.key.clone(), manager.key.clone(), index_bump);
+    let index = Index::new(index_id, signer.key.clone(), manager.key.clone(), index_bump);
     index.serialize(&mut &mut index_account.data.borrow_mut()[..])?;
 
     controller.generate_next_index_id();

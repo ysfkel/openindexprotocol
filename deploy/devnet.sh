@@ -1,0 +1,1 @@
+solana program  deploy --keypair /Users/yusufkelo/.config/solana/id.json target/deploy/openindex.so --url http://api.devnet.solana.com --commitment confirmed

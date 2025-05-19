@@ -3,7 +3,7 @@ use openindex_sdk::openindex::{
     pda::{find_module_signer_address, find_registered_module_address},
     transaction::init_module_transaction,
 };
-use solana_sdk::pubkey::Pubkey;
+use solana_sdk::{pubkey::Pubkey, signature::Keypair};
 
 use crate::{BanksClientResult, ProcessInitModuleResult, Setup};
 
