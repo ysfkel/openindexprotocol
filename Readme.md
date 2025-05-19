@@ -68,8 +68,7 @@ For a deep dive on accounts, PDAs, and execution flow, check the full docs below
 
 ## 📚 Full Technical Docs
 
-* **GitBook:** [https://openindex.gitbook.io/docs](https://openindex.gitbook.io/docs)
-* **Grant proposal PDF:** [`/docs/Grant_Proposal.pdf`](./docs/Grant_Proposal.pdf)
+* **GitBook:** [https://openindex.gitbook.io/openindex](https://openindex.gitbook.io/openindex) 
 
 ---
 
@@ -77,19 +76,13 @@ For a deep dive on accounts, PDAs, and execution flow, check the full docs below
 
 | Status | Feature              | Notes                                |
 | ------ | -------------------- | ------------------------------------ |
-| ✅      | Phase‑1 core program | Mainnet‑beta ready, audited in‑house |
+| ✅      | Phase‑1 core program | ready |
 | 🛠     | Rebalancer Module    | Oracle integration + drift math      |
-| 🛠     | Trade Module         | Jupiter/Phoenix router via CPI       |
-| 🛠     | Governance config    | Controller‑level policies            |
+| 🛠     | Trade Module         | Raydium/ Orca via CPI                |
+| 🛠     | Governance config    | Protocol & Controller‑level policies |
 | 🛠     | SDK & React demo     | Devnet front‑end + TS client         |
 
 Track progress in the [milestone board](https://github.com/OpenIndexProtocol/open-index-protocol/projects/1).
-
----
-
-## 🤝 Contributing
-
-Pull requests are welcome! Please open an issue first if you plan a large change. Run `cargo fmt && cargo clippy` before submitting.
 
 ---
 
