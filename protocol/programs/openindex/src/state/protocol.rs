@@ -1,8 +1,11 @@
 use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{program_pack::IsInitialized, pubkey::Pubkey};
 
+use super::AccountType;
+
 #[derive(BorshDeserialize, BorshSerialize, Debug, Default)]
 pub struct Protocol {
+    pub account_type: AccountType,
     pub owner: Pubkey,
     pub next_controller_id: u64,
     pub initialized: bool,
@@ -10,9 +13,10 @@ pub struct Protocol {
 }
 
 impl Protocol {
-    pub const LEN: usize = 32 + 8 + 1 + 1;
+    pub const LEN: usize = 1 + 32 + 8 + 1 + 1;
     pub fn new(owner: Pubkey, bump: u8) -> Self {
         Self {
+            account_type: AccountType::Protocol,
             owner,
             bump,
             initialized: true,

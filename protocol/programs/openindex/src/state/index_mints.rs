@@ -1,8 +1,11 @@
 use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{program_pack::IsInitialized, pubkey::Pubkey};
 
+use super::AccountType;
+
 #[derive(BorshDeserialize, BorshSerialize, Debug)]
 pub struct IndexMints {
+    pub account_type: AccountType,
     pub mints: Vec<Pubkey>,
     pub initialized: bool,
     pub bump: u8,
@@ -11,17 +14,18 @@ pub struct IndexMints {
 impl IndexMints {
     pub fn new(mints: Vec<Pubkey>, bump: u8) -> Self {
         Self {
+            account_type: AccountType::IndexMints,
             mints,
             initialized: true,
             bump,
         }
     }
     pub fn calc_len(mints_len: usize) -> usize {
-        4 + (mints_len * 32) + 1 + 1
+        1 + 4 + (mints_len * 32) + 1 + 1
     }
 
     pub fn len(&self) -> usize {
-        4 + (self.mints.len() * 32) + 1 + 1
+        1 + 4 + (self.mints.len() * 32) + 1 + 1
     }
 }
 

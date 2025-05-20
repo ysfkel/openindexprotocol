@@ -5,6 +5,7 @@ mod index;
 mod index_mints;
 mod module;
 mod protocol;
+mod account_type;
 
 pub use component::*;
 pub use controller::*;
@@ -13,3 +14,4 @@ pub use index::*;
 pub use index_mints::*;
 pub use module::*;
 pub use protocol::*;
+pub use account_type::*;

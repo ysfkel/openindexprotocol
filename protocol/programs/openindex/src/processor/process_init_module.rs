@@ -40,11 +40,6 @@ pub fn process_init_module(program_id: &Pubkey, accounts: &[AccountInfo]) -> Pro
         .map_err(|_| ProtocolError::InvalidProtocolAccountData)?;
 
     require!(
-        protocol.owner == *signer.key,
-        ProtocolError::OnlyProtocolOwner.into()
-    );
-
-    require!(
         protocol.is_initialized(),
         ProtocolError::ProtocolNotInitialized.into()
     );
@@ -54,6 +49,11 @@ pub fn process_init_module(program_id: &Pubkey, accounts: &[AccountInfo]) -> Pro
     require!(
         *protocol_account.key == protocol_pda,
         ProtocolError::IncorrectProtocolAccount.into()
+    );
+
+    require!(
+        protocol.owner == *signer.key,
+        ProtocolError::OnlyProtocolOwner.into()
     );
 
     let (registered_module_pda, registered_module_bump) =

@@ -1,18 +1,22 @@
 use borsh::{BorshDeserialize, BorshSerialize};
-use solana_program::{program_pack::IsInitialized, pubkey::Pubkey};
+use solana_program::{example_mocks::solana_account::Account, program_pack::IsInitialized, pubkey::Pubkey};
+
+use super::AccountType;
 
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct Module {
-    is_active: bool,
-    initialized: bool,
+    pub account_type: AccountType,
+    pub is_active: bool,
+    pub initialized: bool,
     pub bump: u8,
 }
 
 impl Module {
-    pub const LEN: usize = 1 + 1 + 1;
+    pub const LEN: usize = 1 + 1 + 1 + 1;
 
     pub fn new(is_active: bool, bump: u8) -> Self {
         Self {
+            account_type: AccountType::Module,
             is_active,
             initialized: true,
             bump,

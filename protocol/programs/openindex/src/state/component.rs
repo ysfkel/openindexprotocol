@@ -1,9 +1,14 @@
 use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{program_pack::IsInitialized, pubkey::Pubkey};
 
+use super::AccountType;
+
 /// A Conponent of Index token
 #[derive(BorshDeserialize, BorshSerialize, Debug)]
 pub struct Component {
+    /// The account type of the component - initialized to AccountType::Component
+    pub account_type: AccountType,
+    /// The number of uints in the component
     pub uints: u64,
     /// The token mint of the component
     pub mint: Pubkey,
@@ -16,10 +21,11 @@ pub struct Component {
 }
 
 impl Component {
-    pub const LEN: usize = 8 + 32 + 1 + 1 + 1;
+    pub const LEN: usize = 1 + 8 + 32 + 1 + 1 + 1;
 
     pub fn new(uints: u64, mint: Pubkey, bump: u8, vault_bump: u8) -> Self {
         Self {
+            account_type: AccountType::Component,
             uints,
             mint,
             bump,

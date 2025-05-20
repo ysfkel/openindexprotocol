@@ -18,7 +18,7 @@ deploy_tv:
 	./deploy/test_validator.sh
 
 test:
-	cargo test --workspace -- --nocapture
+	cargo test --workspace -- --nocapture --test-threads 1 
 
 test_validator:
 	cargo test -p test-validator --features test-validator -- --nocapture
