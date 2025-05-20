@@ -6,9 +6,11 @@ use crate::processor::{
 use borsh::BorshDeserialize;
 use openindex_sdk::openindex::instruction::ProtocolInstruction as Instruction;
 use solana_program::{
-    account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
+    account_info::AccountInfo, entrypoint::ProgramResult,
     pubkey::Pubkey,
 };
+
+/// Program instruction processor
 pub fn process_instruction(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
@@ -36,7 +38,6 @@ pub fn process_instruction(
             process_redeem(program_id, accounts, index_id, amount)?
         }
         Instruction::InitModule => process_init_module(program_id, accounts)?,
-        _ => Err(ProgramError::InvalidInstructionData)?,
     }
 
     Ok(())

@@ -1,3 +1,5 @@
+//! Program state processor
+
 use borsh::BorshDeserialize;
 use openindex_sdk::{
     openindex::{
@@ -17,10 +19,10 @@ use solana_program::{
     program_error::ProgramError,
     pubkey::Pubkey,
 };
-use spl_token::instruction::{burn, burn_checked, transfer};
+use spl_token::instruction::{burn, transfer};
+use crate::state::{Component, IndexMints};
 
-use crate::state::{Component, IndexMints, Protocol};
-
+/// instruction to process minting an index
 pub fn process_redeem(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
@@ -74,7 +76,7 @@ pub fn process_redeem(
 
     let mints = index_mints_data.mints;
 
-    let (mint_authority_pda, mint_authority_bump) =
+    let (mint_authority_pda, _) =
         find_index_mint_authority_address(program_id, controller_account.key, index_id);
 
     require!(
@@ -82,7 +84,7 @@ pub fn process_redeem(
         ProtocolError::IncorrectMintAuthority.into()
     );
 
-    for (index, mint) in mints.iter().enumerate() {
+    for  mint in mints.iter() {
         let component_mint_account = next_account_info(accounts_iter)?;
         let component_account = next_account_info(accounts_iter)?;
         let vault_pda = next_account_info(accounts_iter)?;

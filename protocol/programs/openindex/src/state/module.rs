@@ -1,17 +1,37 @@
 use borsh::{BorshDeserialize, BorshSerialize};
-use solana_program::{example_mocks::solana_account::Account, program_pack::IsInitialized, pubkey::Pubkey};
+use solana_program::program_pack::IsInitialized;
 
 use super::AccountType;
 
+/// Module
+///
+/// Metadata account for an **external program** that has been registered
+/// with the protocol (see `InitModule`).  
+/// 
+/// A module is allowed to CPI into the core program to perform automated
+/// tasks such as rebalancing, fee routing, or strategy execution.
+/// 
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct Module {
+    /// Account type. It can be **Uninitialized** or **Module**.
     pub account_type: AccountType,
+
+    /// If `false`, the module is paused and CPIs from it should be rejected.
     pub is_active: bool,
+
+    /// Set to `true` by `InitModule`; queried via `IsInitialized`.
     pub initialized: bool,
+
+    /// PDA bump seed for `registered_module_account`.
     pub bump: u8,
 }
 
 impl Module {
+    /// Packed size in bytes:
+    /// * 1 – `account_type`
+    /// * 1 – `is_active`
+    /// * 1 – `initialized`
+    /// * 1 – `bump`
     pub const LEN: usize = 1 + 1 + 1 + 1;
 
     pub fn new(is_active: bool, bump: u8) -> Self {
@@ -22,15 +42,17 @@ impl Module {
             bump,
         }
     }
-
+    /// Activate the module (e.g. after governance vote).
     pub fn activate(&mut self) {
         self.is_active = true;
     }
 
+    /// Deactivate / pause the module.
     pub fn deactivate(&mut self) {
         self.is_active = false;
     }
 
+    /// Convenience getter.
     pub fn is_active(&self) -> bool {
         self.is_active
     }

@@ -1,3 +1,5 @@
+//! Program state processor
+
 use crate::state::{Controller, ControllerGlobalConfig, Index};
 use borsh::{BorshDeserialize, BorshSerialize};
 use openindex_sdk::{
@@ -21,6 +23,7 @@ use solana_program::{
 };
 use spl_token::{instruction::initialize_mint2, state::Mint};
 
+/// instruction to process creating an index
 pub fn process_create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
     let signer = next_account_info(accounts_iter)?;

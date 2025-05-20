@@ -16,6 +16,7 @@ use {
     solana_sdk::signature::{Keypair, Signer},
 };
 
+/// Creates a transaction to add index components
 pub fn add_index_components_versioned_transaction(
     payer: &Keypair,
     program_id: Pubkey,

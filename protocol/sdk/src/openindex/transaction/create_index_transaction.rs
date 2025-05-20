@@ -8,6 +8,7 @@ use crate::openindex::{
 use solana_sdk::{hash::Hash, signature::Keypair, transaction::Transaction};
 use {solana_program::pubkey::Pubkey, solana_sdk::signature::Signer};
 
+/// Creates a transaction to create an index
 pub fn create_index_transaction(
     payer: &Keypair,
     program_id: Pubkey,

@@ -1,5 +1,7 @@
+//! Program state processor
+
 use crate::state::Protocol;
-use borsh::{BorshDeserialize, BorshSerialize};
+use borsh::BorshSerialize;
 use openindex_sdk::{
     openindex::{error::ProtocolError, pda::find_protocol_address, seeds::PROTOCOL_SEED},
     require,
@@ -9,12 +11,13 @@ use solana_program::{
     entrypoint::ProgramResult,
     program::invoke_signed,
     program_error::ProgramError,
-    program_pack::IsInitialized,
     pubkey::Pubkey,
     rent::Rent,
-    system_instruction, system_program,
+    system_instruction,
     sysvar::Sysvar,
 };
+
+//// instruction to process initializing a protocol
 pub fn process_init_protocol(program_id: Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
     let signer = next_account_info(accounts_iter)?;

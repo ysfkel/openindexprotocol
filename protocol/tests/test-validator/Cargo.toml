@@ -13,8 +13,7 @@ borsh = "1.5.6"
 solana-client = "2.2.7"
 solana-sdk = "2.2.2"
 solana-program = "2.2.1"
-openindex = {version= "0.1.0", path ="../../programs/openindex"}
-openindex-issuance =   {version= "0.1.0", path ="../../programs/modules/issuance"}
+openindex = {version= "0.1.0", path ="../../programs/openindex"} 
 openindex-sdk = {version= "0.1.0", path ="../../sdk", features=["transaction"]}
 spl-associated-token-account = { version = "6.0.0", features = ["no-entrypoint"] }
 tokio = "1.44.2"

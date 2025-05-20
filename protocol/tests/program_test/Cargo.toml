@@ -4,8 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-openindex = {version= "0.1.0", path ="../../programs/openindex"}
-openindex-issuance =   {version= "0.1.0", path ="../../programs/modules/issuance"}
+openindex = {version= "0.1.0", path ="../../programs/openindex"} 
 openindex-sdk = {version= "0.1.0", path ="../../sdk", features=["transaction"]}
 solana-program = "2.2.1"
  

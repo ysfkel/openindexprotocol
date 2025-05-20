@@ -1,3 +1,5 @@
+//! Program state processor
+
 use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
@@ -7,7 +9,7 @@ use solana_program::{
     program_pack::IsInitialized,
     pubkey::Pubkey,
     rent::Rent,
-    system_instruction, system_program as sys_program,
+    system_instruction,
     sysvar::Sysvar,
 };
 
@@ -20,6 +22,8 @@ use openindex_sdk::{
     },
     require,
 };
+
+/// instruction to process initializing a module
 pub fn process_init_module(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
 
@@ -87,7 +91,7 @@ pub fn process_init_module(program_id: &Pubkey, accounts: &[AccountInfo]) -> Pro
         ]],
     )?;
 
-    let mut module = Module::new(true, registered_module_bump);
+    let module = Module::new(true, registered_module_bump);
     module.serialize(&mut &mut registered_module_account.data.borrow_mut()[..])?;
 
     Ok(())

@@ -1,3 +1,5 @@
+//! Program state processor
+
 use crate::state::{Component, Controller, ControllerGlobalConfig, Index, IndexMints};
 use borsh::{BorshDeserialize, BorshSerialize};
 use openindex_sdk::{
@@ -5,7 +7,7 @@ use openindex_sdk::{
         error::ProtocolError,
         pda::{
             create_index_address, find_component_address, find_component_vault_address,
-            find_index_address, find_index_mints_data_address,
+             find_index_mints_data_address,
         },
         seeds::{COMPONENT_SEED, COMPONENT_VAULT_SEED, INDEX_MINTS_DATA_SEED},
     },
@@ -16,7 +18,7 @@ use solana_program::{
     entrypoint::ProgramResult,
     program::invoke_signed,
     program_error::ProgramError,
-    program_pack::{IsInitialized, Pack},
+    program_pack::IsInitialized,
     pubkey::Pubkey,
     rent::Rent,
     system_instruction,
@@ -24,6 +26,7 @@ use solana_program::{
 };
 use spl_associated_token_account::instruction::create_associated_token_account;
 
+/// instruction to process adding index components
 pub fn process_add_index_components(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
@@ -57,7 +60,7 @@ pub fn process_add_index_components(
         ProtocolError::UnknownControllerAccount.into()
     );
 
-    let mut controller = Controller::try_from_slice(&controller_account.data.borrow())?;
+    let controller = Controller::try_from_slice(&controller_account.data.borrow())?;
     require!(
         controller.owner == *signer.key,
         ProtocolError::OnlyControllerOwner.into()

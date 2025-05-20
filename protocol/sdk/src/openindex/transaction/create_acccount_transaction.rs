@@ -3,6 +3,7 @@ use solana_sdk::{
     transaction::Transaction,
 };
 
+/// Creates a transaction to create an account
 pub fn create_acccount_transaction(
     payer: &Keypair,
     account: &Keypair,

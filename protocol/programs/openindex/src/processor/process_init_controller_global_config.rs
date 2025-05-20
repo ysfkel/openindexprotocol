@@ -1,3 +1,5 @@
+//! Program state processor
+
 use crate::state::{ControllerGlobalConfig, Protocol};
 use borsh::{BorshDeserialize, BorshSerialize};
 use openindex_sdk::{
@@ -16,9 +18,11 @@ use solana_program::{
     program_pack::IsInitialized,
     pubkey::Pubkey,
     rent::Rent,
-    system_instruction, system_program,
+    system_instruction,
     sysvar::Sysvar,
 };
+
+/// instruction to process initializing the controller global config
 pub fn process_init_controller_global_config(
     program_id: &Pubkey,
     accounts: &[AccountInfo],

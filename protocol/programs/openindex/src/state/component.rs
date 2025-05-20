@@ -3,26 +3,46 @@ use solana_program::{program_pack::IsInitialized, pubkey::Pubkey};
 
 use super::AccountType;
 
-/// A Conponent of Index token
+/// Component
+///
+/// Per-mint metadata for a *single* asset that makes up an index.  
+/// Created by `AddIndexComponents`, referenced by `Mint` and `Redeem`.
+///
+/// One `Component` account exists for each `(index_mint, component_mint)`
+/// pair and stores the fixed “recipe” amount (`units`) that backs **one**
+/// index token.
 #[derive(BorshDeserialize, BorshSerialize, Debug)]
 pub struct Component {
-    /// The account type of the component - initialized to AccountType::Component
+    /// Account type. It can be **Uninitialized** or **Component**.
     pub account_type: AccountType,
-    /// The number of uints in the component
+
+    /// Number of component units that back **one** index token.
     pub uints: u64,
-    /// The token mint of the component
+
+    /// SPL mint address of the component asset.
     pub mint: Pubkey,
-    /// Component PDA bump
+
+    /// PDA bump seed for `component_account`.
     pub bump: u8,
-    /// The PDA bump of the vault account of the component
+
+    /// PDA bump seed for the component’s vault account.
     pub vault_bump: u8,
-    /// Component initialzed state - set true when component is initialized
+
+    /// Set to `true` by `AddIndexComponents`; queried via `IsInitialized`.
     initialized: bool,
 }
 
 impl Component {
+    /// Packed size in bytes:
+    /// * 1  – `account_type`
+    /// * 8  – `units`
+    /// * 32 – `mint`
+    /// * 1  – `bump`
+    /// * 1  – `vault_bump`
+    /// * 1  – `initialized`
     pub const LEN: usize = 1 + 8 + 32 + 1 + 1 + 1;
 
+   /// Constructor used by `process_add_index_components`.
     pub fn new(uints: u64, mint: Pubkey, bump: u8, vault_bump: u8) -> Self {
         Self {
             account_type: AccountType::Component,

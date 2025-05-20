@@ -1,3 +1,5 @@
+//! Program state processor
+
 use crate::state::{Component, IndexMints};
 use borsh::BorshDeserialize;
 use openindex_sdk::{
@@ -21,6 +23,7 @@ use solana_program::{
 };
 use spl_token::instruction::{mint_to, transfer};
 
+//// instruction to process minting an index
 pub fn process_mint(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
@@ -82,7 +85,7 @@ pub fn process_mint(
         ProtocolError::IncorrectMintAuthority.into()
     );
 
-    for (index, mint) in mints.iter().enumerate() {
+    for _ in mints.iter() {
         let component_mint_account = next_account_info(accounts_iter)?;
         let component_account = next_account_info(accounts_iter)?;
         let vault_pda = next_account_info(accounts_iter)?;

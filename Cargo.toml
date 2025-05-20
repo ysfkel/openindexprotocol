@@ -1,7 +1,7 @@
 [workspace]
 members = [ 
     "protocol/programs/openindex",
-    "protocol/programs/modules/issuance", 
+    # "protocol/programs/modules/issuance", 
     "protocol/sdk",
     "protocol/tests/program_test",
     "protocol/tests/test-validator", 
