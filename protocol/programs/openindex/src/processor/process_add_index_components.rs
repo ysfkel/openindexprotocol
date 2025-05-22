@@ -116,12 +116,11 @@ pub fn process_add_index_components(
         ProtocolError::MintsAmountsLenMismatch.into()
     );
 
-    let space = IndexMints::calc_len(mints_len);
-    let rent = Rent::get()?;
-    let lamports = rent.minimum_balance(space);
-    
-    let component_lamports = rent.minimum_balance(Component::LEN);
+
+
     // creates components
+    let rent = Rent::get()?;
+    let component_lamports = rent.minimum_balance(Component::LEN);
     for (index, mint) in mints.iter().enumerate() {
         let mint_account = next_account_info(accounts_iter)?;
         let component_account = next_account_info(accounts_iter)?;
@@ -222,8 +221,11 @@ pub fn process_add_index_components(
             ]],
         )?;
     }
+    
+    //creates index mints account
+    let space = IndexMints::calc_len(mints_len);
+    let lamports = rent.minimum_balance(space);
 
-    // creates index mints account
     invoke_signed(
         &system_instruction::create_account(
             &signer.key,
