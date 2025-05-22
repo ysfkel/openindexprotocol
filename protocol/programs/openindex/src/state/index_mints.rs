@@ -46,7 +46,7 @@ impl IndexMints {
     pub fn calc_len(mints_len: usize) -> usize {
         1 + 4 + (mints_len * 32) + 1 + 1
     }
-    
+
     /// Compute the packed size from an existing instance.
     pub fn len(&self) -> usize {
         1 + 4 + (self.mints.len() * 32) + 1 + 1
@@ -65,7 +65,6 @@ mod test {
 
     #[test]
     fn test_new() {
-        let owner = Pubkey::new_unique();
         let c = IndexMints::new(vec![Pubkey::new_unique(), Pubkey::new_unique()], 254);
         assert_eq!(c.mints.len(), 2);
         assert_eq!(c.is_initialized(), true);

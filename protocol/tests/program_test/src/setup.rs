@@ -30,12 +30,6 @@ pub async fn setup() -> Setup {
         processor!(openindex::entrypoint::process_instruction),
     );
 
-    program_test.add_program(
-        "openindex-issuance",
-        issuance_program_id,
-        processor!(openindex_issuance::entrypoint::process_instruction),
-    );
-
     let (mut banks_client, payer, recent_blockhashes) = program_test.start().await;
     // get rent
     let rent_account = banks_client

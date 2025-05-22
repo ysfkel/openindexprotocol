@@ -119,28 +119,7 @@ pub fn process_add_index_components(
     let space = IndexMints::calc_len(mints_len);
     let rent = Rent::get()?;
     let lamports = rent.minimum_balance(space);
-
-    invoke_signed(
-        &system_instruction::create_account(
-            &signer.key,
-            &index_mints_account.key,
-            lamports,
-            space as u64,
-            program_id,
-        ),
-        &[
-            signer.clone(),
-            index_mints_account.clone(),
-            system_program_account.clone(),
-        ],
-        &[&[
-            INDEX_MINTS_DATA_SEED,
-            controller_account.key.as_ref(),
-            &index_id.to_le_bytes(),
-            &[index_mints_bump],
-        ]],
-    )?;
-
+    
     let component_lamports = rent.minimum_balance(Component::LEN);
     // creates components
     for (index, mint) in mints.iter().enumerate() {
@@ -243,6 +222,28 @@ pub fn process_add_index_components(
             ]],
         )?;
     }
+
+    // creates index mints account
+    invoke_signed(
+        &system_instruction::create_account(
+            &signer.key,
+            &index_mints_account.key,
+            lamports,
+            space as u64,
+            program_id,
+        ),
+        &[
+            signer.clone(),
+            index_mints_account.clone(),
+            system_program_account.clone(),
+        ],
+        &[&[
+            INDEX_MINTS_DATA_SEED,
+            controller_account.key.as_ref(),
+            &index_id.to_le_bytes(),
+            &[index_mints_bump],
+        ]],
+    )?;
 
     let index_mints = IndexMints::new(mints, index_mints_bump);
     index_mints.serialize(&mut &mut index_mints_account.data.borrow_mut()[..])?;
