@@ -28,7 +28,7 @@ use {
         },
         transaction::{
             add_index_components_transaction, create_index_transaction,
-            create_lookup_table_transaction, create_mint_acccount_transaction,
+            create_mint_acccount_transaction,
             init_controller_global_config_transaction, init_controller_transaction,
             init_protocol_transaction,
         },
@@ -114,12 +114,9 @@ async fn test_add_index_components() -> Result<()> {
     assert!(index_data.initialized);
     assert_eq!(index_data.manager, manager);
     assert!(index_data.owner == payer.pubkey());
-
-    //
     let mut mints = Vec::<Pubkey>::new();
     let mut mints = vec![];
-    let units = vec![1, 2];//, 2, 2];
-
+    let units = vec![1, 2];
     // Create mints
     for i in 1..=units.len() {
         let mint = Keypair::new();
@@ -143,13 +140,11 @@ async fn test_add_index_components() -> Result<()> {
     );
 
     client.send_and_confirm_transaction(&transaction);
-
     let controller_address = find_controller_address(&program_id, controller_id).0;
     let index_pda = find_index_address(&program_id, &controller_address, index_id).0;
-
     let controller_account = client.get_account(&controller_address).unwrap();
-
     let mut components: Vec<Pubkey> = vec![];
+    
     for mint in mints.iter() {
         let component_pda = find_component_address(&program_id, &index_pda, mint).0;
         components.push(component_pda);

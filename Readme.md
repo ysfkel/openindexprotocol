@@ -1,91 +1,71 @@
- # Open Index Protocol
-
-*Solana‑native, modular index‑fund engine*
-
-[![License: MIT/Apache](https://img.shields.io/badge/license-MIT%20%2F%20Apache--2.0-blue)](LICENSE)  [![Build](https://img.shields.io/github/actions/workflow/status/OpenIndexProtocol/open-index-protocol/ci.yml?label=tests)](https://github.com/OpenIndexProtocol/open-index-protocol/actions)
+# Open Index Protocol  
+**Solana's modular index-fund engine** for creating and managing tokenized baskets of SPL assets.  
+*Production-grade, open-source, and extensible via CPI modules.*
 
 ---
 
-## ✨ What is it?
-
-Open Index Protocol lets anyone create, mint, redeem, and manage **tokenized index funds** on Solana. Think **Index Coop + Set Protocol**, but rebuilt for Solana‑level speed, fees, and composability.
-
-* **Phase 1 (live)** – Core program: create indexes, vault custody, permissionless mint/redeem.
-* **Phase 2 (grant milestones)** – Plug‑in Rebalancer + Trade Module, oracle feeds, governance configs, SDK & UI.
+## 🌐 Overview  
+Open Index Protocol enables **on-chain index funds** with:  
+- **Tokenized baskets** - Mint/redeem diversified SPL asset portfolios  
+- **Modular design** - Extend functionality via [`init_module`](https://openindex.gitbook.io/openindex#id-8-init_module) CPI interface  
+- **Low-fee automation** - Optimized for Solana's speed and cost efficiency  
 
 ---
 
-## 🔧 Quick Start
+## ⚙️ Core Components  
+| Component     | Description                                                                 |
+|--------------|-----------------------------------------------------------------------------|
+| `Protocol`   | Global state and module registry                                           |
+| `Controller` | Administrative domain for multiple indexes                                 |
+| `Index`      | Token basket (e.g., "Solana DeFi Top 5")                                   |
+| `Vault`      | PDA-held SPL tokens backing the index                                      |
+| `Module`     | Plug-in programs (e.g., Issuance, Trade, Rebalance)                        |
 
+
+---
+
+## 🧩 Modules  
+
+
+### Coming Soon  
+| Module            | Functionality                              |
+|------------------|-------------------------------------------|
+| `IssuanceModule` | Whitelists & fee hooks for compliance     |
+| `TradeModule`    | DEX swaps via Jupiter/Raydium CPI         |
+| `RebalanceModule`| Oracle-driven portfolio adjustments       |
+
+*Build custom modules for yield strategies, NFT-gating, or DAO governance.*
+
+---
+
+## 🚀 Getting Started  
+### Prerequisites  
+- [Rust](https://www.rust-lang.org/tools/install) + [Solana CLI](https://docs.anza.xyz/cli/install)  
+
+### Build & Test  
 ```bash
-git clone https://github.com/OpenIndexProtocol/open-index-protocol.git
-cd open-index-protocol
-cargo build-bpf          # compile on‑chain program
-cargo test-bpf           # run unit + integration tests
+git clone https://github.com/OpenIndexProtocol/openindexprotocol.git
+cd openindexprotocol/open_index
+cargo build-sbf
+make test  # Unit tests
 ```
 
-> **Prerequisites:** Rust `stable`, Solana CLI ≥1.17, Anchor ≥0.29 for local testing.
+#### Integration Tests  
+1. Start validator:  
+   ```bash
+   solana-test-validator
+   ```  
+2. Deploy:  
+   ```bash
+   solana program deploy target/deploy/openindex.so
+   ```  
+3. Test:  
+   ```bash
+   make test_validator
+   ```  
 
 ---
 
-## 🗂 Repo Layout
+## 📜 License  
+Dual-licensed under **MIT/Apache 2.0** - No fees, no tokens, pure public good.  
 
-```
-programs/openindex/    # Phase‑1 core on‑chain program
-programs/trade-module/ # Phase‑2 DEX CPI router (WIP)
-programs/rebalancer/   # Phase‑2 rebalance logic  (WIP)
-js/                    # TypeScript client SDK (WIP)
-docs/                  # Markdown specs & diagrams
-```
-
----
-
-## ⚙️ High‑Level Architecture
-
-```
-┌────────────┐         attach via init_module          ┌───────────────────┐
-│  Protocol  │ ───────────────────────────────────────▶│  Trade Module     │
-└────┬───────┘                                        └─────────┬─────────┘
-     │ create controller                                        │ swaps via
-┌────▼───────┐ 1:N  mint/redeem                                 │ CPI to DEX
-│ Controller │──────────────────────┐                           │
-└────┬───────┘                      │ CPI fetch                 │
-     │ create index                 │                           │
-┌────▼───────┐            ┌───────────────────┐   CPI trigger   │
-│   Index    │──holds───▶ │   Vault PDAs      │<────────────────┘
-└────────────┘            └───────────────────┘
-         ▲   ▲
-         │   │ add components
-         │   └──────────┐
-┌────────┴──────────┐   │
-│ Rebalancer Module │◀──┘ (computes drift, calls Trade Module)
-└───────────────────┘
-```
-
-For a deep dive on accounts, PDAs, and execution flow, check the full docs below.
-
----
-
-## 📚 Full Technical Docs
-
-* **GitBook:** [https://openindex.gitbook.io/openindex](https://openindex.gitbook.io/openindex) 
-
----
-
-## 🛠 Development Roadmap
-
-| Status | Feature              | Notes                                |
-| ------ | -------------------- | ------------------------------------ |
-| ✅      | Phase‑1 core program | ready |
-| 🛠     | Rebalancer Module    | Oracle integration + drift math      |
-| 🛠     | Trade Module         | Raydium/ Orca via CPI                |
-| 🛠     | Governance config    | Protocol & Controller‑level policies |
-| 🛠     | SDK & React demo     | Devnet front‑end + TS client         |
-
-Track progress in the [milestone board](https://github.com/OpenIndexProtocol/open-index-protocol/projects/1).
-
----
-
-## 🪪 License
-
-Dual‑licensed under **MIT** and **Apache 2.0**. Choose whichever license best fits your needs.

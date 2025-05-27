@@ -117,19 +117,14 @@ pub fn process_mint(
             ProtocolError::IncorrectComponentAccount.into()
         );
 
-        let expected_vault_ata = spl_associated_token_account::get_associated_token_address(
-            vault_pda.key,
-            component_mint_account.key,
-        );
-        require!(
-            *vault_ata.key == expected_vault_ata,
-            ProtocolError::IncorrectVaultATA.into()
-        );
-
         require!(
             component.is_initialized(),
             ProtocolError::ComponentNotInitialized.into()
         );
+
+        let component_amount = amount
+            .checked_mul(component.uints)
+            .ok_or(ProgramError::ArithmeticOverflow)?;
 
         let expected_vault_pda = create_component_vault_address(
             program_id,
@@ -143,9 +138,15 @@ pub fn process_mint(
             ProtocolError::IncorrectVaultAccount.into()
         );
 
-        let component_amount = amount
-            .checked_mul(component.uints)
-            .ok_or(ProgramError::ArithmeticOverflow)?;
+
+        let expected_vault_ata = spl_associated_token_account::get_associated_token_address(
+            vault_pda.key,
+            component_mint_account.key,
+        );
+        require!(
+            *vault_ata.key == expected_vault_ata,
+            ProtocolError::IncorrectVaultATA.into()
+        );
 
         invoke(
             &transfer(

@@ -31,7 +31,6 @@ pub async fn process_mint(
     let mut token_accounts: Vec<Pubkey> = vec![];
     for mint in mints.iter() {
         let ata = get_associated_token_address(&payer.pubkey(), mint);
-
         // 1) Create the ATA
         let ix = create_associated_token_account(&payer.pubkey(), &payer.pubkey(), mint);
 
@@ -46,11 +45,8 @@ pub async fn process_mint(
                 ));
 
         let token_account = get_associated_token_address(&payer.pubkey(), &mint);
-
         assert_eq!(ata, token_account);
-
         println!("user component token account {:?} -> ", token_account.clone());
-
         // mint to the token account
         let mint_to_tx = mint_to_transaction(
             &payer,
@@ -60,11 +56,8 @@ pub async fn process_mint(
             recent_blockhashes,
         )
         .unwrap();
-
         let result = _setup.client.send_and_confirm_transaction(&mint_to_tx);
-
         token_accounts.push(token_account);
-
         // execute the transaction
         let account = _setup.client.get_account(&token_account).unwrap();
         let token_account = Account::unpack(&account.data).unwrap();
@@ -96,9 +89,7 @@ pub async fn process_mint(
     let mint_account_data = spl_token::state::Mint::unpack(&mint_account.data.as_ref()).unwrap();
 
     assert_eq!(token_account_data.mint, mint);
-
     println!("user index token_account {:?} ",token_account);
-
     assert!(mints.len() > 0);
     assert_eq!(mints.len(), token_accounts.len());
 
