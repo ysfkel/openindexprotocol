@@ -10,3 +10,6 @@ crate-type = ["cdylib", "lib"]
 no-entrypoint = []
 
 [dependencies]
+borsh = {workspace = true}
+borsh-derive = {workspace = true}
+solana-program = {workspace = true}
