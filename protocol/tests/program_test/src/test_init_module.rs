@@ -4,7 +4,7 @@ use crate::{
 };
 use borsh::BorshDeserialize;
 use openindex_sdk::openindex::{
-    pda::{find_module_signer_address, find_registered_module_address},
+    pda::find_module_signer_address,
     state::Module,
     transaction::{init_module_transaction, init_protocol_transaction},
 };

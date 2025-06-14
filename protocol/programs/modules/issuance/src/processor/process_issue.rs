@@ -14,7 +14,7 @@ use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint::ProgramResult,
     instruction::{AccountMeta, Instruction},
-    program::invoke,
+    program::{invoke,invoke_signed},
     program_error::ProgramError,
     pubkey::Pubkey,
 };
@@ -143,7 +143,7 @@ pub fn issue(
             data: instruiction_data,
         },
         &cpi_account_infos,
-        &[&[program_id.as_array(), &[issuance_signer_bump]]],
+        &[&[program_id.as_ref(), &[issuance_signer_bump]]],
     )?;
 
     Ok(())
