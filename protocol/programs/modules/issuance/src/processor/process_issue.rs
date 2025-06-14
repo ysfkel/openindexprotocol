@@ -45,6 +45,13 @@ pub fn issue(
         IssuanceError::UnknownIssuanceConfigAccount.into()
     );
 
+    let (issuance_signer_pda, issuance_signer_bump) = find_issuance_signer_address(program_id);
+
+    require!(
+        *issuance_signer_account.key == issuance_signer_pda,
+        IssuanceError::IncorrectIssuanceSignerAccount.into()
+    );
+
     let issuance_config = IssuanceConfig::try_from_slice(&issuance_config_account.data.borrow())?;
 
     for hook in issuance_config.allowed_hooks.iter() {
@@ -71,7 +78,6 @@ pub fn issue(
         )?;
     }
 
-    let (issuance_signer_pda, issuance_signer_bump) = find_issuance_signer_address(program_id);
 
     let (module_pda, module_bump) =
         find_module_address(openindex_program_account.key, &issuance_signer_pda);

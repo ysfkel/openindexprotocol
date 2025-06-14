@@ -8,6 +8,8 @@ use thiserror::Error;
 pub enum IssuanceError {
     #[error("Error:Incorrect index issuance config account")]
     IncorrectIssuanceConfigAccount,
+    #[error("Error:Incorrect issuance signer account")]
+    IncorrectIssuanceSignerAccount,
     #[error("Error:Incorrecthook account")]
     IncorrectHookAccount,
 
