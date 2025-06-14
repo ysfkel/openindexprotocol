@@ -1,9 +1,21 @@
 use borsh::{BorshDeserialize, BorshSerialize};
 use openindex_sdk::{
-    issuance::{error::IssuanceError, pda::find_issuance_config_address, seeds::ISSUANCE_CONFIG_SEED, state::IssuanceConfig},
-     openindex::{error::ProtocolError, pda::create_protocol_address, state::Protocol}, require};
+    issuance::{
+        error::IssuanceError, pda::find_issuance_config_address, seeds::ISSUANCE_CONFIG_SEED,
+        state::IssuanceConfig,
+    },
+    openindex::{error::ProtocolError, pda::create_protocol_address, state::Protocol},
+    require,
+};
 use solana_program::{
-    account_info::{next_account_info, AccountInfo}, entrypoint::ProgramResult, system_instruction, program::invoke_signed, program_error::ProgramError, pubkey::Pubkey, rent::Rent, sysvar::Sysvar
+    account_info::{next_account_info, AccountInfo},
+    entrypoint::ProgramResult,
+    program::invoke_signed,
+    program_error::ProgramError,
+    pubkey::Pubkey,
+    rent::Rent,
+    system_instruction,
+    sysvar::Sysvar,
 };
 
 pub fn process_init_config(
@@ -39,31 +51,37 @@ pub fn process_init_config(
         ProtocolError::OnlyProtocolOwner.into()
     );
 
-    let (issuance_config_pda,issuance_pda_bump) = find_issuance_config_address(openindex_program_account.key);
+    let (issuance_config_pda, issuance_pda_bump) =
+        find_issuance_config_address(openindex_program_account.key);
 
-    require!(*issuance_config_account.key== issuance_config_pda, IssuanceError::IncorrectIssuanceConfigAccount.into());
+    require!(
+        *issuance_config_account.key == issuance_config_pda,
+        IssuanceError::IncorrectIssuanceConfigAccount.into()
+    );
 
     let rent = Rent::get()?;
     let space = IssuanceConfig::calc_len(hooks.len());
     let lamports = rent.minimum_balance(space);
 
     invoke_signed(
-        &system_instruction::create_account(&signer.key, &issuance_config_account.key, lamports, space as u64, program_id),
-          &[
+        &system_instruction::create_account(
+            &signer.key,
+            &issuance_config_account.key,
+            lamports,
+            space as u64,
+            program_id,
+        ),
+        &[
             signer.clone(),
             issuance_config_account.clone(),
-            system_program_account.clone()
-          ], 
-        &[
-            &[
-               ISSUANCE_CONFIG_SEED,
-               &[issuance_pda_bump]
-            ]]
-       )?;
-    
+            system_program_account.clone(),
+        ],
+        &[&[ISSUANCE_CONFIG_SEED, &[issuance_pda_bump]]],
+    )?;
+
     if !hooks.is_empty() {
-       let issuance_config = IssuanceConfig::new(hooks, issuance_pda_bump);
-       issuance_config.serialize(&mut &mut issuance_config_account.data.borrow_mut()[..])?;
+        let issuance_config = IssuanceConfig::new(hooks, issuance_pda_bump);
+        issuance_config.serialize(&mut &mut issuance_config_account.data.borrow_mut()[..])?;
     }
 
     Ok(())

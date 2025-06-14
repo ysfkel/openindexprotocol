@@ -10,3 +10,8 @@ pub enum IssuanceInstruction {
     RegisterHooks { hooks: Vec<Pubkey> },
     UnregisterHooks { hooks: Vec<Pubkey> },
 }
+
+#[derive(BorshSerialize, BorshDeserialize)]
+pub enum ExecuteHookInstruction {
+    Execute { index_id: u64, amount: u64 }, // Discriminator 0
+}

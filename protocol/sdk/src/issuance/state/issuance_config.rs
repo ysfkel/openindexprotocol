@@ -1,8 +1,5 @@
 use borsh::{BorshDeserialize, BorshSerialize};
-use solana_program::{
-    pubkey::Pubkey,
-    program_pack::IsInitialized
-};
+use solana_program::{program_pack::IsInitialized, pubkey::Pubkey};
 
 use super::AccountType;
 
@@ -15,7 +12,6 @@ pub struct IssuanceConfig {
 }
 
 impl IssuanceConfig {
-
     pub fn new(allowed_hooks: Vec<Pubkey>, bump: u8) -> Self {
         Self {
             account_type: AccountType::IssuanceConfig,
@@ -39,11 +35,9 @@ impl IssuanceConfig {
 
     /// Compute the packed size from an existing instance.
     pub fn len(&self) -> usize {
-        
         1 + 4 + (self.allowed_hooks.len() * 32) + 1 + 1
     }
 }
-
 
 impl IsInitialized for IssuanceConfig {
     fn is_initialized(&self) -> bool {
@@ -66,7 +60,10 @@ mod test {
     #[test]
     fn test_len() {
         let c = IssuanceConfig::new(vec![Pubkey::new_unique(), Pubkey::new_unique()], 254);
-        assert_eq!(borsh::to_vec(&c).unwrap().len(), IssuanceConfig::calc_len(2));
+        assert_eq!(
+            borsh::to_vec(&c).unwrap().len(),
+            IssuanceConfig::calc_len(2)
+        );
         assert_eq!(borsh::to_vec(&c).unwrap().len(), c.len());
     }
 }

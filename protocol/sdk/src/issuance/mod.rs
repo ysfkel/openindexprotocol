@@ -1,5 +1,3 @@
-#[cfg(feature = "issuance-state")]
-pub mod state;
 #[cfg(feature = "issuance-error")]
 pub mod error;
 #[cfg(feature = "issuance-instruction")]
@@ -8,8 +6,5 @@ pub mod instruction;
 pub mod pda;
 #[cfg(feature = "issuance-seeds")]
 pub mod seeds;
-
-
-
-
-
+#[cfg(feature = "issuance-state")]
+pub mod state;

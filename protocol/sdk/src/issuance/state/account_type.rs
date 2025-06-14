@@ -7,5 +7,4 @@ pub enum AccountType {
     /// Default uninitialized account state
     #[default]
     IssuanceConfig,
-  
 }

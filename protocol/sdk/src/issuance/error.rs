@@ -1,16 +1,18 @@
 use num_derive::FromPrimitive;
-use solana_program::{decode_error::DecodeError,program_error::PrintProgramError, msg, program_error::ProgramError};
+use solana_program::{
+    decode_error::DecodeError, msg, program_error::PrintProgramError, program_error::ProgramError,
+};
 use thiserror::Error;
 
 #[derive(Clone, Debug, Eq, Error, FromPrimitive, PartialEq)]
 pub enum IssuanceError {
-#[error("Error:Incorrect index issuance config account")]
- IncorrectIssuanceConfigAccount,
- #[error("Error:Incorrecthook account")]
- IncorrectHookAccount,
+    #[error("Error:Incorrect index issuance config account")]
+    IncorrectIssuanceConfigAccount,
+    #[error("Error:Incorrecthook account")]
+    IncorrectHookAccount,
 
-#[error("Error:Invalid issuance config account owner")]
- UnknownIssuanceConfigAccount,
+    #[error("Error:Invalid issuance config account owner")]
+    UnknownIssuanceConfigAccount,
 }
 
 impl From<IssuanceError> for ProgramError {
