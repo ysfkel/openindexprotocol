@@ -5,10 +5,7 @@ use crate::processor::{
 };
 use borsh::BorshDeserialize;
 use openindex_sdk::openindex::instruction::ProtocolInstruction as Instruction;
-use solana_program::{
-    account_info::AccountInfo, entrypoint::ProgramResult,
-    pubkey::Pubkey,
-};
+use solana_program::{account_info::AccountInfo, entrypoint::ProgramResult, pubkey::Pubkey};
 
 /// Program instruction processor
 pub fn process_instruction(

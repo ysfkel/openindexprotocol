@@ -6,11 +6,12 @@ use crate::{
 
 use borsh::BorshDeserialize;
 use openindex_sdk::openindex::{
-    state::{Component, Controller, Index, IndexMints, Protocol},
     pda::{
-    find_component_address, find_controller_address, find_index_address,
-    find_index_mints_data_address,
-}};
+        find_component_address, find_controller_address, find_index_address,
+        find_index_mints_data_address,
+    },
+    state::{Component, Controller, Index, IndexMints, Protocol},
+};
 use serde::Deserialize;
 use solana_program_test::BanksClientError;
 use solana_sdk::{

@@ -10,7 +10,6 @@ use super::pda::find_component_vault_address;
 
 #[derive(BorshDeserialize, BorshSerialize, Debug, PartialEq)]
 pub enum ProtocolInstruction {
-
     /// 0. **InitProtocol**
     ///
     /// Creates **the one-and-only** `protocol_account` PDA for the entire
@@ -39,7 +38,7 @@ pub enum ProtocolInstruction {
     /// * `IncorrectProtocolAccount`  if the PDA derivation doesn’t match  
     /// * `MissingRequiredSignature`  if `signer` did not sign
     InitProtocol,
-    
+
     /// 1. **InitController**
     ///
     /// Creates a new **controller** under the protocol.  
@@ -51,14 +50,14 @@ pub enum ProtocolInstruction {
     ///   already initialised.  
     /// * Increments `protocol.next_controller_id`, then derives the PDA  
     ///   `find_controller_address(program_id, controller_id)`.  
-    /// 
+    ///
     /// * Allocates a `Controller::LEN` account at that PDA, rent-exempt.  
     /// * Writes an initial `Controller` struct with:
     ///     * `id`         = incremental `controller_id`  
     ///     * `authority`  = `signer` (may be transferred later)  
     ///     * `bump`       = PDA bump seed  
     ///     * `config_set` = false (must call `InitControllerGlobalConfig`)  
-    /// 
+    ///
     /// * Persists the updated `protocol_account` (so the next call will get
     ///   the next unique controller ID).
     ///
@@ -76,10 +75,9 @@ pub enum ProtocolInstruction {
     /// * `IncorrectProtocolAccount`      if PDA derivation mismatches provided account  
     /// * `AccountAlreadyInitialized`     if controller_account is non-empty  
     /// * `MissingRequiredSignature`      if signer did not sign
-
     InitController,
 
-   /// 2. **InitControllerGlobalConfig**
+    /// 2. **InitControllerGlobalConfig**
     ///
     /// Creates the singleton **controller_global_config_account** that
     /// stores limits enforced uniformly across **all** controllers  
@@ -91,15 +89,15 @@ pub enum ProtocolInstruction {
     /// ### Behaviour
     /// * Verifies `max_index_components > 0`; otherwise returns
     ///   `InvalidMaxIndexComponents`.
-    /// 
+    ///
     /// * Confirms `protocol_account` is the correct PDA and already
     ///   initialised.  
     /// * Ensures the caller (`signer`) is exactly `protocol.owner`.  
-    /// 
+    ///
     /// * Derives PDA `find_controller_global_config_address()` and creates
     ///   an account of size `ControllerGlobalConfig::LEN`, funded to
     ///   rent-exemption.  
-    /// 
+    ///
     /// * Serialises a `ControllerGlobalConfig` with:
     ///     * `max_index_components`  – the supplied hard cap  
     ///     * `bump`                  – PDA bump seed
@@ -120,9 +118,7 @@ pub enum ProtocolInstruction {
     /// * `IncorrectControllerGlobalConfigAccount` if PDA derivation mismatches  
     /// * `AccountAlreadyInitialized`        if controller_global_config_account already has lamports  
     /// * `MissingRequiredSignature`         if signer did not sign
-    InitControllerGlobalConfig {
-        max_index_components: u32,
-    },
+    InitControllerGlobalConfig { max_index_components: u32 },
 
     /// 3. **InitModule**
     ///
@@ -147,7 +143,7 @@ pub enum ProtocolInstruction {
     /// * Derives
     ///   `find_registered_module_address(program_id, module_signer_account)`  
     ///   and creates the PDA with size `Module::LEN`, rent-exempt.  
-    /// 
+    ///
     /// * Serialises `Module { is_active: true, bump }` so the protocol can
     ///   later verify the caller is a registered module.
     ///
@@ -168,7 +164,7 @@ pub enum ProtocolInstruction {
     /// * `AccountAlreadyInitialized`        if registered_module_account already has lamports  
     /// * `MissingRequiredSignature`         if signer did not sign
     InitModule,
-    
+
     /// 4. **CreateIndex**
     ///
     /// Deploys a **new index** under an existing controller:
@@ -185,14 +181,14 @@ pub enum ProtocolInstruction {
     ///   owner can create new indexes).  
     /// * Verifies `controller_global_config_account` is initialised, thereby
     ///   enforcing protocol-wide limits (e.g. `max_index_components`).  
-    /// 
+    ///
     /// * Derives two PDAs from the *next* `index_id`:  
     ///     * `index_account`  (seed `b"index"`)  
     ///     * `mint_account`   (seed `b"index_mint"`)  
-    /// 
+    ///
     /// * Allocates both accounts rent-exempt and initialises the mint with
     ///   `decimals = 9`.  
-    /// 
+    ///
     /// * Serialises an `Index { id, owner = signer, manager, bump }`.  
     /// * Serialises the updated `Controller`, so the next call gets a fresh
     ///   `index_id`.
@@ -227,7 +223,7 @@ pub enum ProtocolInstruction {
     ///
     /// 1. Creates `index_mints_account` PDA that stores the ordered list of
     ///    component mints (vector of `Pubkey`).  
-    /// 
+    ///
     /// 2. For **each** component listed in `mints`:
     ///    * Allocates a `component_account` PDA holding the per-component
     ///      metadata (`amount`, mint, bumps).  
@@ -248,7 +244,7 @@ pub enum ProtocolInstruction {
     /// * Derives `index_mints_account` PDA, allocates it rent-exempt with
     ///   size `IndexMints::calc_len(mints.len())`, and serialises
     ///   `IndexMints { mints, bump }`.  
-    /// 
+    ///
     /// * Iterates over each `(mint, amount)` pair, deriving:
     ///     * `component_account`  (`b"component"`, index_account, mint)  
     ///     * `vault_pda` & `vault_ata`       (`b"component_vault"`, …)  
@@ -293,7 +289,6 @@ pub enum ProtocolInstruction {
         mints: Vec<Pubkey>,
     },
 
- 
     /// 6. **Mint**
     ///
     /// Mints `amount` of **index tokens** to the signer and simultaneously
@@ -311,7 +306,7 @@ pub enum ProtocolInstruction {
     /// * Requires `amount > 0`.  
     /// * Verifies that `index_mints_account` is the correct PDA and
     ///   deserialises it to obtain the ordered component-mint list `mints`.  
-    /// 
+    ///
     /// * For each component:  
     ///     * Checks PDA correctness for `component_account`, `vault_pda`,
     ///       `vault_ata`.  
@@ -358,10 +353,7 @@ pub enum ProtocolInstruction {
     /// * `InvalidMintAccount`                   if `token_account.mint` ≠ mint_account  
     /// * `ArithmeticOverflow`                   on `amount × component.units`  
     /// * `MissingRequiredSignature`             if signer did not sign
-    Mint {
-        index_id: u64,
-        amount: u64,
-    },
+    Mint { index_id: u64, amount: u64 },
 
     /// 7. **Redeem**
     ///
@@ -380,7 +372,7 @@ pub enum ProtocolInstruction {
     /// * Requires `amount > 0`.  
     /// * Deserialises `index_mints_account` to obtain the ordered component
     ///   list `mints`.  
-    /// 
+    ///
     /// * For each component *i*:  
     ///     * Checks PDA correctness for `component_account[i]`, `vault_pda[i]`,
     ///       `vault_ata[i]`.  
@@ -389,7 +381,7 @@ pub enum ProtocolInstruction {
     ///     * Executes `spl_token::transfer` from the vault’s ATA to the
     ///       signer’s `component_token_account[i]` (CPI, signed by
     ///       `vault_pda[i]`).  
-    /// 
+    ///
     /// * Executes `spl_token::burn` to destroy `amount` index tokens from the
     ///   signer’s `token_account`.
     ///
@@ -427,11 +419,7 @@ pub enum ProtocolInstruction {
     ///   `IncorrectVaultATA`                    if any PDA derivation mismatches  
     /// * `ArithmeticOverflow`                   on `amount × component.units`  
     /// * `MissingRequiredSignature`             if signer did not sign
-    
-    Redeem {
-        index_id: u64,
-        amount: u64,
-    },
+    Redeem { index_id: u64, amount: u64 },
 }
 
 pub fn init_protocol_instruction(

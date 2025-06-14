@@ -7,11 +7,11 @@ use super::AccountType;
 ///
 /// Singleton account that stores *controller-wide limits and guards*
 /// enforced uniformly across every controller and index in the protocol.
-/// 
+///
 /// Currently it holds only `max_index_components`, but you can extend it
 /// with fee rates, rebalancing cool-downs, etc.  
 /// Created once by `InitControllerGlobalConfig`.
-/// 
+///
 #[derive(BorshDeserialize, BorshSerialize, Debug)]
 pub struct ControllerGlobalConfig {
     /// Account type. It can be **Uninitialized** or **ControllerGlobalConfig**.

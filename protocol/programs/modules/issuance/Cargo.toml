@@ -13,4 +13,4 @@ no-entrypoint = []
 borsh = {workspace = true}
 borsh-derive = {workspace = true}
 solana-program = {workspace = true}
-openindex-sdk= {path="../../../sdk/", version="0.1.0", default-features = false,  features = [ "no-entrypoint","issuance","openindex-state" ]}
+openindex-sdk= {path="../../../sdk/", version="0.1.0", default-features = false,  features = [ "no-entrypoint","issuance-error" ,"issuance-pda","issuance-seeds","issuance-state","openindex-instruction","openindex-state","openindex-seeds","openindex-error","openindex-pda"]}

@@ -5,10 +5,10 @@ use crate::{
 
 use borsh::BorshDeserialize;
 use openindex_sdk::openindex::{
-    state::{Controller, Index, Protocol},
     pda::{
         find_controller_address, find_index_address, find_index_mint_address, find_protocol_address,
     },
+    state::{Controller, Index, Protocol},
     transaction::{
         create_index_transaction, init_controller_global_config_transaction,
         init_controller_transaction, init_protocol_transaction,

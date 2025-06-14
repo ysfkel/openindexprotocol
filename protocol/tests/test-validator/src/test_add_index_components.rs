@@ -1,7 +1,7 @@
 use crate::{get_openindex_program_id, process_mint, setup, ProcessMintResult};
 use openindex_sdk::openindex::{
-    state::{Component, Controller, ControllerGlobalConfig, Index, IndexMints},
     pda::find_controller_global_config_address,
+    state::{Component, Controller, ControllerGlobalConfig, Index, IndexMints},
     transaction::add_index_components_versioned_transaction,
 };
 use solana_client::rpc_request::RpcError;
@@ -28,9 +28,8 @@ use {
         },
         transaction::{
             add_index_components_transaction, create_index_transaction,
-            create_mint_acccount_transaction,
-            init_controller_global_config_transaction, init_controller_transaction,
-            init_protocol_transaction,
+            create_mint_acccount_transaction, init_controller_global_config_transaction,
+            init_controller_transaction, init_protocol_transaction,
         },
     },
     solana_client::client_error::ClientErrorKind,
@@ -144,7 +143,7 @@ async fn test_add_index_components() -> Result<()> {
     let index_pda = find_index_address(&program_id, &controller_address, index_id).0;
     let controller_account = client.get_account(&controller_address).unwrap();
     let mut components: Vec<Pubkey> = vec![];
-    
+
     for mint in mints.iter() {
         let component_pda = find_component_address(&program_id, &index_pda, mint).0;
         components.push(component_pda);

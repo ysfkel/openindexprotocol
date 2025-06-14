@@ -1,15 +1,13 @@
 use borsh::BorshDeserialize;
-use openindex_sdk::{
-    openindex::{
-        state::Component,
-        pda::{
-            find_component_address, find_component_vault_address, find_controller_address,
-            find_index_address, find_index_mint_address,
-        },
-        transaction::{
-            create_mint_acccount_transaction, create_token_account_transaction,
-            mint_to_transaction, redeem_transaction,
-        },
+use openindex_sdk::openindex::{
+    pda::{
+        find_component_address, find_component_vault_address, find_controller_address,
+        find_index_address, find_index_mint_address,
+    },
+    state::Component,
+    transaction::{
+        create_mint_acccount_transaction, create_token_account_transaction, mint_to_transaction,
+        redeem_transaction,
     },
 };
 use solana_program_test::tokio;

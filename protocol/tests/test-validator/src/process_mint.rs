@@ -46,7 +46,10 @@ pub async fn process_mint(
 
         let token_account = get_associated_token_address(&payer.pubkey(), &mint);
         assert_eq!(ata, token_account);
-        println!("user component token account {:?} -> ", token_account.clone());
+        println!(
+            "user component token account {:?} -> ",
+            token_account.clone()
+        );
         // mint to the token account
         let mint_to_tx = mint_to_transaction(
             &payer,
@@ -89,7 +92,7 @@ pub async fn process_mint(
     let mint_account_data = spl_token::state::Mint::unpack(&mint_account.data.as_ref()).unwrap();
 
     assert_eq!(token_account_data.mint, mint);
-    println!("user index token_account {:?} ",token_account);
+    println!("user index token_account {:?} ", token_account);
     assert!(mints.len() > 0);
     assert_eq!(mints.len(), token_accounts.len());
 

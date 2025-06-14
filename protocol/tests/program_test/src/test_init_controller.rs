@@ -7,8 +7,8 @@ use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 
 use openindex_sdk::openindex::{
-    state::{Controller, Protocol},
     pda::{find_controller_address, find_protocol_address},
+    state::{Controller, Protocol},
     transaction::{init_controller_transaction, init_protocol_transaction},
 };
 use solana_program_test::BanksClientError;

@@ -1,7 +1,6 @@
 use borsh::BorshDeserialize;
 use openindex_sdk::openindex::{
-    state::Controller,
-    pda::find_controller_address, transaction::create_index_transaction,
+    pda::find_controller_address, state::Controller, transaction::create_index_transaction,
 };
 use solana_sdk::pubkey::Pubkey;
 

@@ -6,7 +6,7 @@ use super::AccountType;
 /// Index
 ///
 /// Metadata account for a single *tokenized index* created under a
-/// 
+///
 /// controller.  Every index has:
 /// * a unique `id` (monotonic within its controller),
 /// * an SPL `mint` (stored separately; PDA seed = `b"index_mint"`),
@@ -15,7 +15,7 @@ use super::AccountType;
 ///   management rights or close the index.
 ///
 /// Created by the `CreateIndex` instruction.
-/// 
+///
 #[derive(BorshDeserialize, BorshSerialize, Debug)]
 pub struct Index {
     /// Account type. It can be **Uninitialized** or **Index**.

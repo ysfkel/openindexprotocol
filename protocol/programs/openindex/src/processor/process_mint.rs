@@ -3,13 +3,13 @@
 use borsh::BorshDeserialize;
 use openindex_sdk::{
     openindex::{
-        state::{Component, IndexMints},
         error::ProtocolError,
         pda::{
             create_component_address, create_component_vault_address,
             create_index_mints_data_address, find_index_mint_authority_address,
         },
         seeds::INDEX_MINT_AUTHORITY_SEED,
+        state::{Component, IndexMints},
     },
     require,
 };
@@ -40,10 +40,7 @@ pub fn process_mint(
     let token_account = next_account_info(accounts_iter)?;
     let token_program_account = next_account_info(accounts_iter)?;
 
-    require!(
-        signer.is_signer,
-        ProgramError::MissingRequiredSignature
-    );
+    require!(signer.is_signer, ProgramError::MissingRequiredSignature);
 
     require!(
         amount > 0,
@@ -137,7 +134,6 @@ pub fn process_mint(
             *vault_pda.key == expected_vault_pda,
             ProtocolError::IncorrectVaultAccount.into()
         );
-
 
         let expected_vault_ata = spl_associated_token_account::get_associated_token_address(
             vault_pda.key,

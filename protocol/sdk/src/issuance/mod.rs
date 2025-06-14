@@ -1,5 +1,15 @@
-mod pda;
-mod seeds;
-mod error;
-mod instruction;
-mod state;
+#[cfg(feature = "issuance-state")]
+pub mod state;
+#[cfg(feature = "issuance-error")]
+pub mod error;
+#[cfg(feature = "issuance-instruction")]
+pub mod instruction;
+#[cfg(feature = "issuance-pda")]
+pub mod pda;
+#[cfg(feature = "issuance-seeds")]
+pub mod seeds;
+
+
+
+
+

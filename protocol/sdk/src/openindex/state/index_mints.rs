@@ -8,12 +8,12 @@ use super::AccountType;
 /// Variable-length PDA that stores the **ordered list of component SPL
 /// mints** backing a given index.  
 /// Created by `AddIndexComponents`, read by `Mint` and `Redeem`.
-/// 
+///
 #[derive(BorshDeserialize, BorshSerialize, Debug)]
 pub struct IndexMints {
     /// Account type. It can be **Uninitialized** or **IndexMints**.
     pub account_type: AccountType,
-    
+
     /// Ordered list of component mint addresses.
     pub mints: Vec<Pubkey>,
 

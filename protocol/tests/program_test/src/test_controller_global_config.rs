@@ -4,8 +4,8 @@ use crate::{
 };
 use borsh::BorshDeserialize;
 use openindex_sdk::openindex::{
-    state::ControllerGlobalConfig,
     pda::find_controller_global_config_address,
+    state::ControllerGlobalConfig,
     transaction::{init_controller_global_config_transaction, init_protocol_transaction},
 };
 use {solana_program_test::tokio, solana_sdk::signature::Signer};

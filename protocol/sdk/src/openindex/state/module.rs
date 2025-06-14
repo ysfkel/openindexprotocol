@@ -7,10 +7,10 @@ use super::AccountType;
 ///
 /// Metadata account for an **external program** that has been registered
 /// with the protocol (see `InitModule`).  
-/// 
+///
 /// A module is allowed to CPI into the core program to perform automated
 /// tasks such as rebalancing, fee routing, or strategy execution.
-/// 
+///
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct Module {
     /// Account type. It can be **Uninitialized** or **Module**.

@@ -13,10 +13,9 @@ use super::AccountType;
 /// * the protocol-governance authority (`owner`);
 /// * a monotonic counter for assigning **controller IDs**;
 /// * a bump seed so the PDA can sign future CPIs.
-/// 
+///
 #[derive(BorshDeserialize, BorshSerialize, Debug, Default)]
 pub struct Protocol {
-
     /// Account type. It can be Uninitialized, Protocol
     pub account_type: AccountType,
 
@@ -37,7 +36,6 @@ pub struct Protocol {
 }
 
 impl Protocol {
-
     /// Packed size in bytes.  
     ///   1  – `account_type` (u8)  
     /// + 32 – `owner` (Pubkey)  

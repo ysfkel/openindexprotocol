@@ -2,13 +2,13 @@
 use borsh::{BorshDeserialize, BorshSerialize};
 use openindex_sdk::{
     openindex::{
-        state::{Component, Controller, ControllerGlobalConfig, Index, IndexMints},
         error::ProtocolError,
         pda::{
             create_index_address, find_component_address, find_component_vault_address,
-             find_index_mints_data_address,
+            find_index_mints_data_address,
         },
         seeds::{COMPONENT_SEED, COMPONENT_VAULT_SEED, INDEX_MINTS_DATA_SEED},
+        state::{Component, Controller, ControllerGlobalConfig, Index, IndexMints},
     },
     require,
 };
@@ -115,8 +115,6 @@ pub fn process_add_index_components(
         ProtocolError::MintsAmountsLenMismatch.into()
     );
 
-
-
     // creates components
     let rent = Rent::get()?;
     let component_lamports = rent.minimum_balance(Component::LEN);
@@ -220,7 +218,7 @@ pub fn process_add_index_components(
             ]],
         )?;
     }
-    
+
     //creates index mints account
     let space = IndexMints::calc_len(mints_len);
     let lamports = rent.minimum_balance(space);

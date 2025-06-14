@@ -2,10 +2,10 @@
 use borsh::{BorshDeserialize, BorshSerialize};
 use openindex_sdk::{
     openindex::{
-        state::{ControllerGlobalConfig, Protocol},
         error::ProtocolError,
         pda::{create_protocol_address, find_controller_global_config_address},
         seeds::CONTROLLER_GLOBAL_CONFIG_SEED,
+        state::{ControllerGlobalConfig, Protocol},
     },
     require,
 };

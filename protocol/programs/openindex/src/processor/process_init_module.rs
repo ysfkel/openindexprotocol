@@ -15,10 +15,10 @@ use solana_program::{
 
 use openindex_sdk::{
     openindex::{
-        state::{Module, Protocol},
         error::ProtocolError,
-        pda::{create_protocol_address, find_registered_module_address},
+        pda::{create_protocol_address, find_module_address},
         seeds::MODULE_SEED,
+        state::{Module, Protocol},
     },
     require,
 };
@@ -61,7 +61,7 @@ pub fn process_init_module(program_id: &Pubkey, accounts: &[AccountInfo]) -> Pro
     );
 
     let (registered_module_pda, registered_module_bump) =
-        find_registered_module_address(program_id, module_signer_account.key);
+        find_module_address(program_id, module_signer_account.key);
 
     require!(
         *registered_module_account.key == registered_module_pda,

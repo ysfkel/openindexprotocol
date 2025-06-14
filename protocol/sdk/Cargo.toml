@@ -16,6 +16,11 @@ openindex-error=["openindex"]
 openindex-instruction=["openindex"]
 openindex-seeds=["openindex"]
 issuance = []
+issuance-state = ["issuance"]
+issuance-error = ["issuance"]
+issuance-instruction = ["issuance"]
+issuance-pda = ["issuance"]
+issuance-seeds = ["issuance"]
 
 [dependencies]
 solana-sdk ={ version = "2.2.2", optional = true }

@@ -4,8 +4,8 @@ use crate::{
 };
 use borsh::BorshDeserialize;
 use openindex_sdk::openindex::{
-    state::Module,
     pda::{find_module_signer_address, find_registered_module_address},
+    state::Module,
     transaction::{init_module_transaction, init_protocol_transaction},
 };
 use solana_program::example_mocks::solana_keypair::Keypair;

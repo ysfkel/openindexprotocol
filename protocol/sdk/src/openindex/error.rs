@@ -30,7 +30,7 @@ pub enum ProtocolError {
     #[error("Error:incorrect mint authority")]
     IncorrectMintAuthority,
     #[error("Error:Invalid module account")]
-    InvalidRegisredModuleAccount,
+    InvalidModuleAccount,
     #[error("Error:incorrect controller account")]
     IncorrectControllerAccount,
     #[error("Error:incorrect controller global config account")]
@@ -103,15 +103,6 @@ impl<T> DecodeError<T> for ProtocolError {
     fn type_of() -> &'static str {
         "Protocol Error"
     }
-}
-
-#[macro_export]
-macro_rules! require {
-    ($cond:expr, $err:expr) => {
-        if !$cond {
-            return Err($err);
-        }
-    };
 }
 
 /// Instruction errors

@@ -3,13 +3,13 @@
 use borsh::BorshDeserialize;
 use openindex_sdk::{
     openindex::{
-        state::{Component, IndexMints},
         error::ProtocolError,
         pda::{
             create_component_address, create_component_vault_address,
             create_index_mints_data_address, find_index_mint_authority_address,
         },
         seeds::COMPONENT_VAULT_SEED,
+        state::{Component, IndexMints},
     },
     require,
 };
@@ -84,7 +84,7 @@ pub fn process_redeem(
         ProtocolError::IncorrectMintAuthority.into()
     );
 
-    for  mint in mints.iter() {
+    for mint in mints.iter() {
         let component_mint_account = next_account_info(accounts_iter)?;
         let component_account = next_account_info(accounts_iter)?;
         let vault_pda = next_account_info(accounts_iter)?;

@@ -19,7 +19,6 @@ pub fn process_instruction(
     instruction_data: &[u8],
 ) -> ProgramResult {
     if let Err(err) = processor::process_instruction(program_id, accounts, instruction_data) {
-        
         // catch internal error and print it
         err.print::<ProtocolError>();
         return Err(err);

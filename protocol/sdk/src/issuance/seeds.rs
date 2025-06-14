@@ -1,0 +1,1 @@
+pub const ISSUANCE_CONFIG_SEED: &[u8] = b"issuance_config";

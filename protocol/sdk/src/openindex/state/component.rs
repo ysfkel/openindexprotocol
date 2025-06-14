@@ -42,7 +42,7 @@ impl Component {
     /// * 1  – `initialized`
     pub const LEN: usize = 1 + 8 + 32 + 1 + 1 + 1;
 
-   /// Constructor used by `process_add_index_components`.
+    /// Constructor used by `process_add_index_components`.
     pub fn new(uints: u64, mint: Pubkey, bump: u8, vault_bump: u8) -> Self {
         Self {
             account_type: AccountType::Component,

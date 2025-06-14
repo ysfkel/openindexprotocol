@@ -1,6 +1,6 @@
-//! Account types 
+//! Account types
 
-use borsh::{BorshDeserialize,  BorshSerialize};
+use borsh::{BorshDeserialize, BorshSerialize};
 
 #[derive(Clone, Debug, Default, PartialEq, Eq, BorshDeserialize, BorshSerialize)]
 pub enum AccountType {
@@ -11,14 +11,14 @@ pub enum AccountType {
     Protocol,
     /// The controller account - stores the controller data
     Controller,
-     /// The controller global config account - stores global config for the controllers
-    ControllerGlobalConfig, 
+    /// The controller global config account - stores global config for the controllers
+    ControllerGlobalConfig,
     /// The index account
     Index,
     /// The component account - index component data
     Component,
     /// The index mints account - stores mint addresses that are part of the index
-    IndexMints, 
+    IndexMints,
     /// Module account -  Determines if an external program is a registered module
-    Module, 
+    Module,
 }

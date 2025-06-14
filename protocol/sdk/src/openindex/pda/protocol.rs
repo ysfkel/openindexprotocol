@@ -172,12 +172,12 @@ pub fn find_module_signer_address(program_id: &Pubkey) -> (Pubkey, u8) {
     (pda, bump)
 }
 
-pub fn find_registered_module_address(
+pub fn find_module_address(
     program_id: &Pubkey,
-    module_signer_account: &Pubkey,
+    module_signer_address: &Pubkey,
 ) -> (Pubkey, u8) {
     let (pda, bump) =
-        Pubkey::find_program_address(&[&MODULE_SEED, &module_signer_account.as_ref()], program_id);
+        Pubkey::find_program_address(&[&MODULE_SEED, &module_signer_address.as_ref()], program_id);
     (pda, bump)
 }
 

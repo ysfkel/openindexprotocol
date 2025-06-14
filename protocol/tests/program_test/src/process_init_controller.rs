@@ -1,7 +1,7 @@
 use borsh::BorshDeserialize;
 use openindex_sdk::openindex::{
-    state::Protocol,
     pda::{find_controller_address, find_protocol_address},
+    state::Protocol,
     transaction::init_controller_transaction,
 };
 

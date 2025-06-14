@@ -2,7 +2,9 @@
 
 use borsh::BorshSerialize;
 use openindex_sdk::{
-    openindex::{error::ProtocolError, state::Protocol,pda::find_protocol_address, seeds::PROTOCOL_SEED},
+    openindex::{
+        error::ProtocolError, pda::find_protocol_address, seeds::PROTOCOL_SEED, state::Protocol,
+    },
     require,
 };
 use solana_program::{

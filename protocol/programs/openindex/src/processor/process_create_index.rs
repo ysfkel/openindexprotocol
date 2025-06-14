@@ -2,10 +2,10 @@
 use borsh::{BorshDeserialize, BorshSerialize};
 use openindex_sdk::{
     openindex::{
-        state::{Controller, ControllerGlobalConfig, Index},
         error::ProtocolError,
         pda::{find_index_address, find_index_mint_address},
         seeds::{INDEX_MINT_AUTHORITY_SEED, INDEX_MINT_SEED, INDEX_SEED},
+        state::{Controller, ControllerGlobalConfig, Index},
     },
     require,
 };
@@ -167,7 +167,12 @@ pub fn process_create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> Pr
         ]],
     )?;
 
-    let index = Index::new(index_id, signer.key.clone(), manager.key.clone(), index_bump);
+    let index = Index::new(
+        index_id,
+        signer.key.clone(),
+        manager.key.clone(),
+        index_bump,
+    );
     index.serialize(&mut &mut index_account.data.borrow_mut()[..])?;
 
     controller.generate_next_index_id();

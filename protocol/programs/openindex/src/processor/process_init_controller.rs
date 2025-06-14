@@ -15,10 +15,10 @@ use solana_program::{
 
 use openindex_sdk::{
     openindex::{
-        state::{Controller, Protocol},
         error::ProtocolError,
         pda::{create_protocol_address, find_controller_address},
         seeds::CONTROLLER_SEED,
+        state::{Controller, Protocol},
     },
     require,
 };
