@@ -16,4 +16,4 @@ solana-program = {workspace = true}
 spl-token = { workspace = true, features = ["no-entrypoint"]}
 spl-associated-token-account = { workspace = true, features = ["no-entrypoint"] }
 thiserror = {workspace = true}
-openindex-sdk = {path="../../sdk/", version="0.1.0", default-features = false,  features = [ "no-entrypoint","openindex" ]}
+openindex-sdk = {path="../../sdk/", version="0.1.0", default-features = false,  features = [ "no-entrypoint","openindex-state","openindex-pda","openindex-error","openindex-seeds","openindex-instruction"]}

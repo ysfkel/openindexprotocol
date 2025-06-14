@@ -3,8 +3,8 @@ use crate::{
     Setup,
 };
 use borsh::BorshDeserialize;
-use openindex::state::Module;
 use openindex_sdk::openindex::{
+    state::Module,
     pda::{find_module_signer_address, find_registered_module_address},
     transaction::{init_module_transaction, init_protocol_transaction},
 };

@@ -5,9 +5,9 @@ use crate::{
 use borsh::BorshDeserialize;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
-use openindex::state::{Controller, Protocol};
 
 use openindex_sdk::openindex::{
+    state::{Controller, Protocol},
     pda::{find_controller_address, find_protocol_address},
     transaction::{init_controller_transaction, init_protocol_transaction},
 };

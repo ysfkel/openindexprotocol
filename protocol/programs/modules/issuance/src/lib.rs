@@ -4,4 +4,3 @@
 
 mod entry_point;
 mod processor;
-mod state;

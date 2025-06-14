@@ -3,6 +3,7 @@
 use borsh::BorshDeserialize;
 use openindex_sdk::{
     openindex::{
+        state::{Component, IndexMints},
         error::ProtocolError,
         pda::{
             create_component_address, create_component_vault_address,
@@ -20,7 +21,6 @@ use solana_program::{
     pubkey::Pubkey,
 };
 use spl_token::instruction::{burn, transfer};
-use crate::state::{Component, IndexMints};
 
 /// instruction to process minting an index
 pub fn process_redeem(

@@ -1,9 +1,8 @@
 //! Program state processor
 
-use crate::state::Protocol;
 use borsh::BorshSerialize;
 use openindex_sdk::{
-    openindex::{error::ProtocolError, pda::find_protocol_address, seeds::PROTOCOL_SEED},
+    openindex::{error::ProtocolError, state::Protocol,pda::find_protocol_address, seeds::PROTOCOL_SEED},
     require,
 };
 use solana_program::{

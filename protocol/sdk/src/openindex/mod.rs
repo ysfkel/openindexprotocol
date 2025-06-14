@@ -1,6 +1,12 @@
+#[cfg(feature = "openindex-error")]
 pub mod error;
+#[cfg(feature = "openindex-instruction")]
 pub mod instruction;
+#[cfg(feature = "openindex-pda")]
 pub mod pda;
+#[cfg(feature = "openindex-seeds")]
 pub mod seeds;
-#[cfg(feature = "transaction")]
+#[cfg(feature = "openindex-state")]
+pub mod state;
+#[cfg(feature = "openindex-transaction")]
 pub mod transaction;

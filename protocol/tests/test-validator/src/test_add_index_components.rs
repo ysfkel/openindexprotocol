@@ -1,6 +1,6 @@
 use crate::{get_openindex_program_id, process_mint, setup, ProcessMintResult};
-use openindex::state::{Component, Controller, ControllerGlobalConfig, Index, IndexMints};
 use openindex_sdk::openindex::{
+    state::{Component, Controller, ControllerGlobalConfig, Index, IndexMints},
     pda::find_controller_global_config_address,
     transaction::add_index_components_versioned_transaction,
 };

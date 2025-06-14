@@ -13,9 +13,9 @@ use solana_program::{
     sysvar::Sysvar,
 };
 
-use crate::state::{Module, Protocol};
 use openindex_sdk::{
     openindex::{
+        state::{Module, Protocol},
         error::ProtocolError,
         pda::{create_protocol_address, find_registered_module_address},
         seeds::MODULE_SEED,

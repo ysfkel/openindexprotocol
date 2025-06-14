@@ -1,9 +1,8 @@
 //! Program state processor
-
-use crate::state::{Component, Controller, ControllerGlobalConfig, Index, IndexMints};
 use borsh::{BorshDeserialize, BorshSerialize};
 use openindex_sdk::{
     openindex::{
+        state::{Component, Controller, ControllerGlobalConfig, Index, IndexMints},
         error::ProtocolError,
         pda::{
             create_index_address, find_component_address, find_component_vault_address,

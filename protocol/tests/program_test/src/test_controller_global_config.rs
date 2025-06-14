@@ -3,8 +3,8 @@ use crate::{
     ProcessControllerGlobalConfigResult, Setup,
 };
 use borsh::BorshDeserialize;
-use openindex::state::ControllerGlobalConfig;
 use openindex_sdk::openindex::{
+    state::ControllerGlobalConfig,
     pda::find_controller_global_config_address,
     transaction::{init_controller_global_config_transaction, init_protocol_transaction},
 };

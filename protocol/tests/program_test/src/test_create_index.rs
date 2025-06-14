@@ -4,8 +4,8 @@ use crate::{
 };
 
 use borsh::BorshDeserialize;
-use openindex::state::{Controller, Index, Protocol};
 use openindex_sdk::openindex::{
+    state::{Controller, Index, Protocol},
     pda::{
         find_controller_address, find_index_address, find_index_mint_address, find_protocol_address,
     },

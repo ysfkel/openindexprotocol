@@ -1,5 +1,4 @@
-use crate::state::AccountType;
-
+use super::AccountType;
 
 pub struct IndexModule {
     pub account_type: AccountType,

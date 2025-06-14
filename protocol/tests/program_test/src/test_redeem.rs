@@ -1,7 +1,7 @@
 use borsh::BorshDeserialize;
-use openindex::state::Component;
 use openindex_sdk::{
     openindex::{
+        state::Component,
         pda::{
             find_component_address, find_component_vault_address, find_controller_address,
             find_index_address, find_index_mint_address,

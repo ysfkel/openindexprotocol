@@ -13,9 +13,9 @@ use solana_program::{
     sysvar::Sysvar,
 };
 
-use crate::state::{Controller, Protocol};
 use openindex_sdk::{
     openindex::{
+        state::{Controller, Protocol},
         error::ProtocolError,
         pda::{create_protocol_address, find_controller_address},
         seeds::CONTROLLER_SEED,
