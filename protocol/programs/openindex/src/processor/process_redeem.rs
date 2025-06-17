@@ -84,6 +84,8 @@ pub fn process_redeem(
         ProtocolError::IncorrectMintAuthority.into()
     );
 
+    require!(token_program_account.key == &spl_token::id(), ProgramError::IncorrectProgramId);
+
     for mint in mints.iter() {
         let component_mint_account = next_account_info(accounts_iter)?;
         let component_account = next_account_info(accounts_iter)?;

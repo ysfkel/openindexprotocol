@@ -57,6 +57,18 @@ pub fn process_mint(
         ProtocolError::UnknownIndexAccount.into()
     );
 
+    require!(index_mints_account.owner == program_id, ProtocolError::UnknownIndexMintsAccount.into());
+
+
+    let (index_pda, index_bump) = find_index_address(program_id, controller_account.key, index_id);
+
+    require!(
+        *index_account.key == index_pda,
+        ProtocolError::IncorrectIndexAccount.into()
+    );
+
+    require!(token_program_account.key == &spl_token::id(), ProgramError::IncorrectProgramId);
+
     let index_mints_data = IndexMints::try_from_slice(&index_mints_account.data.borrow_mut()[..])
         .map_err(|_| ProtocolError::InvalidIndexMintsAccountData)?;
 
@@ -88,6 +100,8 @@ pub fn process_mint(
         let vault_pda = next_account_info(accounts_iter)?;
         let vault_ata = next_account_info(accounts_iter)?;
         let component_token_account = next_account_info(accounts_iter)?;
+
+        require!(component_account.owner == program_id, ProtocolError::UnknownComponentAccount.into());
 
         require!(
             component_token_account.owner == token_program_account.key,

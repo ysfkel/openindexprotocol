@@ -115,6 +115,8 @@ pub fn process_add_index_components(
         ProtocolError::MintsAmountsLenMismatch.into()
     );
 
+    require!(token_program_account.key == &spl_token::id(), ProgramError::IncorrectProgramId);
+
     // creates components
     let rent = Rent::get()?;
     let component_lamports = rent.minimum_balance(Component::LEN);

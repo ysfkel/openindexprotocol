@@ -75,6 +75,8 @@ pub enum ProtocolError {
     UnknownProtocolAccount,
     #[error("Error:Invalid Module owner")]
     UnknownModuleAccount,
+    #[error("Error:Invalid component account")]
+    UnknownComponentAccount,
     #[error("Error:Mints amounts lengths (len) mismatch")]
     MintsAmountsLenMismatch,
     #[error("Error:Invalid mint")]

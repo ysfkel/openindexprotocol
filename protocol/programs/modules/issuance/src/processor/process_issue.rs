@@ -32,6 +32,7 @@ pub fn issue(
     let controller_account = next_account_info(accounts_iter)?;
     let mint_account = next_account_info(accounts_iter)?;
     let mint_authority_account = next_account_info(accounts_iter)?;
+    let index_account = next_account_info(accounts_iter)?;
     let index_mints_account = next_account_info(accounts_iter)?;
     let module_account = next_account_info(accounts_iter)?;
     let openindex_program_account = next_account_info(accounts_iter)?;
@@ -52,6 +53,13 @@ pub fn issue(
         IssuanceError::IncorrectIssuanceSignerAccount.into()
     );
 
+    // let (index_pda, index_bump) = find_index_address(openindex_program_account.key, controller_account.key, index_id);
+
+    // require!(
+    //     *index_account.key == index_pda,
+    //     ProtocolError::IncorrectIndexAccount.into()
+    // );
+
     let issuance_config = IssuanceConfig::try_from_slice(&issuance_config_account.data.borrow())?;
 
     for hook in issuance_config.allowed_hooks.iter() {
@@ -67,7 +75,8 @@ pub fn issue(
         instruction.serialize(&mut instruction_data)?;
 
         // invoke hook account
-        invoke(
+    
+       invoke(
             &Instruction {
                 program_id: *hook_account.key,
                 accounts: vec![AccountMeta::new(*signer.key, true)],
@@ -91,9 +100,11 @@ pub fn issue(
 
     let mut cpi_accounts = vec![
         AccountMeta::new_readonly(*issuance_signer_account.key, true),
+        AccountMeta::new_readonly(*signer.key, true),
         AccountMeta::new_readonly(*controller_account.key, false),
         AccountMeta::new(*mint_account.key, false),
         AccountMeta::new_readonly(*mint_authority_account.key, false),
+        AccountMeta::new_readonly(*index_account.key, false),
         AccountMeta::new(*token_account.key, false),
         AccountMeta::new(*token_program_account.key, false),
         AccountMeta::new_readonly(*module_account.key, false),
@@ -101,6 +112,7 @@ pub fn issue(
 
     let mut cpi_account_infos = vec![
         issuance_signer_account.clone(),
+        signer.clone(),
         controller_account.clone(),
         mint_account.clone(),
         mint_authority_account.clone(),
