@@ -1,6 +1,6 @@
 use crate::openindex::{
     instruction::init_module_instruction,
-    pda::{find_module_signer_address, find_protocol_address, find_module_address},
+    pda::{find_module_address, find_module_signer_address, find_protocol_address},
 };
 use solana_sdk::{hash::Hash, transaction::Transaction};
 

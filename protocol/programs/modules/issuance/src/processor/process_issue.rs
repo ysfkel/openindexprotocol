@@ -14,7 +14,7 @@ use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint::ProgramResult,
     instruction::{AccountMeta, Instruction},
-    program::{invoke,invoke_signed},
+    program::{invoke, invoke_signed},
     program_error::ProgramError,
     pubkey::Pubkey,
 };
@@ -60,41 +60,14 @@ pub fn issue(
     //     ProtocolError::IncorrectIndexAccount.into()
     // );
 
-    let issuance_config = IssuanceConfig::try_from_slice(&issuance_config_account.data.borrow())?;
-
-    for hook in issuance_config.allowed_hooks.iter() {
-        let hook_account = next_account_info(accounts_iter)?;
-
-        require!(
-            *hook_account.key == *hook,
-            IssuanceError::IncorrectHookAccount.into()
-        );
-
-        let instruction = ExecuteHookInstruction::Execute { index_id, amount };
-        let mut instruction_data = vec![];
-        instruction.serialize(&mut instruction_data)?;
-
-        // invoke hook account
-    
-       invoke(
-            &Instruction {
-                program_id: *hook_account.key,
-                accounts: vec![AccountMeta::new(*signer.key, true)],
-
-                data: instruction_data,
-            },
-            &[signer.clone()],
-        )?;
-    }
-
-    let (module_pda, module_bump) =
-        find_module_address(openindex_program_account.key, &issuance_signer_pda);
-    
-    // ! todo 
+    // ! todo
+    // run hooks 
+    // transfer components from user to vault 
+    // make mint cpi call to openindex program
     // - move components transfers from openindex to issuance module - openindex core should only mint index tokens
 
 
-
+  
 
     Ok(())
 }

@@ -1,6 +1,6 @@
 use openindex_sdk::openindex::{
     instruction::init_protocol_instruction,
-    pda::{find_module_signer_address, find_module_address},
+    pda::{find_module_address, find_module_signer_address},
     transaction::init_module_transaction,
 };
 use solana_sdk::{pubkey::Pubkey, signature::Keypair};
@@ -24,8 +24,7 @@ pub async fn process_init_module(
         .await;
 
     let module_signer_pda = find_module_signer_address(&module_program_id).0;
-    let registered_module_pda =
-        find_module_address(&_setup.program_id, &module_signer_pda).0;
+    let registered_module_pda = find_module_address(&_setup.program_id, &module_signer_pda).0;
 
     ProcessInitModuleResult {
         registered_module_pda,

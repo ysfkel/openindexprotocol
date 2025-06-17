@@ -90,7 +90,10 @@ pub fn process_create_index(program_id: &Pubkey, accounts: &[AccountInfo]) -> Pr
         ProgramError::IncorrectProgramId
     );
 
-    require!(token_program_account.key == &spl_token::id(), ProgramError::IncorrectProgramId);
+    require!(
+        token_program_account.key == &spl_token::id(),
+        ProgramError::IncorrectProgramId
+    );
 
     let rent = Rent::get()?;
 
