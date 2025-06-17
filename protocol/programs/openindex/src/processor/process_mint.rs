@@ -61,7 +61,7 @@ pub fn process_mint(
         ProtocolError::UnknownIndexMintsAccount.into()
     );
 
-   let (index_pda, index_bump) = find_index_address(program_id, controller_account.key, index_id);
+   let (index_pda, _) = find_index_address(program_id, controller_account.key, index_id);
 
     require!(
         *index_account.key == index_pda,
@@ -73,7 +73,7 @@ pub fn process_mint(
         ProgramError::IncorrectProgramId
     );
 
-   let (mint_pda, mint_bump) =find_index_mint_address(program_id, controller_account.key, index_id);
+   let (mint_pda, _) =find_index_mint_address(program_id, controller_account.key, index_id);
 
     require!(
         *mint_account.key == mint_pda,

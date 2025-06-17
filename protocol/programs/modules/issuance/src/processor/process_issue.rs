@@ -65,15 +65,15 @@ pub fn issue(
 
     require!(index_mints_account.owner == openindex_program_account.key, ProtocolError::UnknownIndexMintsAccount.into());
 
-    // let (index_pda, index_bump) = find_index_address(openindex_program_account.key, controller_account.key, index_id);
+    let (index_pda, index_bump) = find_index_address(openindex_program_account.key, controller_account.key, index_id);
 
-    // require!(
-    //     *index_account.key == index_pda,
-    //     ProtocolError::IncorrectIndexAccount.into()
-    // );
+    require!(
+        *index_account.key == index_pda,
+        ProtocolError::IncorrectIndexAccount.into()
+    );
 
     // ! todo
-    // run hooks 
+    // execute hooks 
     // transfer components from user to vault 
     // make mint cpi call to openindex program
     // - move components transfers from openindex to issuance module - openindex core should only mint index tokens
