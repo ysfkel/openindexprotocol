@@ -87,76 +87,14 @@ pub fn issue(
         )?;
     }
 
-
     let (module_pda, module_bump) =
         find_module_address(openindex_program_account.key, &issuance_signer_pda);
+    
+    // ! todo 
+    // - move components transfers from openindex to issuance module - openindex core should only mint index tokens
 
-    let index_mints_data = IndexMints::try_from_slice(&index_mints_account.data.borrow())?;
 
-    require!(
-        *module_account.key == module_pda,
-        ProtocolError::InvalidModuleAccount.into()
-    );
 
-    let mut cpi_accounts = vec![
-        AccountMeta::new_readonly(*issuance_signer_account.key, true),
-        AccountMeta::new_readonly(*signer.key, true),
-        AccountMeta::new_readonly(*controller_account.key, false),
-        AccountMeta::new(*mint_account.key, false),
-        AccountMeta::new_readonly(*mint_authority_account.key, false),
-        AccountMeta::new_readonly(*index_account.key, false),
-        AccountMeta::new(*token_account.key, false),
-        AccountMeta::new(*token_program_account.key, false),
-        AccountMeta::new_readonly(*module_account.key, false),
-    ];
-
-    let mut cpi_account_infos = vec![
-        issuance_signer_account.clone(),
-        signer.clone(),
-        controller_account.clone(),
-        mint_account.clone(),
-        mint_authority_account.clone(),
-        token_account.clone(),
-        token_program_account.clone(),
-        module_account.clone(),
-    ];
-
-    for (idx, mint) in index_mints_data.mints.iter().enumerate() {
-        let component_mint_account = next_account_info(accounts_iter)?;
-        let component_account = next_account_info(accounts_iter)?;
-        let vault_pda = next_account_info(accounts_iter)?;
-        let vault_ata = next_account_info(accounts_iter)?;
-        let component_token_account = next_account_info(accounts_iter)?;
-
-        cpi_accounts.push(AccountMeta::new_readonly(
-            *component_mint_account.key,
-            false,
-        ));
-        cpi_accounts.push(AccountMeta::new_readonly(*component_account.key, false));
-        cpi_accounts.push(AccountMeta::new_readonly(*vault_pda.key, false));
-        cpi_accounts.push(AccountMeta::new(*vault_ata.key, false));
-        cpi_accounts.push(AccountMeta::new(*component_token_account.key, false));
-        //
-        cpi_account_infos.push(component_mint_account.clone());
-        cpi_account_infos.push(component_account.clone());
-        cpi_account_infos.push(vault_pda.clone());
-        cpi_account_infos.push(vault_ata.clone());
-        cpi_account_infos.push(component_token_account.clone());
-    }
-
-    let instruction = ProtocolInstruction::Mint { index_id, amount };
-    let mut instruiction_data = vec![];
-    instruction.serialize(&mut instruiction_data)?;
-
-    invoke_signed(
-        &Instruction {
-            program_id: *openindex_program_account.key,
-            accounts: cpi_accounts,
-            data: instruiction_data,
-        },
-        &cpi_account_infos,
-        &[&[program_id.as_ref(), &[issuance_signer_bump]]],
-    )?;
 
     Ok(())
 }
