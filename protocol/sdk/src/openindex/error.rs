@@ -63,8 +63,11 @@ pub enum ProtocolError {
     MaxIndexComponentsExceeded,
     #[error("Error:No mints provided")]
     NoMintsProvided,
+    #[error("Error:Illegal mint account")]
+    IllegalMintAccount,
     #[error("Error:Invalid controller global config account owner")]
     UnknownControllerGlobalConfigAccount,
+
     #[error("Error:Invalid controller account owner")]
     UnknownControllerAccount,
     #[error("Error:Invalid index account")]

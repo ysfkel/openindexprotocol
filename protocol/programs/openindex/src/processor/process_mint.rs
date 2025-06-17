@@ -5,8 +5,7 @@ use openindex_sdk::{
     openindex::{
         error::ProtocolError,
         pda::{
-            create_component_address, create_component_vault_address,
-            create_index_mints_data_address, find_index_mint_authority_address,
+            create_component_address, create_component_vault_address, create_index_mints_data_address, find_index_address, find_index_mint_address, find_index_mint_authority_address
         },
         seeds::INDEX_MINT_AUTHORITY_SEED,
         state::{Component, IndexMints},
@@ -62,7 +61,7 @@ pub fn process_mint(
         ProtocolError::UnknownIndexMintsAccount.into()
     );
 
-    let (index_pda, index_bump) = find_index_address(program_id, controller_account.key, index_id);
+   let (index_pda, index_bump) = find_index_address(program_id, controller_account.key, index_id);
 
     require!(
         *index_account.key == index_pda,
@@ -72,6 +71,13 @@ pub fn process_mint(
     require!(
         token_program_account.key == &spl_token::id(),
         ProgramError::IncorrectProgramId
+    );
+
+   let (mint_pda, mint_bump) =find_index_mint_address(program_id, controller_account.key, index_id);
+
+    require!(
+        *mint_account.key == mint_pda,
+        ProtocolError::IncorrectMintAccount.into()
     );
 
     let index_mints_data = IndexMints::try_from_slice(&index_mints_account.data.borrow_mut()[..])

@@ -34,7 +34,7 @@ pub fn issue(
     let mint_authority_account = next_account_info(accounts_iter)?;
     let index_account = next_account_info(accounts_iter)?;
     let index_mints_account = next_account_info(accounts_iter)?;
-    let module_account = next_account_info(accounts_iter)?;
+    let module_account: &AccountInfo<'_> = next_account_info(accounts_iter)?;
     let openindex_program_account = next_account_info(accounts_iter)?;
     let token_account = next_account_info(accounts_iter)?;
     let token_program_account = next_account_info(accounts_iter)?;
@@ -53,6 +53,18 @@ pub fn issue(
         IssuanceError::IncorrectIssuanceSignerAccount.into()
     );
 
+    let issuance_config = IssuanceConfig::try_from_slice(&issuance_config_account.data.borrow())?;
+
+    require!(*openindex_program_account.key == issuance_config.openindex_program_id, IssuanceError::IllegalOpenIndexProgramId.into());
+
+    require!(controller_account.owner == openindex_program_account.key, ProtocolError::UnknownControllerAccount.into());
+
+    require!(mint_account.owner == openindex_program_account.key, ProtocolError::IllegalMintAccount.into());
+
+    require!(index_account.owner == openindex_program_account.key, ProtocolError::UnknownIndexAccount.into());
+
+    require!(index_mints_account.owner == openindex_program_account.key, ProtocolError::UnknownIndexMintsAccount.into());
+
     // let (index_pda, index_bump) = find_index_address(openindex_program_account.key, controller_account.key, index_id);
 
     // require!(
@@ -67,7 +79,6 @@ pub fn issue(
     // - move components transfers from openindex to issuance module - openindex core should only mint index tokens
 
 
-  
 
     Ok(())
 }

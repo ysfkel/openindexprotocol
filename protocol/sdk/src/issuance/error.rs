@@ -6,6 +6,8 @@ use thiserror::Error;
 
 #[derive(Clone, Debug, Eq, Error, FromPrimitive, PartialEq)]
 pub enum IssuanceError {
+    #[error("Error:Illegal Openindex program Id")]
+    IllegalOpenIndexProgramId,
     #[error("Error:Incorrect index issuance config account")]
     IncorrectIssuanceConfigAccount,
     #[error("Error:Incorrect issuance signer account")]

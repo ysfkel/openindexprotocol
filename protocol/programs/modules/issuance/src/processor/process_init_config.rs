@@ -32,10 +32,8 @@ pub fn process_init_config(
 
     require!(signer.is_signer, ProgramError::MissingRequiredSignature);
 
-    require!(
-        issuance_config_account.lamports() == 0,
-        ProgramError::AccountAlreadyInitialized
-    );
+    require!(protocol_account.owner == openindex_program_account.key, ProtocolError::UnknownProtocolAccount.into());
+
 
     let protocol: Protocol = Protocol::try_from_slice(&protocol_account.data.borrow())?;
 
@@ -49,6 +47,11 @@ pub fn process_init_config(
     require!(
         signer.key == &protocol.owner,
         ProtocolError::OnlyProtocolOwner.into()
+    );
+
+    require!(
+        issuance_config_account.lamports() == 0,
+        ProgramError::AccountAlreadyInitialized
     );
 
     let (issuance_config_pda, issuance_pda_bump) =
@@ -80,7 +83,7 @@ pub fn process_init_config(
     )?;
 
     if !hooks.is_empty() {
-        let issuance_config = IssuanceConfig::new(hooks, issuance_pda_bump);
+        let issuance_config = IssuanceConfig::new(*openindex_program_account.key,hooks, issuance_pda_bump);
         issuance_config.serialize(&mut &mut issuance_config_account.data.borrow_mut()[..])?;
     }
 
