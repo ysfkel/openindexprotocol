@@ -46,6 +46,14 @@ pub fn issue(
         IssuanceError::UnknownIssuanceConfigAccount.into()
     );
 
+    let (issuance_config_pda, issuance_pda_bump) =
+        find_issuance_config_address(program_id);
+
+    require!(
+        *issuance_config_account.key == issuance_config_pda,
+        IssuanceError::IncorrectIssuanceConfigAccount.into()
+    );
+
     let (issuance_signer_pda, issuance_signer_bump) = find_issuance_signer_address(program_id);
 
     require!(

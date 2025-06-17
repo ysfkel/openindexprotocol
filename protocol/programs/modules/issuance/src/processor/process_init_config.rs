@@ -55,7 +55,7 @@ pub fn process_init_config(
     );
 
     let (issuance_config_pda, issuance_pda_bump) =
-        find_issuance_config_address(openindex_program_account.key);
+        find_issuance_config_address(program_id);
 
     require!(
         *issuance_config_account.key == issuance_config_pda,
