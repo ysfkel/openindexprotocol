@@ -38,6 +38,10 @@ Open Index Protocol enables **on-chain index funds** with:
 
 ---
 
+### 📜 Architecture Doc
+- [Architecture Gitbook](https://openindex.gitbook.io/openindex)
+---
+
 ## 🚀 Getting Started  
 ### Prerequisites  
 - [Rust](https://www.rust-lang.org/tools/install) + [Solana CLI](https://docs.anza.xyz/cli/install)  
